@@ -1,0 +1,9 @@
+<header class="site-header" role="banner">
+  <div class="container">
+    {% render 'logo' %}
+    {% render 'nav-main' %}
+    <a href="{{ routes.cart_url }}" aria-label="{{ 'a11y.open_cart' | t }}">
+      {{ 'header.cart' | t }}
+    </a>
+  </div>
+</header>
