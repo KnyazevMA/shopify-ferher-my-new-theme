@@ -1,0 +1,224 @@
+{{ 'custom-product-detail.css' | asset_url | stylesheet_tag }}
+
+{% assign product = all_products[section.settings.product] | default: null %}
+
+<div class="page-width">
+  <section class="product-detail" data-product-id="{{ product.id }}">
+    <div class="product-detail__wrapper">
+      <div class="product-detail__inner-left">
+        <div class="product-detail__wrapper-big-img">
+          {% if product.featured_image != blank %}
+            {{ product.featured_image | image_url: width: 536 | image_tag: alt: product.title }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'product-detail__placeholder' }}
+          {% endif %}
+        </div>
+        {% if section.settings.show_thumbnails == blank or section.settings.show_thumbnails %}
+          <div class="product-detail__wrapper-btn-img" data-thumbs>
+            {% assign color_names = product.metafields.custom.color_product.value | map: 'name' %}
+            {% for color in color_names %}
+              {% assign variants_for_color = product.variants | where: 'option1', color %}
+              {% if variants_for_color.size == 0 %}
+                {% assign variants_for_color = product.variants | where: 'option2', color %}
+              {% endif %}
+              {% if variants_for_color.size > 0 %}
+                <div
+                  class="product-detail__thumb-group"
+                  data-color="{{ color | downcase }}"
+                  {% unless forloop.first %}
+                    style="display:none"
+                  {% endunless %}
+                >
+                  {% for variant in variants_for_color limit: 5 %}
+                    {% if variant.featured_image %}
+                      <button
+                        class="product-detail__btn-img {% if forloop.first %}product-detail__btn-img--active{% endif %}"
+                        type="button"
+                        data-large="{{ variant.featured_image | image_url: width: 800 }}"
+                      >
+                        {{ variant.featured_image | image_url: width: 88 | image_tag: alt: color }}
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="product-detail__inner-right">
+        <h2 class="product-detail__title">{{ product.title | default: 'Product title placeholder' }}</h2>
+        <p class="product-detail__price">
+          {% if product.compare_at_price > product.price %}
+            <span class="product-detail__price--sale">{{ product.price | money }}</span>
+            <span class="product-detail__price--old">{{- product.compare_at_price | money -}}</span>
+          {% else %}
+            <span>{{ product.price | money | default: '$100.00' }}</span>
+          {% endif %}
+        </p>
+        <span class="product-detail__availability" id="variant-availability"> </span>
+        {% assign product_colors = product.metafields.custom.color_product.value %}
+        {% if product_colors %}
+          <fieldset class="product-detail__option-color">
+            <legend class="product-detail__legend">
+              {{ section.settings.color_text_title | default: 'Оберіть колір' }}
+            </legend>
+            {% for color_entry in product_colors %}
+              {% assign matched_variant = product.variants | where: 'option1', color_entry.name | first %}
+              {% if matched_variant == null %}
+                {% assign matched_variant = product.variants | where: 'option2', color_entry.name | first %}
+              {% endif %}
+              <label class="custom-radio">
+                <input
+                  class="custom-radio__field"
+                  type="radio"
+                  name="color"
+                  value="{{ color_entry.name | downcase }}"
+                  data-image="{{ matched_variant.featured_image | image_url: width: 600 }}"
+                  data-stock="{{ matched_variant.inventory_quantity }}"
+                  data-available="{{ matched_variant.available }}"
+                  {% if forloop.first %}
+                    checked
+                  {% endif %}
+                >
+                <span
+                  class="custom-radio__visual custom-radio__visual--color"
+                  style="background-color: {{ color_entry.color }};"
+                ></span>
+              </label>
+            {% endfor %}
+          </fieldset>
+        {% else %}
+          <fieldset class="product-detail__option-color">
+            <legend class="product-detail__legend">
+              {{ section.settings.color_text_title | default: 'Оберіть колір' }}
+            </legend>
+            {% assign placeholder_colors = 'Red,Green,Blue' | split: ',' %}
+            {% for color in placeholder_colors %}
+              <label class="custom-radio">
+                <input type="radio" name="color" disabled>
+                <span
+                  class="custom-radio__visual custom-radio__visual--color"
+                  style="background-color: {{ color | downcase }}"
+                ></span>
+              </label>
+            {% endfor %}
+          </fieldset>
+        {% endif %}
+        {% assign product_sizes = product.metafields.custom.sizes.value %}
+        {% if product_sizes %}
+          <fieldset class="product-detail__option-size">
+            <legend class="product-detail__legend">
+              {{ section.settings.size_text_title | default: 'Оберіть розмір' }}
+            </legend>
+            <div class="product-detail__size-label-inner">
+              {% for size in product_sizes %}
+                {% assign matched_variant = product.variants | where: 'option2', size.name | first %}
+                {% if matched_variant == null %}
+                  {% assign matched_variant = product.variants | where: 'option1', size.name | first %}
+                {% endif %}
+                <label class="custom-radio">
+                  <input
+                    class="custom-radio__field"
+                    type="radio"
+                    name="size"
+                    value="{{ size.name }}"
+                    data-stock="{{ matched_variant.inventory_quantity }}"
+                    data-available="{{ matched_variant.available }}"
+                    {% if forloop.first %}
+                      checked
+                    {% endif %}
+                  >
+                  <span class="custom-radio__visual">{{ size.name }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% else %}
+          <fieldset class="product-detail__option-size">
+            <legend class="product-detail__legend">
+              {{ section.settings.size_text_title | default: 'Оберіть розмір' }}
+            </legend>
+            <div class="product-detail__size-label-inner">
+              {% assign placeholder_size = 'S,M,L' | split: ',' %}
+              {% for size in placeholder_size %}
+                <label class="custom-radio">
+                  <input type="radio" name="size" disabled>
+                  <span class="custom-radio__visual">{{ size }}</span>
+                </label>
+              {% endfor %}
+            </div>
+          </fieldset>
+        {% endif %}
+        <button class="product-detail__btn" type="submit">
+          {{ 'product.add_to_cart' | t: default: 'Add to cart' }}
+        </button>
+        <p class="product-detail__description">
+          {{
+            product.description
+            | strip_html
+            | truncate: 200
+            | default: 'This is a sample placeholder description for your product section.'
+          }}
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script type="application/json" id="ProductVariants-{{ product.id }}">
+  {
+    {%- for v in product.variants -%}
+      "{{ v.id }}": {
+        "id": {{ v.id | json }},
+        "available": {{ v.available | json }},
+        "inventory_quantity": {{ v.inventory_quantity | default: 0 | json }},
+        "option1": {{ v.option1 | json }},
+        "option2": {{ v.option2 | json }},
+        "featured_image": {{ v.featured_image | image_url: width: 800 | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  }
+</script>
+<script type="application/json" id="Translations">
+  {
+      "in_stock": {{ 'product.inventory_in_stock' | t: default: 'In stock: ' | json }},
+      "sold_out": {{ 'product.sold_out' | t: default: 'Sold out' | json }}
+    }
+</script>
+
+{% schema %}
+{
+  "name": "Product Detail",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Select a product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "Show product thumbnails",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "color_text_title",
+      "label": "Color label text",
+      "default": "Choose color:"
+    },
+    {
+      "type": "text",
+      "id": "size_text_title",
+      "label": "Size label text",
+      "default": "Choose size:"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Detail"
+    }
+  ]
+}
+{% endschema %}
