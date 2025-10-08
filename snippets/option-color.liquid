@@ -1,0 +1,50 @@
+{% assign product_colors = product.metafields.custom.color_product.value %}
+{% if product_colors %}
+  <fieldset class="option-color">
+    {% if hide_legend != blank %}
+      <legend class="option-color__legend">
+        {{ product.choose_color | t | default: 'Оберіть колір' }}
+      </legend>
+    {% endif %}
+    {% for color_entry in product_colors %}
+      {% assign matched_variant = product.variants | where: 'option1', color_entry.name | first %}
+      {% if matched_variant == null %}
+        {% assign matched_variant = product.variants | where: 'option2', color_entry.name | first %}
+      {% endif %}
+      <label class="custom-radio">
+        <input
+          class="custom-radio__field"
+          type="radio"
+          name="color"
+          value="{{ color_entry.name | downcase }}"
+          data-image="{{ matched_variant.featured_image | image_url: width: 600 }}"
+          data-stock="{{ matched_variant.inventory_quantity }}"
+          data-available="{{ matched_variant.available }}"
+          {% if forloop.first %}
+            checked
+          {% endif %}
+        >
+        <span
+          class="custom-radio__visual custom-radio__visual--color"
+          style="background-color: {{ color_entry.color }};"
+        ></span>
+      </label>
+    {% endfor %}
+  </fieldset>
+{% else %}
+  <fieldset class="option-color">
+    <legend class="option-color__legend">
+      {{ product.choose_color | t | default: 'Оберіть колір' }}
+    </legend>
+    {% assign placeholder_colors = 'Red,Green,Blue' | split: ',' %}
+    {% for color in placeholder_colors %}
+      <label class="custom-radio">
+        <input type="radio" name="color" disabled>
+        <span
+          class="custom-radio__visual custom-radio__visual--color"
+          style="background-color: {{ color | downcase }}"
+        ></span>
+      </label>
+    {% endfor %}
+  </fieldset>
+{% endif %}

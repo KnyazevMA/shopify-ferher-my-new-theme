@@ -1,0 +1,22 @@
+{
+    "header": {
+        "cart": "Cart",
+        "shop": "Shop"
+    },
+    "footer": {
+        "login": "Login",
+        "search": "Search",
+        "copyright": "All rights reserved"
+    },
+    "a11y": {
+        "open_cart": "Open cart",
+        "footer_nav": "Footer navigation"
+    },
+    "product": {
+        "inventory_in_stock": "In stock:",
+        "sold_out": "Sold out",
+        "add_to_cart": "Add to cart",
+        "choose_color": "Choose color",
+        "choose_size": "Choose size"
+    }
+}

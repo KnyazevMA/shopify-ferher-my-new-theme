@@ -1,0 +1,47 @@
+{% assign product_sizes = product.metafields.custom.sizes.value %}
+{% if product_sizes != blank %}
+  <fieldset class="option-size">
+    {% if hide_legend != blank %}
+      <legend class="option-size__legend">
+        {{ product.choose_size | t | default: 'Оберіть розмір' }}
+      </legend>
+    {% endif %}
+    <div class="option-size__label-inner">
+      {% for size in product_sizes %}
+        {% assign matched_variant = product.variants | where: 'option2', size.name | first %}
+        {% if matched_variant == null %}
+          {% assign matched_variant = product.variants | where: 'option1', size.name | first %}
+        {% endif %}
+        <label class="custom-radio">
+          <input
+            class="custom-radio__field"
+            type="radio"
+            name="size"
+            value="{{ size.name }}"
+            data-stock="{{ matched_variant.inventory_quantity }}"
+            data-available="{{ matched_variant.available }}"
+            {% if forloop.first %}
+              checked
+            {% endif %}
+          >
+          <span class="custom-radio__visual">{{ size.name }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+{% else %}
+  <fieldset class="option-size">
+    <legend class="option-size__legend">
+      {{ product.choose_size | t | default: 'Оберіть розмір' }}
+    </legend>
+    <div class="option-size__label-inner">
+      {% assign placeholder_size = 'S,M,L' | split: ',' %}
+      {% for size in placeholder_size %}
+        <label class="custom-radio">
+          <input type="radio" name="size" disabled>
+          <span class="custom-radio__visual">{{ size }}</span>
+        </label>
+      {% endfor %}
+    </div>
+  </fieldset>
+{% endif %}

@@ -1,4 +1,5 @@
 {{ 'custom-product-detail.css' | asset_url | stylesheet_tag }}
+{{ 'options.css' | asset_url | stylesheet_tag }}
 
 {% assign product = all_products[section.settings.product] | default: null %}
 
@@ -13,7 +14,7 @@
             {{ 'image' | placeholder_svg_tag: 'product-detail__placeholder' }}
           {% endif %}
         </div>
-        {% if section.settings.show_thumbnails == blank or section.settings.show_thumbnails %}
+        {% if section.settings.show_thumbnails != blank %}
           <div class="product-detail__wrapper-btn-img" data-thumbs>
             {% assign color_names = product.metafields.custom.color_product.value | map: 'name' %}
             {% for color in color_names %}
@@ -57,99 +58,8 @@
           {% endif %}
         </p>
         <span class="product-detail__availability" id="variant-availability"> </span>
-        {% assign product_colors = product.metafields.custom.color_product.value %}
-        {% if product_colors %}
-          <fieldset class="product-detail__option-color">
-            <legend class="product-detail__legend">
-              {{ section.settings.color_text_title | default: 'Оберіть колір' }}
-            </legend>
-            {% for color_entry in product_colors %}
-              {% assign matched_variant = product.variants | where: 'option1', color_entry.name | first %}
-              {% if matched_variant == null %}
-                {% assign matched_variant = product.variants | where: 'option2', color_entry.name | first %}
-              {% endif %}
-              <label class="custom-radio">
-                <input
-                  class="custom-radio__field"
-                  type="radio"
-                  name="color"
-                  value="{{ color_entry.name | downcase }}"
-                  data-image="{{ matched_variant.featured_image | image_url: width: 600 }}"
-                  data-stock="{{ matched_variant.inventory_quantity }}"
-                  data-available="{{ matched_variant.available }}"
-                  {% if forloop.first %}
-                    checked
-                  {% endif %}
-                >
-                <span
-                  class="custom-radio__visual custom-radio__visual--color"
-                  style="background-color: {{ color_entry.color }};"
-                ></span>
-              </label>
-            {% endfor %}
-          </fieldset>
-        {% else %}
-          <fieldset class="product-detail__option-color">
-            <legend class="product-detail__legend">
-              {{ section.settings.color_text_title | default: 'Оберіть колір' }}
-            </legend>
-            {% assign placeholder_colors = 'Red,Green,Blue' | split: ',' %}
-            {% for color in placeholder_colors %}
-              <label class="custom-radio">
-                <input type="radio" name="color" disabled>
-                <span
-                  class="custom-radio__visual custom-radio__visual--color"
-                  style="background-color: {{ color | downcase }}"
-                ></span>
-              </label>
-            {% endfor %}
-          </fieldset>
-        {% endif %}
-        {% assign product_sizes = product.metafields.custom.sizes.value %}
-        {% if product_sizes %}
-          <fieldset class="product-detail__option-size">
-            <legend class="product-detail__legend">
-              {{ section.settings.size_text_title | default: 'Оберіть розмір' }}
-            </legend>
-            <div class="product-detail__size-label-inner">
-              {% for size in product_sizes %}
-                {% assign matched_variant = product.variants | where: 'option2', size.name | first %}
-                {% if matched_variant == null %}
-                  {% assign matched_variant = product.variants | where: 'option1', size.name | first %}
-                {% endif %}
-                <label class="custom-radio">
-                  <input
-                    class="custom-radio__field"
-                    type="radio"
-                    name="size"
-                    value="{{ size.name }}"
-                    data-stock="{{ matched_variant.inventory_quantity }}"
-                    data-available="{{ matched_variant.available }}"
-                    {% if forloop.first %}
-                      checked
-                    {% endif %}
-                  >
-                  <span class="custom-radio__visual">{{ size.name }}</span>
-                </label>
-              {% endfor %}
-            </div>
-          </fieldset>
-        {% else %}
-          <fieldset class="product-detail__option-size">
-            <legend class="product-detail__legend">
-              {{ section.settings.size_text_title | default: 'Оберіть розмір' }}
-            </legend>
-            <div class="product-detail__size-label-inner">
-              {% assign placeholder_size = 'S,M,L' | split: ',' %}
-              {% for size in placeholder_size %}
-                <label class="custom-radio">
-                  <input type="radio" name="size" disabled>
-                  <span class="custom-radio__visual">{{ size }}</span>
-                </label>
-              {% endfor %}
-            </div>
-          </fieldset>
-        {% endif %}
+        {% render 'option-color', product: product, hide_legend: section.settings.hide_color_legend %}
+        {% render 'option-size', product: product, hide_legend: section.settings.hide_size_legend %}
         <button class="product-detail__btn" type="submit">
           {{ 'product.add_to_cart' | t: default: 'Add to cart' }}
         </button>
@@ -203,16 +113,16 @@
       "default": true
     },
     {
-      "type": "text",
-      "id": "color_text_title",
-      "label": "Color label text",
-      "default": "Choose color:"
+      "type": "checkbox",
+      "id": "hide_color_legend",
+      "label": "Hide color legend",
+      "default": true
     },
     {
-      "type": "text",
-      "id": "size_text_title",
-      "label": "Size label text",
-      "default": "Choose size:"
+      "type": "checkbox",
+      "id": "hide_size_legend",
+      "label": "Hide size legend",
+      "default": true
     }
   ],
   "presets": [

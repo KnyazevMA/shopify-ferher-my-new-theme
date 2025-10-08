@@ -1,4 +1,4 @@
-{{ 'global.js' | asset_url | script_tag }}
+<script src="{{ 'global.js' | asset_url }}" defer></script>
 
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
