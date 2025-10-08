@@ -1,0 +1,134 @@
+{{ 'custom-product-detail.css' | asset_url | stylesheet_tag }}
+{{ 'options.css' | asset_url | stylesheet_tag }}
+
+{% assign product = all_products[section.settings.product] | default: null %}
+
+<div class="page-width">
+  <section class="product-detail" data-product-id="{{ product.id }}">
+    <div class="product-detail__wrapper">
+      <div class="product-detail__inner-left">
+        <div class="product-detail__wrapper-big-img">
+          {% if product.featured_image != blank %}
+            {{ product.featured_image | image_url: width: 536 | image_tag: alt: product.title }}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'product-detail__placeholder' }}
+          {% endif %}
+        </div>
+        {% if section.settings.show_thumbnails != blank %}
+          <div class="product-detail__wrapper-btn-img" data-thumbs>
+            {% assign color_names = product.metafields.custom.color_product.value | map: 'name' %}
+            {% for color in color_names %}
+              {% assign variants_for_color = product.variants | where: 'option1', color %}
+              {% if variants_for_color.size == 0 %}
+                {% assign variants_for_color = product.variants | where: 'option2', color %}
+              {% endif %}
+              {% if variants_for_color.size > 0 %}
+                <div
+                  class="product-detail__thumb-group"
+                  data-color="{{ color | downcase }}"
+                  {% unless forloop.first %}
+                    style="display:none"
+                  {% endunless %}
+                >
+                  {% for variant in variants_for_color limit: 5 %}
+                    {% if variant.featured_image %}
+                      <button
+                        class="product-detail__btn-img {% if forloop.first %}product-detail__btn-img--active{% endif %}"
+                        type="button"
+                        data-large="{{ variant.featured_image | image_url: width: 800 }}"
+                      >
+                        {{ variant.featured_image | image_url: width: 88 | image_tag: alt: color }}
+                      </button>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="product-detail__inner-right">
+        <h2 class="product-detail__title">{{ product.title | default: 'Product title placeholder' }}</h2>
+        <p class="product-detail__price">
+          {% if product.compare_at_price > product.price %}
+            <span class="product-detail__price--sale">{{ product.price | money }}</span>
+            <span class="product-detail__price--old">{{- product.compare_at_price | money -}}</span>
+          {% else %}
+            <span>{{ product.price | money | default: '$100.00' }}</span>
+          {% endif %}
+        </p>
+        <span class="product-detail__availability" id="variant-availability"> </span>
+        {% render 'option-color', product: product, hide_legend: section.settings.hide_color_legend %}
+        {% render 'option-size', product: product, hide_legend: section.settings.hide_size_legend %}
+        <button class="product-detail__btn" type="submit">
+          {{ 'product.add_to_cart' | t: default: 'Add to cart' }}
+        </button>
+        <p class="product-detail__description">
+          {{
+            product.description
+            | strip_html
+            | truncate: 200
+            | default: 'This is a sample placeholder description for your product section.'
+          }}
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script type="application/json" id="ProductVariants-{{ product.id }}">
+  {
+    {%- for v in product.variants -%}
+      "{{ v.id }}": {
+        "id": {{ v.id | json }},
+        "available": {{ v.available | json }},
+        "inventory_quantity": {{ v.inventory_quantity | default: 0 | json }},
+        "option1": {{ v.option1 | json }},
+        "option2": {{ v.option2 | json }},
+        "featured_image": {{ v.featured_image | image_url: width: 800 | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  }
+</script>
+<script type="application/json" id="Translations">
+  {
+      "in_stock": {{ 'product.inventory_in_stock' | t: default: 'In stock: ' | json }},
+      "sold_out": {{ 'product.sold_out' | t: default: 'Sold out' | json }}
+    }
+</script>
+
+{% schema %}
+{
+  "name": "Product Detail",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Select a product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_thumbnails",
+      "label": "Show product thumbnails",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_color_legend",
+      "label": "Hide color legend",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_size_legend",
+      "label": "Hide size legend",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Detail"
+    }
+  ]
+}
+{% endschema %}
