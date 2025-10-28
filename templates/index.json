@@ -1,9 +1,69 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "main": {
       "type": "header",
       "settings": {}
+    },
+    "promo_banners_mfdTkL": {
+      "type": "promo-banners",
+      "blocks": {
+        "banner_rCtc3z": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-1.jpg",
+            "title": "Осіння колекція",
+            "button_label": "Shop now",
+            "button_link": "shopify://collections/all",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_feUJyM": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-2.webp",
+            "title": "Зимова колекція",
+            "button_label": "Shop now",
+            "button_link": "shopify://collections/all",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_a4DVB3": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-3.jpg",
+            "title": "Весіння колекція",
+            "button_label": "Shop now",
+            "button_link": "shopify://collections/all",
+            "aspect_ratio": "1-1"
+          }
+        }
+      },
+      "block_order": [
+        "banner_rCtc3z",
+        "banner_feUJyM",
+        "banner_a4DVB3"
+      ],
+      "name": "Promo banners",
+      "settings": {
+        "title": "Ознайомтеся з нашими колекціями",
+        "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
+        "text_align": "center",
+        "padding": 60,
+        "color_scheme": "light"
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "main",
+    "promo_banners_mfdTkL"
+  ]
 }
