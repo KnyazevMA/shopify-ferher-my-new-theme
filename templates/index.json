@@ -60,10 +60,23 @@
         "padding": 60,
         "color_scheme": "light"
       }
+    },
+    "featured_products_xqwcrY": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "title": "Featured products",
+        "collection": "summer-collection-under-100",
+        "products_count": 4,
+        "show_price": true,
+        "show_rating": false,
+        "show_add_to_cart": true
+      }
     }
   },
   "order": [
     "main",
-    "promo_banners_mfdTkL"
+    "promo_banners_mfdTkL",
+    "featured_products_xqwcrY"
   ]
 }
