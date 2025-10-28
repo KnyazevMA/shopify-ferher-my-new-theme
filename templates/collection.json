@@ -9,12 +9,20 @@
  */
 {
   "sections": {
-    "featured-products": {
+    "featured_products_WG464T": {
       "type": "featured-products",
-      "settings": {}
+      "name": "Featured products",
+      "settings": {
+        "title": "Featured products",
+        "collection": "summer-collection-under-100",
+        "products_count": 11,
+        "show_price": true,
+        "show_rating": false,
+        "show_add_to_cart": true
+      }
     }
   },
   "order": [
-    "featured-products"
+    "featured_products_WG464T"
   ]
 }
