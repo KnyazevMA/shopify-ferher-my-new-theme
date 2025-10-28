@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ shop.name | escape }}</title>
     {{ content_for_header }}
+    <script src="{{ 'global.js' | asset_url }}" defer></script>
   </head>
   <body>
     {% section 'header' %}

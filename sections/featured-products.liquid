@@ -1,0 +1,145 @@
+{%- liquid
+  assign collection_handle = section.settings.collection.handle | default: collection.handle
+  assign collection = collections[collection_handle] | default: collection
+  assign rating_value = 4.0 | plus: 0
+-%}
+
+{{ 'featured-products.css' | asset_url | stylesheet_tag }}
+
+<section
+  class="featured-products"
+  role="region"
+  aria-label="{{ section.settings.title | escape }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <h2 class="featured-products__title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    {% if collection != blank %}
+      <div class="featured-products__controls">
+        <label for="sort-select">{{ 'sections.featured_products.sort_label' | t: default: 'Sort by' }}</label>
+        <select id="sort-select" class="featured-products__sort">
+          <option value="best-selling" selected>
+            {{ 'sections.featured_products.sort_best' | t: default: 'Best selling' }}
+          </option>
+          <option value="price-ascending">
+            {{ 'sections.featured_products.sort_low' | t: default: 'Price: Low to High' }}
+          </option>
+          <option value="price-descending">
+            {{ 'sections.featured_products.sort_high' | t: default: 'Price: High to Low' }}
+          </option>
+          <option value="title-ascending">
+            {{ 'sections.featured_products.sort_az' | t: default: 'Title: A–Z' }}
+          </option>
+        </select>
+      </div>
+
+      <div class="featured-products__grid">
+        {%- for product in collection.products limit: section.settings.products_count -%}
+          <div
+            class="featured-products__item"
+            data-price="{{ product.price }}"
+            data-title="{{ product.title | escape }}"
+            data-index="{{ forloop.index0 }}"
+            {{ product.shopify_attributes }}
+          >
+            <a href="{{ product.url }}" class="featured-products__link">
+              {{ product.featured_image | image_url: width: 500 | image_tag: alt: product.title }}
+              <h3 class="featured-products__name">{{ product.title }}</h3>
+
+              {% if section.settings.show_price %}
+                <span class="featured-products__price">
+                  {{ product.price | money }}
+                </span>
+              {% endif %}
+
+              {% if section.settings.show_rating %}
+                <div
+                  class="featured-products__rating"
+                  role="img"
+                  aria-label="Rating {{ rating_value }} out of 5"
+                >
+                  <div class="featured-products__stars" data-rating="{{ rating_value }}">
+                    {% for i in (1..5) %}
+                      {% assign star_class = 'star' %}
+                      {% if i <= rating_value %}
+                        {% assign star_class = 'star is-filled' %}
+                      {% endif %}
+                      {% render 'icon-star', star_class: star_class %}
+                    {% endfor %}
+                    <span class="featured-products__stars-value" aria-hidden="true">{{ rating_value }}</span>
+                  </div>
+                </div>
+              {% endif %}
+
+              {% if section.settings.show_add_to_cart %}
+                <button
+                  class="featured-products__btn"
+                  type="button"
+                  data-product-id="{{ product.selected_or_first_available_variant.id }}"
+                >
+                  {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
+                </button>
+              {% endif %}
+            </a>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>{{ 'sections.featured_products.no_collection' | t: default: 'Please select a collection' }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Featured products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select collection"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Number of products",
+      "min": 2,
+      "max": 12,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Show add to cart button",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured products",
+      "category": "Custom sections"
+    }
+  ]
+}
+{% endschema %}
