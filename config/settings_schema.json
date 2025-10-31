@@ -1,6 +1,14 @@
 [
   {
-    "name": "Main Settings",
-    "settings": []
+    "name": "General",
+    "settings": [
+      { "type": "text", "id": "store_tagline", "label": "Store tagline" }
+    ]
+  },
+  {
+    "name": "Header",
+    "settings": [
+      { "type": "link_list", "id": "main_menu", "label": "Main menu" }
+    ]
   }
 ]
