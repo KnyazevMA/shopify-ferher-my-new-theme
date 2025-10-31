@@ -1,0 +1,158 @@
+{%- liquid
+  assign tags_raw = block.settings.tags | default: ''
+  assign tags = tags_raw | split: ',' | map: 'strip'
+  assign links_raw = block.settings.links | default: ''
+  assign links = links_raw | split: ',' | map: 'strip'
+%}
+
+{{ 'designers.css' | asset_url | stylesheet_tag }}
+
+<section class="designers">
+  <div class="page-width">
+    {% if section.settings.title %}
+      <h2 class="designers__title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.description != blank %}
+      <div class="designers__description">{{ section.settings.description }}</div>
+    {% endif %}
+
+    <div class="designers__grid">
+      {% for block in section.blocks %}
+        <article class="designer-card" {{ block.shopify_attributes }}>
+          <div class="designer-card__header">
+            {% if block.avatar != blank %}
+              {{ block.avatar | image_url: width: 600 | image_tag: class: 'designer-card__avatar', alt: block.name }}
+            {% endif %}
+            <h2 class="designer-card__name">
+              <p class="designer-card__first-name">{{- block.first_name -}}</p>
+              <p class="designer-card__last-name" {{- block.last_name -}}></p>
+            </h2>
+            <p class="designer-card__role">Designer</p>
+          </div>
+
+          {% if block.bio != blank %}
+            <div class="designer-card__section">
+              <h3 class="designer-card__section-title">Bio</h3>
+              <p class="designer-card__bio">{{ block.bio }}</p>
+            </div>
+          {% endif %}
+
+          {% if block.tags != blank %}
+            <div class="designer-card__section">
+              <h3 class="designer-card__section-title">Tags</h3>
+              <div class="designer-card__tags">
+                {% for tag in tags %}
+                  <span class="designer-card__chip">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.links != blank %}
+            <div class="designer-card__section designer-card__links">
+              <h3 class="designer-card__section-title">Portfolio links</h3>
+              {% for link in links %}
+                <a href="{{ link }}" target="_blank">{{ link }}</a>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if block.date_of_birth != blank %}
+            <div class="designer-card__section">
+              <div class="designer-card__label">Date of birth</div>
+              <div class="designer-card__date">{{ block.date_of_birth }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.verified %}
+            <div class="designer-card__verified">Verified Designer</div>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Designers (blocks only)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Наші дизайнери"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Команда, що створює колекції.</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "designer",
+      "name": "Designer card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "first_name",
+          "label": "First name",
+          "default": "First name"
+        },
+        {
+          "type": "text",
+          "id": "last_name",
+          "label": "Last name",
+          "default": "Last name"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar"
+        },
+        {
+          "type": "textarea",
+          "id": "bio",
+          "label": "Bio",
+          "default": "Bio"
+        },
+
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Tags (comma separated)",
+          "default": "womenswear, knitwear"
+        },
+        {
+          "type": "text",
+          "id": "links",
+          "label": "Links (comma separated URLs)",
+          "default": "https://instagram.com/, https://behance.net/"
+        },
+
+        {
+          "type": "text",
+          "id": "date_of_birth",
+          "label": "Date of birth (YYYY-MM-DD)",
+          "default": "1888-10-01"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Verified designer",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Designers",
+      "category": "Custom sections",
+      "blocks": [{ "type": "designer" }, { "type": "designer" }, { "type": "designer" }]
+    }
+  ]
+}
+{% endschema %}

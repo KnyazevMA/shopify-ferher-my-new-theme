@@ -1,7 +1,7 @@
 {%- liquid
   assign collection_handle = section.settings.collection.handle | default: collection.handle
   assign collection = collections[collection_handle] | default: collection
-  assign rating_value = 4.0 | plus: 0
+  assign rating_value = 2.0 | plus: 0
 -%}
 
 {{ 'featured-products.css' | asset_url | stylesheet_tag }}
