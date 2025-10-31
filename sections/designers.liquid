@@ -1,10 +1,3 @@
-{%- liquid
-  assign tags_raw = block.settings.tags | default: ''
-  assign tags = tags_raw | split: ',' | map: 'strip'
-  assign links_raw = block.settings.links | default: ''
-  assign links = links_raw | split: ',' | map: 'strip'
-%}
-
 {{ 'designers.css' | asset_url | stylesheet_tag }}
 
 <section class="designers">
@@ -20,51 +13,62 @@
       {% for block in section.blocks %}
         <article class="designer-card" {{ block.shopify_attributes }}>
           <div class="designer-card__header">
-            {% if block.avatar != blank %}
-              {{ block.avatar | image_url: width: 600 | image_tag: class: 'designer-card__avatar', alt: block.name }}
+            {% if block.settings.avatar != blank %}
+              {{
+                block.settings.avatar
+                | image_url: width: 600
+                | image_tag: class: 'designer-card__avatar', alt: block.name
+              }}
             {% endif %}
             <h2 class="designer-card__name">
-              <p class="designer-card__first-name">{{- block.first_name -}}</p>
-              <p class="designer-card__last-name" {{- block.last_name -}}></p>
+              <span class="designer-card__first-name">{{- block.settings.first_name -}}</span>
+              <span class="designer-card__last-name">{{- block.settings.last_name -}}</span>
             </h2>
             <p class="designer-card__role">Designer</p>
           </div>
 
-          {% if block.bio != blank %}
+          {% if block.settings.bio != blank %}
             <div class="designer-card__section">
               <h3 class="designer-card__section-title">Bio</h3>
-              <p class="designer-card__bio">{{ block.bio }}</p>
+              <p class="designer-card__bio">{{ block.settings.bio }}</p>
             </div>
           {% endif %}
 
-          {% if block.tags != blank %}
+          {% assign tags_raw = block.settings.tags | default: '' %}
+          {% assign tags = tags_raw | split: ',' %}
+          {% if block.settings.tags != blank %}
             <div class="designer-card__section">
               <h3 class="designer-card__section-title">Tags</h3>
               <div class="designer-card__tags">
                 {% for tag in tags %}
-                  <span class="designer-card__chip">{{ tag }}</span>
+                  {% assign t = tag | strip %}
+                  {% if t != '' %}
+                    <span class="designer-card__chip">{{ t }}</span>
+                  {% endif %}
                 {% endfor %}
               </div>
             </div>
           {% endif %}
 
-          {% if block.links != blank %}
+          {% assign links_raw = block.settings.links | default: '' %}
+          {% assign links = links_raw | split: ',' %}
+          {% if block.settings.links != blank %}
             <div class="designer-card__section designer-card__links">
               <h3 class="designer-card__section-title">Portfolio links</h3>
               {% for link in links %}
-                <a href="{{ link }}" target="_blank">{{ link }}</a>
+                <a href="{{ link | strip }}" target="_blank">{{ link | strip }}</a>
               {% endfor %}
             </div>
           {% endif %}
 
-          {% if block.date_of_birth != blank %}
+          {% if block.settings.date_of_birth != blank %}
             <div class="designer-card__section">
               <div class="designer-card__label">Date of birth</div>
-              <div class="designer-card__date">{{ block.date_of_birth }}</div>
+              <div class="designer-card__date">{{ block.settings.date_of_birth }}</div>
             </div>
           {% endif %}
 
-          {% if block.verified %}
+          {% if block.settings.verified %}
             <div class="designer-card__verified">Verified Designer</div>
           {% endif %}
         </article>
@@ -99,7 +103,7 @@
           "type": "text",
           "id": "first_name",
           "label": "First name",
-          "default": "First name"
+          "default": "Name"
         },
         {
           "type": "text",
@@ -113,10 +117,10 @@
           "label": "Avatar"
         },
         {
-          "type": "textarea",
+          "type": "richtext",
           "id": "bio",
           "label": "Bio",
-          "default": "Bio"
+          "default": "<p>Bio<p>"
         },
 
         {
