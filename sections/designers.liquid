@@ -1,7 +1,7 @@
-{{ 'designers.css' | asset_url | stylesheet_tag }}
-{{ 'styles.css' | asset_url | stylesheet_tag }}
-
-<section class="designers">
+<section
+  class="designers"
+  style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
+>
   <div class="page-width">
     {% if section.settings.title %}
       <h2 class="designers__title">{{ section.settings.title }}</h2>
@@ -23,7 +23,7 @@
                 {%- assign avatar_file = block.settings.avatar -%}
               {%- else -%}
                 <img
-                  src="{{ 'avatar-fallback.svg' | asset_url }}"
+                  src="{{ 'icons/avatar-fallback.svg' | asset_url }}"
                   alt="Default avatar"
                   class="designer-card__avatar"
                   width="180"
@@ -143,6 +143,15 @@
       "id": "description",
       "label": "Description",
       "default": "<p>Команда, що створює колекції.</p>"
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "label": "Section padding bottom (px)",
+      "min": 0,
+      "max": 80,
+      "default": 40,
+      "step": 5
     }
   ],
   "blocks": [
@@ -204,7 +213,7 @@
           "id": "verified",
           "label": "Verified designer",
           "default": false
-        }
+        },
       ]
     }
   ],

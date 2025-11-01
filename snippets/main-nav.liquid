@@ -1,0 +1,56 @@
+<nav class="main-nav" aria-label="{{ 'a11y.main_nav' | t }}">
+  {%- if main_menu and main_menu.links.size > 0 -%}
+    <ul class="main-nav__list">
+      {%- for link in main_menu.links -%}
+        <li class="main-nav__item">
+          <a
+            class="main-nav__link"
+            href="{{ link.url }}"
+            {% if link.title %}
+              aria-label="{{ link.title | escape }}"
+            {% endif %}
+          >
+            {{ link.title }}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- endif -%}
+</nav>
+
+<style>
+  .main-nav {
+    justify-self: center;
+  }
+
+  .main-nav__list {
+    display: inline-flex;
+    gap: var(--space-24, 24px);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-nav__link {
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .main-nav__link:hover {
+    color: var(--color-link);
+  }
+
+  @media (max-width: 1024px) {
+    .main-nav__list {
+      gap: var(--space-16, 16px);
+    }
+
+    @media (max-width: 768px) {
+      .main-nav {
+        display: none;
+      }
+    }
+  }
+</style>

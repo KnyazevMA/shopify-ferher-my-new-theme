@@ -4,10 +4,9 @@
   assign rating_value = 2.0 | plus: 0
 -%}
 
-{{ 'featured-products.css' | asset_url | stylesheet_tag }}
-
 <section
   class="featured-products"
+  style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
   role="region"
   aria-label="{{ section.settings.title | escape }}"
   data-section-id="{{ section.id }}"
@@ -133,6 +132,15 @@
       "id": "show_add_to_cart",
       "label": "Show add to cart button",
       "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "label": "Section padding bottom (px)",
+      "min": 0,
+      "max": 80,
+      "default": 40,
+      "step": 5
     }
   ],
   "presets": [

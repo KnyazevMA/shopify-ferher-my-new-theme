@@ -1,8 +1,6 @@
-{{ 'promo-banners.css' | asset_url | stylesheet_tag }}
-
 <section
   class="promo-banners promo-banners--{{ section.settings.color_scheme }}"
-  style="padding-top: {{ section.settings.padding | append: 'px' }}; padding-bottom: {{ section.settings.padding | append: 'px' }};"
+  style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
   aria-label="{{ section.settings.title | escape }}"
 >
   <div class="page-width">
@@ -25,7 +23,12 @@
           {{ block.shopify_attributes }}
         >
           {% if block.settings.image %}
-            {{ block.settings.image | image_url: width: 600 | image_tag: alt: block.settings.title | default: 'Banner image' }}
+            {{
+              block.settings.image
+              | image_url: width: 600
+              | image_tag: alt: block.settings.title
+              | default: 'Banner image'
+            }}
           {% else %}
             {{ 'image' | placeholder_svg_tag: 'promo-banners__placeholder' }}
           {% endif %}
@@ -76,10 +79,10 @@
     },
     {
       "type": "range",
-      "id": "padding",
-      "label": "Section padding (px)",
+      "id": "padding-bottom",
+      "label": "Section padding bottom (px)",
       "min": 0,
-      "max": 100,
+      "max": 80,
       "default": 40,
       "step": 5
     },

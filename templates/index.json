@@ -1,136 +1,151 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-  "promo_banners_mfdTkL": {
-    "type": "promo-banners",
-    "blocks": {
-      "banner_rCtc3z": {
-        "type": "banner",
-        "settings": {
-          "image": "shopify://shop_images/Collection-1.jpg",
-          "title": "Осіння колекція",
-          "button_label": "Подивитись колекцію",
-          "button_link": "shopify://collections",
-          "aspect_ratio": "1-1"
+  "sections": {
+    "main": {
+      "type": "featured-products",
+      "settings": {}
+    },
+    "promo_banners_mfdTkL": {
+      "type": "promo-banners",
+      "blocks": {
+        "banner_rCtc3z": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-1.jpg",
+            "title": "Осіння колекція",
+            "button_label": "Подивитись колекцію",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_feUJyM": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-2.webp",
+            "title": "Зимова колекція",
+            "button_label": "Переглянути колекцію",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_a4DVB3": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-3.jpg",
+            "title": "Весіння колекція",
+            "button_label": "Ознайомитись з колекцією",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
         }
       },
-      "banner_feUJyM": {
-        "type": "banner",
-        "settings": {
-          "image": "shopify://shop_images/Collection-2.webp",
-          "title": "Зимова колекція",
-          "button_label": "Переглянути колекцію",
-          "button_link": "shopify://collections",
-          "aspect_ratio": "1-1"
-        }
-      },
-      "banner_a4DVB3": {
-        "type": "banner",
-        "settings": {
-          "image": "shopify://shop_images/Collection-3.jpg",
-          "title": "Весіння колекція",
-          "button_label": "Ознайомитись з колекцією",
-          "button_link": "shopify://collections",
-          "aspect_ratio": "1-1"
-        }
+      "block_order": [
+        "banner_rCtc3z",
+        "banner_feUJyM",
+        "banner_a4DVB3"
+      ],
+      "name": "Promo banners",
+      "settings": {
+        "title": "Ознайомтеся з нашими колекціями",
+        "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
+        "text_align": "center",
+        "padding": 60,
+        "color_scheme": "light"
       }
     },
-    "block_order": [
-      "banner_rCtc3z",
-      "banner_feUJyM",
-      "banner_a4DVB3"
-    ],
-    "name": "Promo banners",
-    "settings": {
-      "title": "Ознайомтеся з нашими колекціями",
-      "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
-      "text_align": "center",
-      "padding": 60,
-      "color_scheme": "light"
-    }
-  },
-  "featured_products_xqwcrY": {
-    "type": "featured-products",
-    "name": "Featured products",
-    "settings": {
-      "title": "Featured products",
-      "collection": "summer-collection-under-100",
-      "products_count": 4,
-      "show_price": true,
-      "show_rating": true,
-      "show_add_to_cart": true
-    }
-  },
-  "designers_wiAGAB": {
-    "type": "designers",
-    "blocks": {
-      "designer_pRGdrU": {
-        "type": "designer",
-        "settings": {
-          "designer_ref": "olivia",
-          "first_name": "Name",
-          "last_name": "Last name",
-          "bio": "<p>Bio</p><p></p>",
-          "tags": "womenswear, knitwear",
-          "links": "https://instagram.com/, https://behance.net/",
-          "date_of_birth": "1888-10-01",
-          "verified": false
-        }
-      },
-      "designer_nwXnCw": {
-        "type": "designer",
-        "settings": {
-          "designer_ref": "kenji",
-          "first_name": "Name",
-          "last_name": "Last name",
-          "bio": "<p>Bio</p><p></p>",
-          "tags": "womenswear, knitwear",
-          "links": "https://instagram.com/, https://behance.net/",
-          "date_of_birth": "1888-10-01",
-          "verified": false
-        }
-      },
-      "designer_VzQJqb": {
-        "type": "designer",
-        "settings": {
-          "designer_ref": "sofia",
-          "first_name": "Name",
-          "last_name": "Last name",
-          "bio": "<p>Bio</p><p></p>",
-          "tags": "womenswear, knitwear",
-          "links": "https://instagram.com/, https://behance.net/",
-          "date_of_birth": "1888-10-01",
-          "verified": false
-        }
-      },
-      "designer_gQgaEM": {
-        "type": "designer",
-        "settings": {
-          "designer_ref": "liam",
-          "first_name": "Name",
-          "last_name": "Last name",
-          "bio": "<p>Bio</p><p></p>",
-          "tags": "womenswear, knitwear",
-          "links": "https://instagram.com/, https://behance.net/",
-          "date_of_birth": "1888-10-01",
-          "verified": false
-        }
+    "featured_products_xqwcrY": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "title": "Featured products",
+        "collection": "summer-collection-under-100",
+        "products_count": 4,
+        "show_price": true,
+        "show_rating": true,
+        "show_add_to_cart": true
       }
     },
-    "block_order": [
-      "designer_pRGdrU",
-      "designer_nwXnCw",
-      "designer_VzQJqb",
-      "designer_gQgaEM"
-    ],
-    "name": "Designers",
-    "settings": {
-      "title": "Наші дизайнери",
-      "description": "<p>Команда, що створює колекції.</p>"
+    "designers_wiAGAB": {
+      "type": "designers",
+      "blocks": {
+        "designer_pRGdrU": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "olivia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_nwXnCw": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "kenji",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_VzQJqb": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "sofia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_gQgaEM": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "liam",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        }
+      },
+      "block_order": [
+        "designer_pRGdrU",
+        "designer_nwXnCw",
+        "designer_VzQJqb",
+        "designer_gQgaEM"
+      ],
+      "name": "Designers",
+      "settings": {
+        "title": "Наші дизайнери",
+        "description": "<p>Команда, що створює колекції.</p>"
+      }
     }
   },
-"order": [
-  "main",
-  "promo_banners_mfdTkL",
-  "featured_products_xqwcrY",
-  "designers_wiAGAB"
-]
+  "order": [
+    "main",
+    "promo_banners_mfdTkL",
+    "featured_products_xqwcrY",
+    "designers_wiAGAB"
+  ]
 }

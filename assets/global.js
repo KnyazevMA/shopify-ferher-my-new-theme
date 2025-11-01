@@ -116,10 +116,33 @@ class AddToCart {
     }
 }
 
+class BurgerToggle {
+    constructor(context = document) {
+        this.context = context;
+        this.init();
+    }
+
+    init() {
+        this.context.addEventListener('click', (e) => {
+            const btn = e.target.closest('.header__burger');
+            if (!btn) return;
+            e.preventDefault();
+            this.toggle(btn);
+        });
+    }
+
+    toggle(btn) {
+        const active = btn.classList.toggle('header__burger--active');
+        btn.setAttribute('aria-expanded', active ? 'true' : 'false');
+        document.dispatchEvent(new CustomEvent('burger:toggle', { detail: { active } }));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
     });
 
     new AddToCart(document);
+    new BurgerToggle(document);
 });
