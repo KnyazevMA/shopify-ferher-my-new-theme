@@ -1,4 +1,5 @@
 {{ 'designers.css' | asset_url | stylesheet_tag }}
+{{ 'styles.css' | asset_url | stylesheet_tag }}
 
 <section class="designers">
   <div class="page-width">
@@ -9,71 +10,121 @@
       <div class="designers__description">{{ section.settings.description }}</div>
     {% endif %}
 
-    <div class="designers__grid">
+    <ul class="designers__grid">
       {% for block in section.blocks %}
-        <article class="designer-card" {{ block.shopify_attributes }}>
-          <div class="designer-card__header">
-            {% if block.settings.avatar != blank %}
-              {{
-                block.settings.avatar
-                | image_url: width: 600
-                | image_tag: class: 'designer-card__avatar', alt: block.name
-              }}
+        {% assign d = block.settings.designer_ref %}
+        <li class="designers__grid-item">
+          <article class="designer-card" {{ block.shopify_attributes }}>
+            <div class="designer-card__header">
+              {% assign avatar_file = null %}
+              {%- if d and d.avatar -%}
+                {%- assign avatar_file = d.avatar.value -%}
+              {%- elsif block.settings.avatar != blank -%}
+                {%- assign avatar_file = block.settings.avatar -%}
+              {%- else -%}
+                <img
+                  src="{{ 'avatar-fallback.svg' | asset_url }}"
+                  alt="Default avatar"
+                  class="designer-card__avatar"
+                  width="180"
+                  height="180"
+                  loading="lazy"
+                >
+              {%- endif -%}
+              {% if avatar_file != blank %}
+                {{ avatar_file | image_url: width: 600 | image_tag: class: 'designer-card__avatar', alt: block.name }}
+              {% endif %}
+
+              <h2 class="designer-card__name">
+                <span class="designer-card__first-name">{{ d.first_name | default: block.settings.first_name }}</span>
+                <span class="designer-card__last-name">{{ d.last_name | default: block.settings.last_name }}</span>
+              </h2>
+              <p class="designer-card__role">{{ 'sections.designers.designer' | t: default: 'Designer' }}</p>
+            </div>
+
+            {% if d and d.bio %}
+              {% assign bio_html = d.bio.value %}
+            {% else %}
+              {% assign bio_html = block.settings.bio %}
             {% endif %}
-            <h2 class="designer-card__name">
-              <span class="designer-card__first-name">{{- block.settings.first_name -}}</span>
-              <span class="designer-card__last-name">{{- block.settings.last_name -}}</span>
-            </h2>
-            <p class="designer-card__role">Designer</p>
-          </div>
-
-          {% if block.settings.bio != blank %}
-            <div class="designer-card__section">
-              <h3 class="designer-card__section-title">Bio</h3>
-              <p class="designer-card__bio">{{ block.settings.bio }}</p>
-            </div>
-          {% endif %}
-
-          {% assign tags_raw = block.settings.tags | default: '' %}
-          {% assign tags = tags_raw | split: ',' %}
-          {% if block.settings.tags != blank %}
-            <div class="designer-card__section">
-              <h3 class="designer-card__section-title">Tags</h3>
-              <div class="designer-card__tags">
-                {% for tag in tags %}
-                  {% assign t = tag | strip %}
-                  {% if t != '' %}
-                    <span class="designer-card__chip">{{ t }}</span>
-                  {% endif %}
-                {% endfor %}
+            {% if bio_html != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">{{ 'sections.designers.bio' | t: default: 'Bio' }}</h3>
+                <p class="designer-card__bio">{{ bio_html }}</p>
               </div>
-            </div>
-          {% endif %}
+            {% endif %}
 
-          {% assign links_raw = block.settings.links | default: '' %}
-          {% assign links = links_raw | split: ',' %}
-          {% if block.settings.links != blank %}
-            <div class="designer-card__section designer-card__links">
-              <h3 class="designer-card__section-title">Portfolio links</h3>
-              {% for link in links %}
-                <a href="{{ link | strip }}" target="_blank">{{ link | strip }}</a>
-              {% endfor %}
-            </div>
-          {% endif %}
+            {% if d and d.tags %}
+              {% assign tags = d.tags.value %}
+            {% else %}
+              {% assign tags_raw = block.settings.tags | default: '' %}
+              {% assign tags_norm = tags_raw | replace: ' і ', ',' | replace: ' and ', ',' | replace: ' & ', ',' %}
+              {% assign tags = tags_norm | split: ',' %}
+            {% endif %}
+            {% if tags != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">{{ 'sections.designers.tags' | t: default: 'Tags' }}</h3>
+                <div class="designer-card__tags">
+                  {% for tag in tags %}
+                    {% assign t = tag | strip %}
+                    {% if t != '' %}
+                      <span class="designer-card__chip">{{ t }}</span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
 
-          {% if block.settings.date_of_birth != blank %}
-            <div class="designer-card__section">
-              <div class="designer-card__label">Date of birth</div>
-              <div class="designer-card__date">{{ block.settings.date_of_birth }}</div>
-            </div>
-          {% endif %}
+            {% if d and d.links %}
+              {% assign links = d.links.value %}
+            {% else %}
+              {% assign links_raw = block.settings.links | default: '' %}
+              {% assign links_norm = links_raw | replace: ' і ', ',' | replace: ' and ', ',' | replace: ' & ', ',' %}
+              {% assign links = links_norm | split: ',' %}
+            {% endif %}
+            {% if links != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">
+                  {{ 'sections.designers.portfolio_links' | t: default: 'Portfolio links' }}
+                </h3>
+                <div class="designer-card__links">
+                  {% for link in links %}
+                    <a href="{{ link | strip }}" target="_blank">{{ link | strip }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
 
-          {% if block.settings.verified %}
-            <div class="designer-card__verified">Verified Designer</div>
-          {% endif %}
-        </article>
+            {% if d and d.date_of_birth %}
+              {% assign dob = d.date_of_birth.value | date: '%d %B %Y' %}
+            {% else %}
+              {% assign dob = block.settings.date_of_birth | date: '%d %B %Y' %}
+            {% endif %}
+            {% if dob != blank %}
+              <div class="designer-card__section">
+                <div class="designer-card__label">{{ 'sections.designers.dob' | t: default: 'Date of birth' }}</div>
+                <div class="designer-card__date">{{ dob }}</div>
+              </div>
+            {% endif %}
+
+            {% if d and d.verified %}
+              {% assign verified = d.verified.value %}
+            {% else %}
+              {% assign verified = block.settings.verified %}
+            {% endif %}
+            {% if verified == true %}
+              <div class="designer-card__verified">
+                {{ 'sections.designers.verified' | t: default: 'Verified designer' }}
+              </div>
+            {% else %}
+              <div class="designer-card__no-verified">
+                {{ 'sections.designers.no_verified' | t: default: 'No verified designer' }}
+              </div>
+            {% endif %}
+          </article>
+        </li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 </section>
 
@@ -99,6 +150,12 @@
       "type": "designer",
       "name": "Designer card",
       "settings": [
+        {
+          "type": "metaobject",
+          "id": "designer_ref",
+          "label": "Designer (metaobject)",
+          "metaobject_type": "designer"
+        },
         {
           "type": "text",
           "id": "first_name",
