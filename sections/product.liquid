@@ -55,18 +55,63 @@
         <div class="product__inner-right">
           <h1 class="product__title">{{ product.title }}</h1>
 
-          <p class="product__price">
-            {% if product.compare_at_price_max > product.price %}
-              <span class="product__price--sale">{{ product.price | money }}</span>
-              <span class="product__price--old">{{ product.compare_at_price_max | money }}</span>
-            {% else %}
-              <span>{{ product.price | money }}</span>
-            {% endif %}
-          </p>
-
-          <span class="product__availability" id="variant-availability"> </span>
-
           {%- form 'product', product, id: 'ProductForm', class: 'product__form' -%}
+            <div class="product__wrapper-top">
+              <div class="product__inner-top">
+                <p class="product__price">
+                  {% if product.compare_at_price_max > product.price %}
+                    <span class="product__price--sale">{{ product.price | money }}</span>
+                    <span class="product__price--old">{{ product.compare_at_price_max | money }}</span>
+                  {% else %}
+                    <span>{{ product.price | money }}</span>
+                  {% endif %}
+                </p>
+
+                <span class="product__availability" id="variant-availability"> </span>
+              </div>
+              <div class="product__quantily">
+                <div class="product__quantity-label">
+                  <label for="Quantity-{{ product.id }}" class="product__quantity-label-text">
+                    {{- 'products.product.quantity' | t: default: 'Quantity' -}}
+                  </label>
+                  <button
+                    type="button"
+                    class="product__quantity-info"
+                    aria-label="{{ 'products.product.quantity_help' | t: default: 'Enter desired quantity to add to cart.' }}"
+                    aria-describedby="QuantityHelp-{{ product.id }}"
+                  >
+                    <svg
+                      class="icon icon--info"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+                      <line x1="12" y1="10" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      <circle cx="12" cy="7" r="1.25" fill="currentColor"/>
+                    </svg>
+                  </button>
+                  <span id="QuantityHelp-{{ product.id }}" class="tooltip tooltip--above" role="tooltip">
+                    {{- 'products.product.quantity_help' | t: default: 'Enter desired quantity to add to cart.' -}}
+                  </span>
+                </div>
+                {% render 'quantity' %}
+              </div>
+            </div>
+
+            {% if form.errors %}
+              <div class="form-errors" role="alert" aria-live="assertive">
+                {{ form.errors | default_errors }}
+              </div>
+            {% endif %}
+            {% if form.posted_successfully? %}
+              <div class="form-success" role="status" aria-live="polite">
+                {{ 'products.product.added_success' | t }}
+              </div>
+            {% endif %}
+
             {% assign product_colors = product.metafields.custom.color_product.value %}
             {% if product_colors %}
               <fieldset class="product__option-color">
@@ -88,6 +133,9 @@
                       {% if forloop.first %}
                         checked
                       {% endif %}
+                      {% if form.errors and form.errors.color %}
+                        aria-invalid="true" aria-describedby="FieldError-Color-{{ product.id }}"
+                      {% endif %}
                     >
                     <span
                       class="custom-radio__visual custom-radio__visual--color"
@@ -95,6 +143,12 @@
                     ></span>
                   </label>
                 {% endfor %}
+
+                {% if form.errors and form.errors.color %}
+                  <p id="FieldError-Color-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
+                    {{ form.errors.color | join: ', ' }}
+                  </p>
+                {% endif %}
               </fieldset>
             {% endif %}
 
@@ -119,15 +173,84 @@
                         {% if forloop.first %}
                           checked
                         {% endif %}
+                        {% if form.errors and form.errors.size %}
+                          aria-invalid="true" aria-describedby="FieldError-Size-{{ product.id }}"
+                        {% endif %}
                       >
                       <span class="custom-radio__visual">{{ size.name }}</span>
                     </label>
                   {% endfor %}
                 </div>
+
+                {% if form.errors and form.errors.size %}
+                  <p id="FieldError-Size-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
+                    {{ form.errors.size | join: ', ' }}
+                  </p>
+                {% endif %}
               </fieldset>
             {% endif %}
 
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+            <div
+              class="hp-field"
+              aria-hidden="true"
+              style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;"
+            >
+              <label class="sr-only" for="hp-{{ product.id }}">
+                {{- 'forms.honeypot' | t: default: 'Leave this field empty' -}}
+              </label>
+              <input id="hp-{{ product.id }}" type="text" name="hp" tabindex="-1" autocomplete="off">
+            </div>
+
+            {% if form.errors and form.errors.quantity %}
+              <p id="FieldError-Quantity-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
+                {{ form.errors.quantity | join: ', ' }}
+              </p>
+            {% endif %}
+
+            <fieldset class="product__props">
+              <legend class="product__legend">
+                {{ 'products.product.inquiry_title' | t: default: 'Product inquiry' }}
+              </legend>
+              <label for="PropContact-{{ product.id }}">
+                {{- 'products.product.preferred_contact' | t: default: 'Preferred contact method' -}}
+              </label>
+              <select
+                class="product__select"
+                id="PropContact-{{ product.id }}"
+                name="properties[Preferred contact]"
+                {% if form.errors and form.errors['properties[Preferred contact]'] %}
+                  aria-invalid="true" aria-describedby="FieldError-PropContact-{{ product.id }}"
+                {% endif %}
+              >
+                <option value="email">{{ 'products.product.contact_email' | t: default: 'Email' }}</option>
+                <option value="phone">{{ 'products.product.contact_phone' | t: default: 'Phone' }}</option>
+              </select>
+              {% if form.errors and form.errors['properties[Preferred contact]'] %}
+                <p id="FieldError-PropContact-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
+                  {{ form.errors['properties[Preferred contact]'] | join: ', ' }}
+                </p>
+              {% endif %}
+              <label for="PropReason-{{ product.id }}">{{ 'products.product.reason' | t: default: 'Reason' }}</label>
+              <textarea
+                id="PropReason-{{ product.id }}"
+                name="properties[Reason]"
+                class="product__textarea"
+                rows="3"
+                maxlength="300"
+                autocomplete="off"
+                style="resize: none;"
+                {% if form.errors and form.errors['properties[Reason]'] %}
+                  aria-invalid="true" aria-describedby="FieldError-PropReason-{{ product.id }}"
+                {% endif %}
+              ></textarea>
+              {% if form.errors and form.errors['properties[Reason]'] %}
+                <p id="FieldError-PropReason-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
+                  {{ form.errors['properties[Reason]'] | join: ', ' }}
+                </p>
+              {% endif %}
+            </fieldset>
 
             <div class="product__btn-wrap">
               <button
@@ -138,9 +261,9 @@
                 {% endunless %}
               >
                 {% if product.available -%}
-                  {{- 'products.product.add_to_cart' | t -}}
+                  {{- 'products.product.add_to_cart' | t: default: 'Add to cart' -}}
                 {%- else -%}
-                  {{- 'products.product.sold_out' | t -}}
+                  {{- 'products.product.sold_out' | t: default: 'Sold out' -}}
                 {%- endif %}
               </button>
             </div>
@@ -170,7 +293,16 @@
       <script type="application/json" id="Translations">
         {
           "in_stock": {{ 'products.product.inventory_in_stock' | t: default: 'In stock: ' | json }},
-          "sold_out": {{ 'products.product.sold_out' | t: default: 'Sold out' | json }}
+          "sold_out": {{ 'products.product.sold_out' | t: default: 'Sold out' | json }},
+          "quantity_min_error": {{ 'products.product.quantity_min_error' | t: default: 'Quantity must be at least 1' | json }},
+          "productId": {{ product.id | json }},
+          "locale": {{ request.locale.iso_code | default: shop.locale | json }},
+          "added_short": {{ 'products.product.added_short' | t: default: 'Added!' | json }},
+          "error_short": {{ 'general.error_short' | t: default: 'Error' | json }},
+          "added_to_cart": {{ 'products.product.added_to_cart' | t: default: 'Added to cart' | json }},
+          "missing_product_id": {{ 'cart.missing_product_id' | t: default: 'Missing product id' | json }},
+          "add_to_cart_failed": {{ 'cart.add_to_cart_failed' | t: default: 'Add to cart failed' | json }},
+          "error_adding_to_cart": {{ 'cart.error_adding_to_cart' | t: default: 'Error adding to cart' | json }}
         }
       </script>
 
@@ -194,13 +326,13 @@
       "type": "text",
       "id": "color_text_title",
       "label": "Color label text",
-      "default": "Choose color:"
+      "default": "Виберіть колір:"
     },
     {
       "type": "text",
       "id": "size_text_title",
       "label": "Size label text",
-      "default": "Choose size:"
+      "default": "Виберіть розмір:"
     }
   ]
 }

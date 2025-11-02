@@ -20,6 +20,9 @@
     "main_nav": "Головне меню навігації",
     "open_menu": "Відкрити меню"
   },
+  "forms": {
+    "honeypot": "Залиште це поле порожнім"
+  },
   "sections": {
     "featured_products": {
       "no_collection": "Будь ласка, виберіть колекцію",
@@ -45,6 +48,24 @@
       "quantity": "Кількість",
       "sold_out": "Продано",
       "inventory_in_stock": "В наявності",
+      "quantity_help": "Введіть бажану кількість продукту для додавання до кошика.",
+      "inquiry_title": "Запит про товар",
+      "reason": "Причина звернення",
+      "preferred_contact": "Бажаний спосіб зв'язку",
+      "contact_email": "Електронна пошта",
+      "contact_phone": "Телефон",
+      "added_success": "Товар успішно додано",
+      "quantity_min_error": "Кількість повинна бути не менше 1",
+      "added_short": "Додано",
+      "added_to_cart": "Товар додано до кошика"
     }
+  },
+  "cart": {
+    "missing_product_id": "Відсутній ідентифікатор товару",
+    "add_to_cart_failed": "Не вдалося додати до кошика",
+    "error_adding_to_cart": "Помилка додавання до кошика"
+  },
+  "general": {
+    "error_short": "Помилка"
   }
 }

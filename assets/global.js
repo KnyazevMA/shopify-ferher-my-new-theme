@@ -1,3 +1,19 @@
+function getCtxFromTranslations() {
+    try {
+        const el = document.getElementById('Translations');
+        return el ? JSON.parse(el.textContent) : {};
+    } catch { return {}; }
+}
+const ctx = getCtxFromTranslations();
+function t(key, fallback = '') {
+    try {
+        if (ctx && Object.prototype.hasOwnProperty.call(ctx, key)) return ctx[key];
+        return fallback;
+    } catch (_) {
+        return fallback;
+    }
+}
+
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
@@ -99,12 +115,12 @@ class AddToCart {
 
             if (!res.ok) throw new Error(`Add to cart failed (${res.status})`);
             const data = await res.json();
-            this.flash(btn, 'Added!', 1200, originalText);
+            this.flash(btn, t('added_short', 'Додано!'), 1200, originalText);
 
             document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
         } catch (err) {
             console.error('Error adding to cart:', err);
-            this.flash(btn, 'Error', 1200, originalText);
+            this.flash(btn, t('error_short', 'Помилка'), 1200, originalText);
         } finally {
             btn.disabled = false;
         }
@@ -113,6 +129,146 @@ class AddToCart {
     flash(btn, temp, ms, fallback) {
         btn.textContent = temp;
         setTimeout(() => (btn.textContent = fallback), ms);
+    }
+}
+
+class AjaxCart {
+    constructor(context = document) {
+        this.context = context;
+        this.init();
+    }
+
+    init() {
+        this.context.addEventListener('submit', this.onSubmit.bind(this), true);
+    }
+
+    async onSubmit(event) {
+        const form = event.target;
+        if (!form || form.tagName !== 'FORM') return;
+
+        // Honeypot check (anti-spam)
+        const hp = form.querySelector('input[name="hp"], input[name="honeypot"]');
+        if (hp && hp.value.trim() !== '') {
+            event.preventDefault();
+            this.flashSubmit(form, t('spam_detected', 'Підозра на спам'), 'error');
+            console.warn('Honeypot triggered, form blocked');
+            return; 
+        }
+
+        const action = (form.getAttribute('action') || '').toLowerCase();
+        const hasAddAction = action.indexOf('/cart/add') !== -1;
+        const hasIdField = !!form.querySelector('input[name="id"]');
+        if (!hasAddAction && !hasIdField) return;
+
+        event.preventDefault();
+
+        try {
+            form.setAttribute('aria-busy', 'true');
+            const submitButtons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
+            submitButtons.forEach(b => b.disabled = true);
+
+            const fd = new FormData(form);
+            const payload = {};
+            const properties = {};
+            for (const [key, value] of fd.entries()) {
+                if (key.startsWith('properties[')) {
+                    const m = key.match(/^properties\[(.*)\]$/);
+                    const propName = m ? m[1] : key;
+                    properties[propName] = value;
+                } else {
+                    payload[key] = value;
+                }
+            }
+            if (Object.keys(properties).length) payload.properties = properties;
+
+            const body = {
+                id: payload.id ? Number(payload.id) : undefined,
+                quantity: payload.quantity ? Number(payload.quantity) : (payload.quantity === undefined ? 1 : Number(payload.quantity)),
+                properties: payload.properties || {}
+            };
+
+            if (!body.id) {
+                this.flashSubmit(form, t('missing_product_id', 'Відсутній ідентифікатор товару'), 'error');
+                return;
+            }
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'form_submit',
+                formType: 'product',
+                productId: (ctx && ctx.productId) || null,
+                locale: (ctx && ctx.locale) || null,
+                timestamp: Date.now()
+            });
+
+            const res = await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+
+            let data;
+            try { data = await res.json(); } catch (e) { data = null; }
+
+            if (!res.ok) {
+                const msg = (data && (data.description || data.message || data.error)) ? (data.description || data.message || data.error) : `Add to cart failed (${res.status})`;
+                throw new Error(msg);
+            }
+
+            const successText = t('added_to_cart', 'Додано до кошика');
+            this.flashSubmit(form, successText, 'success');
+
+            const ctxLocal = ctx || {};
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'form_success',
+                formType: 'product',
+                productId: ctxLocal.productId ?? null,
+                locale: ctxLocal.locale ?? null
+            });
+
+            document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+
+        } catch (err) {
+            const message = err && err.message ? err.message : t('error_adding_to_cart', 'Помилка додавання до кошика');
+            this.flashSubmit(form, message, 'error');
+
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                event: 'form_error',
+                formType: 'product',
+                message
+            });
+
+            console.error('AjaxCart error:', err);
+        } finally {
+            try { form.removeAttribute('aria-busy'); } catch (e) { }
+            const submitButtons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
+            submitButtons.forEach(b => b.disabled = false);
+        }
+    }
+
+    showMessage(form, text, type = 'success') { }
+
+    flashSubmit(form, text, type = 'success') {
+        const btn = form.querySelector('button[type="submit"], input[type="submit"]');
+        if (!btn) return;
+
+        const isInput = btn.tagName === 'INPUT';
+        const original = isInput ? (btn.value ?? '') : (btn.textContent ?? '');
+        const duration = 3000;
+
+        btn.disabled = true;
+        if (isInput) btn.value = text; else btn.textContent = text;
+        btn.classList.toggle('is-success', type === 'success');
+        btn.classList.toggle('is-error', type === 'error');
+
+        setTimeout(() => {
+            if (isInput) btn.value = original; else btn.textContent = original;
+            btn.disabled = false;
+            btn.classList.remove('is-success');
+            btn.classList.remove('is-error');
+        }, duration);
     }
 }
 
@@ -146,11 +302,14 @@ class ProductPage {
         this.addToCartBtn = this.section.querySelector('.product__btn');
         this.mainImageEl = this.section.querySelector('.product__main-img') || this.section.querySelector('.product__wrapper-big-img img');
 
-        const productId = this.section.dataset.productId;
+        this.productId = this.section.dataset.productId;
+        this.variantsData = {};
         try {
-            this.variantsData = JSON.parse(document.querySelector(`#ProductVariants-${productId}`).textContent);
+            const dataEl = this.section.querySelector(`#ProductVariants-${this.productId}`) || document.querySelector(`#ProductVariants-${this.productId}`);
+            if (dataEl) this.variantsData = JSON.parse(dataEl.textContent || '{}');
         } catch (e) {
             this.variantsData = {};
+            console.error('Failed to parse product variants JSON', e);
         }
 
         this.bindEvents();
@@ -158,7 +317,6 @@ class ProductPage {
     }
 
     bindEvents() {
-        // thumbnails
         this.thumbButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const large = btn.dataset.large;
@@ -166,26 +324,65 @@ class ProductPage {
                     this.mainImageEl.src = large.startsWith('//') ? `https:${large}` : large;
                     this.mainImageEl.srcset = '';
                 }
-                // toggle active state
-                btn.closest('.product__thumb-group')
-                    .querySelectorAll('.product__btn-img')
-                    .forEach(b => b.classList.remove('product__btn-img--active'));
+                const group = btn.closest('.product__thumb-group');
+                if (group) {
+                    group.querySelectorAll('.product__btn-img').forEach(b => b.classList.remove('product__btn-img--active'));
+                }
                 btn.classList.add('product__btn-img--active');
             });
         });
 
-        // option radios (color/size)
         this.section.querySelectorAll('input[name="color"]').forEach(input => {
-            input.addEventListener('change', () => {
-                this.updateMainImageFromInput(input);
+            input.addEventListener('change', (e) => {
+                this.updateMainImageFromInput(e.target);
                 this.updateVariantState();
-                this.toggleThumbnailGroups(input.value);
+                this.toggleThumbnailGroups(e.target.value);
             });
         });
 
         this.section.querySelectorAll('input[name="size"]').forEach(input => {
             input.addEventListener('change', () => this.updateVariantState());
         });
+
+        this.section.addEventListener('change', (e) => {
+            const t = e.target;
+            if (!t) return;
+            if (t.matches && t.matches('input[name="color"]')) {
+                this.updateMainImageFromInput(t);
+                this.updateVariantState();
+                this.toggleThumbnailGroups(t.value);
+            } else if (t.matches && t.matches('input[name="size"]')) {
+                this.updateVariantState();
+            }
+        });
+
+        const form = this.section.querySelector('form#ProductForm') || this.section.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                try {
+                    form.setAttribute('aria-busy', 'true');
+                    const submitButtons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
+                    submitButtons.forEach(b => b.disabled = true);
+
+                    let cleaned = false;
+                    const cleanup = () => {
+                        if (cleaned) return;
+                        cleaned = true;
+                        try { form.removeAttribute('aria-busy'); } catch (err) { }
+                        submitButtons.forEach(b => b.disabled = false);
+                        document.removeEventListener('cart:updated', cleanup);
+                        window.removeEventListener('pageshow', cleanup);
+                        if (timer) clearTimeout(timer);
+                    };
+
+                    document.addEventListener('cart:updated', cleanup);
+                    window.addEventListener('pageshow', cleanup);
+                    var timer = setTimeout(cleanup, 10000);
+                } catch (err) {
+                    console.error('ProductForm submit handler error', err);
+                }
+            });
+        }
     }
 
     renderDefaultState() {
@@ -203,24 +400,28 @@ class ProductPage {
     }
 
     updateMainImageFromInput(input) {
-        const imageUrl = input.dataset.image;
+        const imageUrl = input && input.dataset ? input.dataset.image : null;
         if (!imageUrl || !this.mainImageEl) return;
         this.mainImageEl.src = imageUrl.startsWith('//') ? `https:${imageUrl}` : imageUrl;
         this.mainImageEl.srcset = '';
     }
 
+    findMatchingVariant(color, size) {
+        const list = Object.values(this.variantsData || {});
+        return list.find(v => {
+            const vColor = (v.option1 || '').toString().toLowerCase();
+            const vSize = (v.option2 || '').toString().toLowerCase();
+            const matchColor = v.option1 ? vColor === (color || '').toString().toLowerCase() : true;
+            const matchSize = v.option2 ? vSize === (size || '').toString().toLowerCase() : true;
+            return matchColor && matchSize;
+        }) || null;
+    }
+
     updateVariantState() {
-        // determine selected option values
         const color = this.section.querySelector('input[name="color"]:checked')?.value;
         const size = this.section.querySelector('input[name="size"]:checked')?.value;
 
-        // find matching variant in this.variantsData (fallback to first)
-        const variants = Object.values(this.variantsData || {});
-        const found = variants.find(v => {
-            const matchColor = v.option1 ? (v.option1 || '').toLowerCase() === (color || '').toLowerCase() : true;
-            const matchSize = v.option2 ? (v.option2 || '').toLowerCase() === (size || '').toLowerCase() : true;
-            return matchColor && matchSize;
-        });
+        const found = this.findMatchingVariant(color, size);
 
         if (!found) {
             this.setSoldOut();
@@ -231,23 +432,119 @@ class ProductPage {
         const available = Boolean(found.available);
         if (available && qty > 0) this.setAvailable(qty);
         else this.setSoldOut();
-        // update hidden input id for form to selected variant
         const inputId = this.section.querySelector('input[name="id"]');
-        if (inputId) inputId.value = found.id;
+        if (inputId) {
+            inputId.value = found.id;
+            if (this.addToCartBtn) this.addToCartBtn.dataset.productId = found.id;
+        }
     }
 
     setAvailable(qty) {
-        const translations = (document.querySelector('#Translations') && JSON.parse(document.querySelector('#Translations').textContent)) || {};
-        const inStockText = translations.in_stock || 'In stock: ';
+        const inStockText = t('in_stock', 'In stock: ');
         if (this.availabilityEl) this.availabilityEl.textContent = `${inStockText} ${qty}`;
         if (this.addToCartBtn) this.addToCartBtn.disabled = false;
     }
 
     setSoldOut() {
-        const translations = (document.querySelector('#Translations') && JSON.parse(document.querySelector('#Translations').textContent)) || {};
-        const soldText = translations.sold_out || 'Sold out';
+        const soldText = t('sold_out', 'Sold out');
         if (this.availabilityEl) this.availabilityEl.textContent = soldText;
         if (this.addToCartBtn) this.addToCartBtn.disabled = true;
+    }
+}
+
+class QuantityValidator {
+    constructor(input) {
+        this.input = input;
+        this.tooltip = null;
+        this.init();
+    }
+
+    init() {
+        this.input.addEventListener('invalid', e => {
+            e.preventDefault();
+            this.showTooltip(t('quantity_min_error', 'Quantity must be at least 1'));
+        });
+
+        this.input.addEventListener('input', () => this.hideTooltip());
+    }
+
+    showTooltip(message) {
+        if (this.tooltip) this.tooltip.remove();
+
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'tooltip tooltip--error';
+        this.tooltip.textContent = message;
+
+        this.input.parentNode.appendChild(this.tooltip);
+        requestAnimationFrame(() => this.tooltip.classList.add('visible'));
+    }
+
+    hideTooltip() {
+        if (!this.tooltip) return;
+        this.tooltip.classList.remove('visible');
+        setTimeout(() => this.tooltip?.remove(), 200);
+    }
+}
+
+class QuantityStepper {
+    constructor(context = document) {
+        this.context = context;
+        this.onClick = this.onClick.bind(this);
+        this.init();
+    }
+
+    init() {
+        this.context.addEventListener('click', this.onClick);
+    }
+
+    onClick(e) {
+        const btn = e.target.closest('[data-qty], .quantity__btn--plus, .quantity__btn--minus, .quantity__plus, .quantity__minus');
+        if (!btn) return;
+
+        let dir = 0;
+        const attr = btn.getAttribute('data-qty');
+        if (attr === 'plus') dir = +1;
+        else if (attr === 'minus') dir = -1;
+        else if (btn.classList.contains('quantity__btn--plus') || btn.classList.contains('quantity__plus')) dir = +1;
+        else if (btn.classList.contains('quantity__btn--minus') || btn.classList.contains('quantity__minus')) dir = -1;
+        if (!dir) return;
+
+        const input = this.getInput(btn);
+        if (!input) return;
+
+        e.preventDefault();
+
+        const step = Number(input.step || 1) || 1;
+        const min = (input.min !== '' && !Number.isNaN(Number(input.min))) ? Number(input.min) : 1;
+        const hasMax = input.max !== '' && !Number.isNaN(Number(input.max));
+        const max = hasMax ? Number(input.max) : Number.POSITIVE_INFINITY;
+
+        const current = Number(input.value || 0);
+        let next = current + dir * step;
+
+        if (Number.isNaN(next)) next = min;
+        if (next < min) next = min;
+        if (next > max) next = max;
+
+        input.value = String(next);
+
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    getInput(btn) {
+        const containers = [
+            btn.closest('.quantity'),
+            btn.closest('form'),
+            btn.closest('.product'),
+            this.context
+        ].filter(Boolean);
+
+        for (const root of containers) {
+            const input = root.querySelector('input[name="quantity"]');
+            if (input) return input;
+        }
+        return null;
     }
 }
 
@@ -256,9 +553,15 @@ document.addEventListener('DOMContentLoaded', () => {
         new FeaturedProducts(section);
     });
     document.querySelectorAll('.product').forEach(section => {
-        new ProductPage(section)
+        new ProductPage(section);
+    });
+
+    document.querySelectorAll('input[name="quantity"]').forEach(inp => {
+        new QuantityValidator(inp)
     });
 
     new AddToCart(document);
     new BurgerToggle(document);
+    new AjaxCart(document);
+    new QuantityStepper(document);
 });
