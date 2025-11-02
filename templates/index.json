@@ -9,10 +9,6 @@
  */
 {
   "sections": {
-    "main": {
-      "type": "featured-products",
-      "settings": {}
-    },
     "promo_banners_mfdTkL": {
       "type": "promo-banners",
       "blocks": {
@@ -57,7 +53,7 @@
         "title": "Ознайомтеся з нашими колекціями",
         "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
         "text_align": "center",
-        "padding": 60,
+        "padding-bottom": 40,
         "color_scheme": "light"
       }
     },
@@ -70,7 +66,8 @@
         "products_count": 4,
         "show_price": true,
         "show_rating": true,
-        "show_add_to_cart": true
+        "show_add_to_cart": true,
+        "padding-bottom": 40
       }
     },
     "designers_wiAGAB": {
@@ -138,14 +135,24 @@
       "name": "Designers",
       "settings": {
         "title": "Наші дизайнери",
-        "description": "<p>Команда, що створює колекції.</p>"
+        "description": "<p>Команда, що створює колекції.</p>",
+        "padding-bottom": 40
+      }
+    },
+    "feedback_rBYXNH": {
+      "type": "feedback",
+      "name": "Contact form",
+      "settings": {
+        "title": "Need help?",
+        "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
+        "show_phone": true
       }
     }
   },
   "order": [
-    "main",
     "promo_banners_mfdTkL",
     "featured_products_xqwcrY",
-    "designers_wiAGAB"
+    "designers_wiAGAB",
+    "feedback_rBYXNH"
   ]
 }
