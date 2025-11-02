@@ -171,11 +171,15 @@
 
 .product__option-color,
 .product__option-size {
-  display: flex;
-  gap: 8px;
   border: none;
   padding: 0;
   margin: 0 0 16px 0;
+}
+
+.product__color-label-inner {
+  display: flex;
+  gap: 8px;
+  flex-direction: row;
 }
 
 .product__legend,

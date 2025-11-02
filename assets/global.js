@@ -152,7 +152,7 @@ class AjaxCart {
             event.preventDefault();
             this.flashSubmit(form, t('spam_detected', 'Підозра на спам'), 'error');
             console.warn('Honeypot triggered, form blocked');
-            return; 
+            return;
         }
 
         const action = (form.getAttribute('action') || '').toLowerCase();
@@ -335,8 +335,8 @@ class ProductPage {
         this.section.querySelectorAll('input[name="color"]').forEach(input => {
             input.addEventListener('change', (e) => {
                 this.updateMainImageFromInput(e.target);
-                this.updateVariantState();
                 this.toggleThumbnailGroups(e.target.value);
+                this.updateVariantState();
             });
         });
 
@@ -349,8 +349,8 @@ class ProductPage {
             if (!t) return;
             if (t.matches && t.matches('input[name="color"]')) {
                 this.updateMainImageFromInput(t);
-                this.updateVariantState();
                 this.toggleThumbnailGroups(t.value);
+                this.updateVariantState();
             } else if (t.matches && t.matches('input[name="size"]')) {
                 this.updateVariantState();
             }
@@ -407,12 +407,19 @@ class ProductPage {
     }
 
     findMatchingVariant(color, size) {
+        const norm = (v) => (v ?? '').toString().trim().toLowerCase();
+        const c = norm(color);
+        const s = norm(size);
+
         const list = Object.values(this.variantsData || {});
         return list.find(v => {
-            const vColor = (v.option1 || '').toString().toLowerCase();
-            const vSize = (v.option2 || '').toString().toLowerCase();
-            const matchColor = v.option1 ? vColor === (color || '').toString().toLowerCase() : true;
-            const matchSize = v.option2 ? vSize === (size || '').toString().toLowerCase() : true;
+            const v1 = norm(v.option1);
+            const v2 = norm(v.option2);
+            const matchColor = color != null && color !== '' ? (v1 === c || v2 === c) : true;
+            const matchSize = size != null && size !== '' ? (v1 === s || v2 === s) : true;
+            if (color && size) {
+                return (v1 === c && v2 === s) || (v1 === s && v2 === c);
+            }
             return matchColor && matchSize;
         }) || null;
     }
@@ -420,18 +427,38 @@ class ProductPage {
     updateVariantState() {
         const color = this.section.querySelector('input[name="color"]:checked')?.value;
         const size = this.section.querySelector('input[name="size"]:checked')?.value;
+        const priceEl = this.section.querySelector('#ProductPrice');
+        const compareEl = this.section.querySelector('#ProductCompare');
 
         const found = this.findMatchingVariant(color, size);
+        console.log({ color, size, found });
 
         if (!found) {
             this.setSoldOut();
             return;
         }
 
-        const qty = Number(found.inventory_quantity || 0);
-        const available = Boolean(found.available);
-        if (available && qty > 0) this.setAvailable(qty);
-        else this.setSoldOut();
+        if (found.price_money) priceEl.textContent = found.price_money;
+        if (found.compare_money && found.compare_money !== found.price_money) {
+            compareEl.textContent = found.compare_money;
+            compareEl.hidden = false;
+        } else {
+            compareEl.hidden = true;
+        }
+
+        const qty = Number(found.inventory_quantity ?? 0);
+        const managed = Boolean(found.inventory_management);
+        const policy = (found.inventory_policy || 'deny').toLowerCase();
+        const isAvail = Boolean(found.available);
+
+        if (!isAvail) {
+            this.setSoldOut();
+        } else if (!managed || policy === 'continue' || qty <= 0) {
+            this.setAvailable();
+        } else {
+            this.setAvailable(qty);
+        }
+
         const inputId = this.section.querySelector('input[name="id"]');
         if (inputId) {
             inputId.value = found.id;
@@ -440,8 +467,15 @@ class ProductPage {
     }
 
     setAvailable(qty) {
-        const inStockText = t('in_stock', 'In stock: ');
-        if (this.availabilityEl) this.availabilityEl.textContent = `${inStockText} ${qty}`;
+        const labelWithCount = t('in_stock', 'In stock:');
+        const labelGeneric = t('in_stock_generic', 'In stock');
+
+        if (this.availabilityEl) {
+            const showCount = typeof qty === 'number' && qty > 0;
+            this.availabilityEl.textContent = showCount
+                ? `${labelWithCount} ${qty}`
+                : labelGeneric;
+        }
         if (this.addToCartBtn) this.addToCartBtn.disabled = false;
     }
 
