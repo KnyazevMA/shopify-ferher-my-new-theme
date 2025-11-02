@@ -40,6 +40,19 @@
       "dob": "Дата народження",
       "verified": "Верифікований дизайнер",
       "no_verified": "Неверифікований дизайнер"
+    },
+    "contact": {
+      "success": "Дякуємо! Ваше повідомлення надіслано.",
+      "name_label": "Ім’я",
+      "name_placeholder": "Введіть ім’я",
+      "phone_label": "Телефон",
+      "phone_placeholder": "Введіть номер телефону",
+      "email_label": "Email",
+      "email_placeholder": "Введіть email",
+      "message_label": "Повідомлення",
+      "message_placeholder": "Опишіть ваше питання",
+      "submit": "Надіслати",
+      "submit_aria": "Надіслати форму зворотного зв’язку",
     }
   },
   "products": {
