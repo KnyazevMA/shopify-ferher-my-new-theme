@@ -1,0 +1,97 @@
+<section class="product">
+  <div class="page-width">
+    {%- if product -%}
+      <div class="product__wrapper">
+        <div class="product__media">
+          {%- if product.media.size > 0 -%}
+            {%- for m in product.media -%}
+              {{ m | media }}
+            {%- endfor -%}
+          {%- else -%}
+            <img src="{{ 'placeholder-image.png' | asset_url }}" alt="{{ product.title | escape }}" width="800" height="800">
+          {%- endif -%}
+        </div>
+
+        <div class="product__info">
+          <h1 class="product__title">{{ product.title }}</h1>
+
+          {%- if section.settings.show_vendor and product.vendor != blank -%}
+            <div class="product__vendor">{{ product.vendor }}</div>
+          {%- endif -%}
+
+          <div class="product__price">
+            {%- render 'price', product: product -%}
+          </div>
+
+          {%- form 'product', product, id: 'ProductForm', class: 'product-form' -%}
+            {%- if product.has_only_default_variant == false -%}
+              <div class="product-form__options">
+                {%- for option in product.options_with_values -%}
+                  <label for="Option-{{ forloop.index }}">{{ option.name }}</label>
+                  <select id="Option-{{ forloop.index }}" name="options[{{ option.name | escape }}]">
+                    {%- for val in option.values -%}
+                      <option
+                        value="{{ val | escape }}"
+                        {% if option.selected_value == val %}selected{% endif %}
+                      >{{ val }}</option>
+                    {%- endfor -%}
+                  </select>
+                {%- endfor -%}
+              </div>
+            {%- endif -%}
+
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+            <div class="product-form__qty">
+              <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
+              <input id="Quantity" type="number" name="quantity" min="1" value="1" inputmode="numeric">
+            </div>
+
+            <button type="submit" class="btn product-form__add-to-cart"
+              {% unless product.available %}disabled{% endunless %}
+            >
+              {%- if product.available -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </button>
+
+          {%- endform -%}
+
+          {%- if section.settings.show_sku and product.selected_or_first_available_variant.sku != blank -%}
+            <div class="product__sku">SKU: {{ product.selected_or_first_available_variant.sku }}</div>
+          {%- endif -%}
+
+          {%- if product.description != blank -%}
+            <div class="product__description rte">
+              {{ product.description }}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    {%- else -%}
+      <p>Product object is missing in this context.</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main product",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sku",
+      "label": "Show SKU",
+      "default": false
+    }
+  ]
+}
+{% endschema %}
