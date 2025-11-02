@@ -1,96 +1,206 @@
-<section class="product">
+<section class="product" data-product-id="{{ product.id }}">
   <div class="page-width">
-    {%- if product -%}
+    {% if product %}
       <div class="product__wrapper">
-        <div class="product__media">
-          {%- if product.media.size > 0 -%}
-            {%- for m in product.media -%}
-              {{ m | media }}
-            {%- endfor -%}
-          {%- else -%}
-            <img src="{{ 'placeholder-image.png' | asset_url }}" alt="{{ product.title | escape }}" width="800" height="800">
-          {%- endif -%}
-        </div>
-
-        <div class="product__info">
-          <h1 class="product__title">{{ product.title }}</h1>
-
-          {%- if section.settings.show_vendor and product.vendor != blank -%}
-            <div class="product__vendor">{{ product.vendor }}</div>
-          {%- endif -%}
-
-          <div class="product__price">
-            {%- render 'price', product: product -%}
+        <div class="product__inner-left">
+          <div class="product__wrapper-big-img">
+            {% if product.featured_image %}
+              {{
+                product.featured_image
+                | image_url: width: 536
+                | image_tag: class: 'product__main-img', alt: product.title
+              }}
+            {% else %}
+              {{ 'image' | placeholder_svg_tag: 'product__placeholder' }}
+            {% endif %}
           </div>
 
-          {%- form 'product', product, id: 'ProductForm', class: 'product-form' -%}
-            {%- if product.has_only_default_variant == false -%}
-              <div class="product-form__options">
-                {%- for option in product.options_with_values -%}
-                  <label for="Option-{{ forloop.index }}">{{ option.name }}</label>
-                  <select id="Option-{{ forloop.index }}" name="options[{{ option.name | escape }}]">
-                    {%- for val in option.values -%}
-                      <option
-                        value="{{ val | escape }}"
-                        {% if option.selected_value == val %}selected{% endif %}
-                      >{{ val }}</option>
-                    {%- endfor -%}
-                  </select>
-                {%- endfor -%}
-              </div>
-            {%- endif -%}
+          {% if section.settings.show_thumbnails %}
+            <div class="product__thumb-group-list" data-thumbs>
+              {% assign colors = product.metafields.custom.color_product.value | default: '' %}
+              {% if colors and colors != '' %}
+                {% assign color_names = colors | map: 'name' %}
+                {% for color in color_names %}
+                  {% assign variants_for_color = product.variants | where: 'option1', color %}
+                  {% if variants_for_color.size == 0 %}
+                    {% assign variants_for_color = product.variants | where: 'option2', color %}
+                  {% endif %}
+                  {% if variants_for_color.size > 0 %}
+                    <div
+                      class="product__thumb-group"
+                      data-color="{{ color | downcase }}"
+                      {% unless forloop.first %}
+                        style="display:none"
+                      {% endunless %}
+                    >
+                      {% for variant in variants_for_color limit: 5 %}
+                        {% if variant.featured_image %}
+                          <button
+                            class="product__btn-img {% if forloop.first %}product__btn-img--active{% endif %}"
+                            type="button"
+                            data-large="{{ variant.featured_image | image_url: width: 800 }}"
+                          >
+                            {{ variant.featured_image | image_url: width: 88 | image_tag: alt: color }}
+                          </button>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="product__inner-right">
+          <h1 class="product__title">{{ product.title }}</h1>
+
+          <p class="product__price">
+            {% if product.compare_at_price_max > product.price %}
+              <span class="product__price--sale">{{ product.price | money }}</span>
+              <span class="product__price--old">{{ product.compare_at_price_max | money }}</span>
+            {% else %}
+              <span>{{ product.price | money }}</span>
+            {% endif %}
+          </p>
+
+          <span class="product__availability" id="variant-availability"> </span>
+
+          {%- form 'product', product, id: 'ProductForm', class: 'product__form' -%}
+            {% assign product_colors = product.metafields.custom.color_product.value %}
+            {% if product_colors %}
+              <fieldset class="product__option-color">
+                <legend class="product__legend">{{ section.settings.color_text_title }}</legend>
+                {% for color_entry in product_colors limit: 10 %}
+                  {% assign matched_variant = product.variants | where: 'option1', color_entry.name | first %}
+                  {% if matched_variant == null %}
+                    {% assign matched_variant = product.variants | where: 'option2', color_entry.name | first %}
+                  {% endif %}
+                  <label class="custom-radio">
+                    <input
+                      class="custom-radio__field"
+                      type="radio"
+                      name="color"
+                      value="{{ color_entry.name | downcase }}"
+                      data-image="{{ matched_variant.featured_image | image_url: width: 600 }}"
+                      data-stock="{{ matched_variant.inventory_quantity }}"
+                      data-available="{{ matched_variant.available }}"
+                      {% if forloop.first %}
+                        checked
+                      {% endif %}
+                    >
+                    <span
+                      class="custom-radio__visual custom-radio__visual--color"
+                      style="background-color: {{ color_entry.color }};"
+                    ></span>
+                  </label>
+                {% endfor %}
+              </fieldset>
+            {% endif %}
+
+            {% assign product_sizes = product.metafields.custom.sizes.value %}
+            {% if product_sizes %}
+              <fieldset class="product__option-size">
+                <legend class="product__legend">{{ section.settings.size_text_title }}</legend>
+                <div class="product__size-label-inner">
+                  {% for size in product_sizes %}
+                    {% assign matched_variant = product.variants | where: 'option2', size.name | first %}
+                    {% if matched_variant == null %}
+                      {% assign matched_variant = product.variants | where: 'option1', size.name | first %}
+                    {% endif %}
+                    <label class="custom-radio">
+                      <input
+                        class="custom-radio__field"
+                        type="radio"
+                        name="size"
+                        value="{{ size.name }}"
+                        data-stock="{{ matched_variant.inventory_quantity }}"
+                        data-available="{{ matched_variant.available }}"
+                        {% if forloop.first %}
+                          checked
+                        {% endif %}
+                      >
+                      <span class="custom-radio__visual">{{ size.name }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% endif %}
 
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
 
-            <div class="product-form__qty">
-              <label for="Quantity">{{ 'products.product.quantity' | t }}</label>
-              <input id="Quantity" type="number" name="quantity" min="1" value="1" inputmode="numeric">
+            <div class="product__btn-wrap">
+              <button
+                class="product__btn"
+                type="submit"
+                {% unless product.available %}
+                  disabled
+                {% endunless %}
+              >
+                {% if product.available -%}
+                  {{- 'products.product.add_to_cart' | t -}}
+                {%- else -%}
+                  {{- 'products.product.sold_out' | t -}}
+                {%- endif %}
+              </button>
             </div>
-
-            <button type="submit" class="btn product-form__add-to-cart"
-              {% unless product.available %}disabled{% endunless %}
-            >
-              {%- if product.available -%}
-                {{ 'products.product.add_to_cart' | t }}
-              {%- else -%}
-                {{ 'products.product.sold_out' | t }}
-              {%- endif -%}
-            </button>
-
           {%- endform -%}
 
-          {%- if section.settings.show_sku and product.selected_or_first_available_variant.sku != blank -%}
-            <div class="product__sku">SKU: {{ product.selected_or_first_available_variant.sku }}</div>
-          {%- endif -%}
-
-          {%- if product.description != blank -%}
-            <div class="product__description rte">
-              {{ product.description }}
-            </div>
-          {%- endif -%}
+          <p class="product__description">
+            {{ product.description | strip_html | truncate: 300 }}
+          </p>
         </div>
       </div>
-    {%- else -%}
+
+      <script type="application/json" id="ProductVariants-{{ product.id }}">
+        {
+          {%- for v in product.variants -%}
+            "{{ v.id }}": {
+              "id": {{ v.id | json }},
+              "available": {{ v.available | json }},
+              "inventory_quantity": {{ v.inventory_quantity | default: 0 | json }},
+              "option1": {{ v.option1 | json }},
+              "option2": {{ v.option2 | json }},
+              "featured_image": {{ v.featured_image | image_url: width: 800 | json }}
+            }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        }
+      </script>
+
+      <script type="application/json" id="Translations">
+        {
+          "in_stock": {{ 'products.product.inventory_in_stock' | t: default: 'In stock: ' | json }},
+          "sold_out": {{ 'products.product.sold_out' | t: default: 'Sold out' | json }}
+        }
+      </script>
+
+    {% else %}
       <p>Product object is missing in this context.</p>
-    {%- endif -%}
+    {% endif %}
   </div>
 </section>
 
 {% schema %}
 {
-  "name": "Main product",
+  "name": "Main product (adapted)",
   "settings": [
     {
       "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Show vendor",
+      "id": "show_thumbnails",
+      "label": "Show thumbnails",
       "default": true
     },
     {
-      "type": "checkbox",
-      "id": "show_sku",
-      "label": "Show SKU",
-      "default": false
+      "type": "text",
+      "id": "color_text_title",
+      "label": "Color label text",
+      "default": "Choose color:"
+    },
+    {
+      "type": "text",
+      "id": "size_text_title",
+      "label": "Size label text",
+      "default": "Choose size:"
     }
   ]
 }

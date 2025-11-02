@@ -138,9 +138,125 @@ class BurgerToggle {
     }
 }
 
+class ProductPage {
+    constructor(section) {
+        this.section = section;
+        this.thumbButtons = Array.from(this.section.querySelectorAll('.product__btn-img'));
+        this.availabilityEl = this.section.querySelector('#variant-availability');
+        this.addToCartBtn = this.section.querySelector('.product__btn');
+        this.mainImageEl = this.section.querySelector('.product__main-img') || this.section.querySelector('.product__wrapper-big-img img');
+
+        const productId = this.section.dataset.productId;
+        try {
+            this.variantsData = JSON.parse(document.querySelector(`#ProductVariants-${productId}`).textContent);
+        } catch (e) {
+            this.variantsData = {};
+        }
+
+        this.bindEvents();
+        this.renderDefaultState();
+    }
+
+    bindEvents() {
+        // thumbnails
+        this.thumbButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const large = btn.dataset.large;
+                if (large && this.mainImageEl) {
+                    this.mainImageEl.src = large.startsWith('//') ? `https:${large}` : large;
+                    this.mainImageEl.srcset = '';
+                }
+                // toggle active state
+                btn.closest('.product__thumb-group')
+                    .querySelectorAll('.product__btn-img')
+                    .forEach(b => b.classList.remove('product__btn-img--active'));
+                btn.classList.add('product__btn-img--active');
+            });
+        });
+
+        // option radios (color/size)
+        this.section.querySelectorAll('input[name="color"]').forEach(input => {
+            input.addEventListener('change', () => {
+                this.updateMainImageFromInput(input);
+                this.updateVariantState();
+                this.toggleThumbnailGroups(input.value);
+            });
+        });
+
+        this.section.querySelectorAll('input[name="size"]').forEach(input => {
+            input.addEventListener('change', () => this.updateVariantState());
+        });
+    }
+
+    renderDefaultState() {
+        const defaultColor = this.section.querySelector('input[name="color"]:checked');
+        if (defaultColor) {
+            this.toggleThumbnailGroups(defaultColor.value);
+            this.updateMainImageFromInput(defaultColor);
+        }
+        this.updateVariantState();
+    }
+
+    toggleThumbnailGroups(color) {
+        const groups = this.section.querySelectorAll('.product__thumb-group');
+        groups.forEach(g => g.style.display = (g.dataset.color === (color || '').toLowerCase()) ? '' : 'none');
+    }
+
+    updateMainImageFromInput(input) {
+        const imageUrl = input.dataset.image;
+        if (!imageUrl || !this.mainImageEl) return;
+        this.mainImageEl.src = imageUrl.startsWith('//') ? `https:${imageUrl}` : imageUrl;
+        this.mainImageEl.srcset = '';
+    }
+
+    updateVariantState() {
+        // determine selected option values
+        const color = this.section.querySelector('input[name="color"]:checked')?.value;
+        const size = this.section.querySelector('input[name="size"]:checked')?.value;
+
+        // find matching variant in this.variantsData (fallback to first)
+        const variants = Object.values(this.variantsData || {});
+        const found = variants.find(v => {
+            const matchColor = v.option1 ? (v.option1 || '').toLowerCase() === (color || '').toLowerCase() : true;
+            const matchSize = v.option2 ? (v.option2 || '').toLowerCase() === (size || '').toLowerCase() : true;
+            return matchColor && matchSize;
+        });
+
+        if (!found) {
+            this.setSoldOut();
+            return;
+        }
+
+        const qty = Number(found.inventory_quantity || 0);
+        const available = Boolean(found.available);
+        if (available && qty > 0) this.setAvailable(qty);
+        else this.setSoldOut();
+        // update hidden input id for form to selected variant
+        const inputId = this.section.querySelector('input[name="id"]');
+        if (inputId) inputId.value = found.id;
+    }
+
+    setAvailable(qty) {
+        const translations = (document.querySelector('#Translations') && JSON.parse(document.querySelector('#Translations').textContent)) || {};
+        const inStockText = translations.in_stock || 'In stock: ';
+        if (this.availabilityEl) this.availabilityEl.textContent = `${inStockText} ${qty}`;
+        if (this.addToCartBtn) this.addToCartBtn.disabled = false;
+    }
+
+    setSoldOut() {
+        const translations = (document.querySelector('#Translations') && JSON.parse(document.querySelector('#Translations').textContent)) || {};
+        const soldText = translations.sold_out || 'Sold out';
+        if (this.availabilityEl) this.availabilityEl.textContent = soldText;
+        if (this.addToCartBtn) this.addToCartBtn.disabled = true;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
+    });
+    document.querySelectorAll('.product').forEach(section => {
+        new ProductPage(section)
     });
 
     new AddToCart(document);

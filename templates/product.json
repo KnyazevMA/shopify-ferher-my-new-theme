@@ -1,7 +1,7 @@
 {
   "sections": {
     "main-product": {
-      "type": "main-product",
+      "type": "product",
       "settings": {
         "show_vendor": true,
         "show_sku": false

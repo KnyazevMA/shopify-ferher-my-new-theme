@@ -22,14 +22,9 @@
               {%- elsif block.settings.avatar != blank -%}
                 {%- assign avatar_file = block.settings.avatar -%}
               {%- else -%}
-                <img
-                  src="{{ 'icons/avatar-fallback.svg' | asset_url }}"
-                  alt="Default avatar"
-                  class="designer-card__avatar"
-                  width="180"
-                  height="180"
-                  loading="lazy"
-                >
+                <svg class="designer-card__avatar" aria-hidden="true" focusable="false">
+                  <use href="#avatar-fallback" xlink:href="#avatar-fallback"></use>
+                </svg>
               {%- endif -%}
               {% if avatar_file != blank %}
                 {{ avatar_file | image_url: width: 600 | image_tag: class: 'designer-card__avatar', alt: block.name }}
@@ -213,7 +208,7 @@
           "id": "verified",
           "label": "Verified designer",
           "default": false
-        },
+        }
       ]
     }
   ],

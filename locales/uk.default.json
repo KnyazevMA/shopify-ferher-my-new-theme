@@ -42,6 +42,9 @@
   "products": {
     "product": {
       "add_to_cart": "Додати до кошика",
+      "quantity": "Кількість",
+      "sold_out": "Продано",
+      "inventory_in_stock": "В наявності",
     }
   }
 }
