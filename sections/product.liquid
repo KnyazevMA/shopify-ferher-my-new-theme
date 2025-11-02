@@ -19,39 +19,67 @@
 
           {% if section.settings.show_thumbnails %}
             <div class="product__thumb-group-list" data-thumbs>
-              {% comment %}
-                {% assign colors = product.metafields.custom.color_product.value | default: '' %}
-                {% if colors and colors != '' %}
-                  {% assign color_names = colors | map: 'name' %}
-                  {% for color in color_names %}
-                    {% assign variants_for_color = product.variants | where: 'option1', color %}
-                    {% if variants_for_color.size == 0 %}
-                      {% assign variants_for_color = product.variants | where: 'option2', color %}
-                    {% endif %}
-                    {% if variants_for_color.size > 0 %}
-                      <div
-                        class="product__thumb-group"
-                        data-color="{{ color | downcase }}"
-                        {% unless forloop.first %}
-                          style="display:none"
-                        {% endunless %}
+              {%- assign color_option_index = -1 -%}
+              {%- for option in product.options_with_values -%}
+                {%- assign dn = option.name | downcase -%}
+                {%- if dn contains 'color' or dn contains 'colour' or dn contains 'колір' -%}
+                  {%- assign color_option_index = forloop.index0 -%}
+                {%- endif -%}
+              {%- endfor -%}
+
+              {%- if color_option_index >= 0 -%}
+                {%- assign color_option = product.options_with_values[color_option_index] -%}
+                {%- assign colors = color_option.values | uniq -%}
+
+                {%- for color_value in colors -%}
+                  <div
+                    class="product__thumb-group"
+                    data-color="{{ color_value | downcase }}"
+                    {% unless forloop.first %}
+                      style="display:none"
+                    {% endunless %}
+                  >
+                    {%- assign count = 0 -%}
+                    {%- assign opt_number = color_option_index | plus: 1 -%}
+                    {%- assign option_key = 'option' | append: opt_number -%}
+
+                    {%- for v in product.variants -%}
+                      {%- assign v_color = v[option_key] -%}
+                      {%- if v_color and v_color == color_value and v.featured_image -%}
+                        <button
+                          class="product__btn-img {% if count == 0 %}product__btn-img--active{% endif %}"
+                          type="button"
+                          data-large="{{ v.featured_image | image_url: width: 800 }}"
+                        >
+                          {{ v.featured_image | image_url: width: 88 | image_tag: alt: color_value }}
+                        </button>
+                        {%- assign count = count | plus: 1 -%}
+                        {%- if count >= 5 -%}{% break %}{%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+
+                    {%- if count == 0 -%}
+                      {{ 'image' | placeholder_svg_tag }}
+                    {%- endif -%}
+                  </div>
+                {%- endfor -%}
+
+              {%- else -%}
+                <div class="product__thumb-group" data-color="all">
+                  {%- assign shown = 0 -%}
+                  {%- for m in product.media limit: 5 -%}
+                    {%- if m.media_type == 'image' -%}
+                      <button
+                        class="product__btn-img {% if shown == 0 %}product__btn-img--active{% endif %}"
+                        type="button"
+                        data-large="{{ m | image_url: width: 800 }}"
                       >
-                        {% for variant in variants_for_color limit: 5 %}
-                          {% if variant.featured_image %}
-                            <button
-                              class="product__btn-img {% if forloop.first %}product__btn-img--active{% endif %}"
-                              type="button"
-                              data-large="{{ variant.featured_image | image_url: width: 800 }}"
-                            >
-                              {{ variant.featured_image | image_url: width: 88 | image_tag: alt: color }}
-                            </button>
-                          {% endif %}
-                        {% endfor %}
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                {% endif %}
-              {% endcomment %}
+                        {{ m | image_url: width: 88 | image_tag: alt: product.title }}
+                      </button>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
             </div>
           {% endif %}
         </div>
@@ -89,18 +117,8 @@
                     aria-label="{{ 'products.product.quantity_help' | t: default: 'Enter desired quantity to add to cart.' }}"
                     aria-describedby="QuantityHelp-{{ product.id }}"
                   >
-                    {% comment %} вынести свг в спрайт {% endcomment %}
-                    <svg
-                      class="icon icon--info"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      aria-hidden="true"
-                      focusable="false"
-                    >
-                      <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
-                      <line x1="12" y1="10" x2="12" y2="16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                      <circle cx="12" cy="7" r="1.25" fill="currentColor"/>
+                    <svg class="icon icon--info" width="16" height="16" focusable="false">
+                      <use href="#icon-info"></use>
                     </svg>
                   </button>
                   <span id="QuantityHelp-{{ product.id }}" class="tooltip tooltip--above" role="tooltip">
@@ -141,21 +159,31 @@
                   {%- assign color_option = product.options_with_values[color_option_index] -%}
                   {%- assign unique_colors = color_option.values | uniq -%}
 
-                  {%- for color_value in unique_colors limit: 3 -%}
-                    {%- assign matched_variant = product.variants
-                      | where: 'option'
-                      | append: color_option_index
-                      | plus: 1
-                      | first
-                    -%}
+                  {%- assign color_opt_number = color_option_index | plus: 1 -%}
+                  {%- assign color_option_key = 'option' | append: color_opt_number -%}
 
+                  {%- for color_value in unique_colors limit: 3 -%}
+                    {%- assign has_available_for_color = false -%}
+                    {%- assign first_image_for_color = '' -%}
+                    {%- for v in product.variants -%}
+                      {%- assign v_color = v[color_option_key] -%}
+                      {%- if v_color and v_color == color_value -%}
+                        {%- if first_image_for_color == '' and v.featured_image -%}
+                          {%- assign first_image_for_color = v.featured_image | image_url: width: 800 -%}
+                        {%- endif -%}
+                        {%- if v.available -%}
+                          {%- assign has_available_for_color = true -%}
+                        {%- endif -%}
+                      {%- endif -%}
+                    {%- endfor -%}
                     <label class="custom-radio">
                       <input
                         class="custom-radio__field"
                         type="radio"
                         name="color"
                         value="{{ color_value }}"
-                        data-available="{{ matched_variant.available }}"
+                        data-available="{{ has_available_for_color }}"
+                        data-image="{{ first_image_for_color }}"
                         {% if forloop.first %}
                           checked
                         {% endif %}
@@ -185,44 +213,6 @@
               </fieldset>
             {%- endif -%}
 
-            {% comment %}
-              {% assign product_sizes = product.metafields.custom.sizes.value %}
-              {% if product_sizes %}
-                <fieldset class="product__option-size">
-                  <legend class="product__legend">{{ section.settings.size_text_title }}</legend>
-                  <div class="product__size-label-inner">
-                    {% for size in product_sizes %}
-                      {% assign matched_variant = product.variants | where: 'option2', size.name | first %}
-                      {% if matched_variant == null %}
-                        {% assign matched_variant = product.variants | where: 'option1', size.name | first %}
-                      {% endif %}
-                      <label class="custom-radio">
-                        <input
-                          class="custom-radio__field"
-                          type="radio"
-                          name="size"
-                          value="{{ size.name }}"
-                          data-stock="{{ matched_variant.inventory_quantity }}"
-                          data-available="{{ matched_variant.available }}"
-                          {% if forloop.first %}
-                            checked
-                          {% endif %}
-                          {% if form.errors and form.errors.size %}
-                            aria-invalid="true" aria-describedby="FieldError-Size-{{ product.id }}"
-                          {% endif %}
-                        >
-                        <span class="custom-radio__visual">{{ size.name }}</span>
-                      </label>
-                    {% endfor %}
-                  </div>
-                  {% if form.errors and form.errors.size %}
-                    <p id="FieldError-Size-{{ product.id }}" class="field-error" role="alert" aria-live="assertive">
-                      {{ form.errors.size | join: ', ' }}
-                    </p>
-                  {% endif %}
-                </fieldset>
-              {% endif %}
-            {% endcomment %}
             {% assign size_option_index = -1 %}
 
             {%- for option in product.options_with_values -%}
@@ -237,27 +227,46 @@
                 <legend class="product__legend">{{ section.settings.size_text_title }}</legend>
                 <div class="product__size-label-inner">
                   {%- assign size_option = product.options_with_values[size_option_index] -%}
+                  {%- assign size_opt_number = size_option_index | plus: 1 -%}
+                  {%- assign size_option_key = 'option' | append: size_opt_number -%}
                   {%- for size_value in size_option.values -%}
-                    {%- assign matched_variant = product.variants
-                      | where: 'option#{size_option_index | plus: 1}', size_value
-                      | first
-                    -%}
+                    {%- assign matched_variant_for_size = null -%}
+                    {%- for v in product.variants -%}
+                      {%- if v[size_option_key] == size_value -%}
+                        {%- assign matched_variant_for_size = v -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
                     <label class="custom-radio">
                       <input
                         class="custom-radio__field"
                         type="radio"
                         name="size"
                         value="{{ size_value }}"
-                        data-stock="{{ matched_variant.inventory_quantity }}"
-                        data-available="{{ matched_variant.available }}"
+                        data-stock="{{ matched_variant_for_size.inventory_quantity }}"
+                        data-available="{{ matched_variant_for_size.available }}"
                         {% if forloop.first %}
                           checked
+                        {% endif %}
+                        {% if form.errors and form.errors.size %}
+                          aria-invalid="true"
+                          aria-describedby="FieldError-Size-{{ product.id }}"
                         {% endif %}
                       >
                       <span class="custom-radio__visual">{{ size_value }}</span>
                     </label>
                   {%- endfor -%}
                 </div>
+                {% if form.errors and form.errors.size %}
+                  <p
+                    id="FieldError-Size-{{ product.id }}"
+                    class="field-error"
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    {{ form.errors.size | join: ', ' }}
+                  </p>
+                {% endif %}
               </fieldset>
             {%- endif -%}
 
@@ -327,15 +336,15 @@
               <button
                 class="product__btn"
                 type="submit"
-                {% unless product.available %}
+                {% unless current_variant.available %}
                   disabled
                 {% endunless %}
               >
-                {% if product.available -%}
-                  {{- 'products.product.add_to_cart' | t: default: 'Add to cart' -}}
-                {%- else -%}
-                  {{- 'products.product.sold_out' | t: default: 'Sold out' -}}
-                {%- endif %}
+                {% if current_variant.available %}
+                  {{ 'products.product.add_to_cart' | t }}
+                {% else %}
+                  {{ 'products.product.sold_out' | t }}
+                {% endif %}
               </button>
             </div>
           {%- endform -%}

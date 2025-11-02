@@ -431,7 +431,6 @@ class ProductPage {
         const compareEl = this.section.querySelector('#ProductCompare');
 
         const found = this.findMatchingVariant(color, size);
-        console.log({ color, size, found });
 
         if (!found) {
             this.setSoldOut();
