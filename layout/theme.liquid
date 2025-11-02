@@ -8,6 +8,9 @@
     <script src="{{ 'global.js' | asset_url }}" defer></script>
   </head>
   <body>
+    {{ 'main.css' | asset_url | stylesheet_tag }}
+    {% render 'icon-sprite' %}
+
     {% section 'header' %}
 
     <main id="main" role="main" aria-labelledby="page-title">

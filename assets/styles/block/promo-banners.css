@@ -1,16 +1,8 @@
-:root {
-    --promo-bg: #111;
-    --promo-color: #fff;
-    --promo-border: #111;
-    --promo-bg-hover: transparent;
-    --promo-color-hover: #111;
-}
-
 .promo-banners {
     width: 100%;
     position: relative;
-    background-color: var(--promo-bg);
-    color: var(--promo-color);
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
 }
 
 .promo-banners__title {
@@ -74,46 +66,68 @@
 
 .promo-banners__btn {
     display: inline-block;
-    background-color: var(--promo-bg);
-    color: var(--promo-color);
-    border: 1px solid var(--promo-border);
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+    border: 1px solid var(--scheme-light-border);
     padding: 0.6em 1.2em;
     border-radius: 0.3em;
     font-size: 0.9rem;
     text-transform: uppercase;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: background .18s ease, color .18s ease, opacity .18s ease;
 }
 
 .promo-banners__btn:hover {
-    background-color: var(--promo-bg-hover);
-    color: var(--promo-color-hover);
-    opacity: 0.8;
+    opacity: 0.95;
 }
 
 /* ────────────────   COLOR SCHEMES.  ──────────────── */
 .promo-banners--dark {
-    --promo-bg: #111;
-    --promo-color: #fff;
-    --promo-border: #003cff;
-    --promo-bg-hover: #fff;
-    --promo-color-hover: #111;
+    background-color: var(--scheme-dark-bg);
+    color: var(--scheme-dark-text);
+}
+
+.promo-banners--dark .promo-banners__btn {
+    background-color: var(--scheme-dark-bg);
+    color: var(--scheme-dark-text);
+    border: 1px solid var(--scheme-dark-border);
+}
+
+.promo-banners--dark .promo-banners__btn:hover {
+    background-color: var(--btn-dark-hover-bg);
+    color: var(--btn-dark-hover-text);
 }
 
 .promo-banners--light {
-    --promo-bg: #fff;
-    --promo-color: #111;
-    --promo-border: #fff;
-    --promo-bg-hover: #111;
-    --promo-color-hover: #fff;
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+}
+
+.promo-banners--light .promo-banners__btn {
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+    border: 1px solid var(--scheme-light-border);
+}
+
+.promo-banners--light .promo-banners__btn:hover {
+    background-color: var(--btn-light-hover-bg);
+    color: var(--btn-light-hover-text);
 }
 
 .promo-banners--accent {
-    --promo-bg: #00b894;
-    --promo-color: #ffffff;
-    --promo-border: #032d24;
-    --promo-bg-hover: #55efc4;
-    --promo-color-hover: #ffffff;
+    background-color: var(--scheme-accent-bg);
+    color: var(--scheme-accent-text);
+}
+
+.promo-banners--accent .promo-banners__btn {
+    background-color: var(--scheme-accent-bg);
+    color: var(--scheme-accent-text);
+    border: 1px solid var(--scheme-accent-border);
+}
+
+.promo-banners--accent .promo-banners__btn:hover {
+    background-color: var(--scheme-accent-hover);
+    color: var(--scheme-accent-text);
 }
 
 /* ────────────────   ASPECT RATIO.  ──────────────── */

@@ -10,7 +10,7 @@
 {
   "sections": {
     "main": {
-      "type": "header",
+      "type": "featured-products",
       "settings": {}
     },
     "promo_banners_mfdTkL": {
