@@ -1,9 +1,10 @@
 {
   "sections": {
     "main": {
-      "type": "header",
-      "settings": {}
+      "type": "featured-products"
     }
   },
-  "order": ["main"]
+  "order": [
+    "main"
+  ]
 }
