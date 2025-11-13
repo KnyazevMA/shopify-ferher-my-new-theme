@@ -14,6 +14,79 @@ function t(key, fallback = '') {
     }
 }
 
+function createSectionSwiper(rootEl, {
+    containerSelector,
+    nextSelector,
+    prevSelector,
+    paginationSelector,
+    options = {}
+} = {}) {
+    if (!window.Swiper) {
+        console.warn('Swiper is not loaded');
+        return null;
+    }
+
+    const container = rootEl.querySelector(containerSelector);
+    if (!container) {
+        console.warn('Swiper container not found:', containerSelector);
+        return null;
+    }
+
+    const nextEl = nextSelector ? rootEl.querySelector(nextSelector) : null;
+    const prevEl = prevSelector ? rootEl.querySelector(prevSelector) : null;
+    const paginationEl = paginationSelector ? rootEl.querySelector(paginationSelector) : null;
+
+    const baseConfig = {
+        slidesPerView: 4,
+        spaceBetween: 24,
+        loop: false,
+        navigation: nextEl && prevEl ? {
+            nextEl,
+            prevEl,
+        } : undefined,
+        pagination: false,
+        breakpoints: {
+            0: {
+                slidesPerView: 1.2,
+                spaceBetween: 10,
+            },
+            450: {
+                slidesPerView: 1.3,
+                spaceBetween: 10,
+            },
+            568: {
+                slidesPerView: 2,
+                spaceBetween: 15,
+            },
+            700: {
+                slidesPerView: 2.2,
+                spaceBetween: 15,
+            },
+            768: {
+                slidesPerView: 2.5,
+                spaceBetween: 20,
+            },
+            870: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+            },
+            1000: {
+                slidesPerView: 4,
+                spaceBetween: 24,
+            },
+        },
+    };
+
+    return new Swiper(container, {
+        ...baseConfig,
+        ...options,
+        breakpoints: {
+            ...baseConfig.breakpoints,
+            ...(options.breakpoints || {}),
+        },
+    });
+}
+
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
@@ -581,6 +654,53 @@ class QuantityStepper {
     }
 }
 
+class ProductRecommendationsSection {
+    constructor(sectionEl) {
+        this.sectionEl = sectionEl;
+        this.productId = sectionEl.dataset.productId;
+        this.sectionId = sectionEl.dataset.sectionId;
+
+        if (!this.productId || !this.sectionId) return;
+
+        this.fetchRecommendations();
+    }
+
+    async fetchRecommendations() {
+        const url = `/recommendations/products?section_id=${this.sectionId}&product_id=${this.productId}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) return;
+
+            const html = await response.text();
+
+            // Парсим HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newSection = doc.querySelector('[data-section-type="product-recommendations"]');
+
+            // Нічого не повернулося – ховаємо секцію
+            if (!newSection) {
+                this.sectionEl.style.display = 'none';
+                return;
+            }
+
+            // Замінюємо вміст поточної секції на новий
+            this.sectionEl.innerHTML = newSection.innerHTML;
+
+            // Ініціалізуємо Swiper
+            this.swiper = createSectionSwiper(this.sectionEl, {
+                containerSelector: '.js-product-recommendations-swiper',
+                nextSelector: '.swiper-button-next',
+                prevSelector: '.swiper-button-prev',
+                paginationSelector: '.swiper-pagination'
+            });
+        } catch (error) {
+            console.error('Failed to load product recommendations', error);
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
@@ -591,6 +711,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('input[name="quantity"]').forEach(inp => {
         new QuantityValidator(inp)
+    });
+
+    document.querySelectorAll('[data-section-type="product-recommendations"]').forEach(section => {
+        new ProductRecommendationsSection(section);
     });
 
     new AddToCart(document);

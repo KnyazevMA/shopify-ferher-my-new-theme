@@ -37,53 +37,7 @@
 
       <div class="featured-products__grid">
         {%- for product in collection.products limit: section.settings.products_count -%}
-          <div
-            class="featured-products__item"
-            data-price="{{ product.price }}"
-            data-title="{{ product.title | escape }}"
-            data-index="{{ forloop.index0 }}"
-            {{ product.shopify_attributes }}
-          >
-            <a href="{{ product.url }}" class="featured-products__link">
-              {{ product.featured_image | image_url: width: 500 | image_tag: alt: product.title }}
-              <h3 class="featured-products__name">{{ product.title }}</h3>
-
-              {% if section.settings.show_price %}
-                <span class="featured-products__price">
-                  {{ product.price | money }}
-                </span>
-              {% endif %}
-
-              {% if section.settings.show_rating %}
-                <div
-                  class="featured-products__rating"
-                  role="img"
-                  aria-label="Rating {{ rating_value }} out of 5"
-                >
-                  <div class="featured-products__stars" data-rating="{{ rating_value }}">
-                    {% for i in (1..5) %}
-                      {% assign star_class = 'star' %}
-                      {% if i <= rating_value %}
-                        {% assign star_class = 'star is-filled' %}
-                      {% endif %}
-                      {% render 'icon-star', star_class: star_class %}
-                    {% endfor %}
-                    <span class="featured-products__stars-value" aria-hidden="true">{{ rating_value }}</span>
-                  </div>
-                </div>
-              {% endif %}
-
-              {% if section.settings.show_add_to_cart %}
-                <button
-                  class="featured-products__btn"
-                  type="button"
-                  data-product-id="{{ product.selected_or_first_available_variant.id }}"
-                >
-                  {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
-                </button>
-              {% endif %}
-            </a>
-          </div>
+          {% render 'product-card', product: product, rating_value: rating_value %}
         {% endfor %}
       </div>
     {% else %}

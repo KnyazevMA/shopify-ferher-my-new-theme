@@ -1,0 +1,54 @@
+{%- liquid
+  assign rating_value = 2.0 | plus: 0
+-%}
+
+<section
+  class="product-recommendations"
+  data-section-type="product-recommendations"
+  data-product-id="{{ product.id }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    <h2 class="product-recommendations__title">
+      {{ section.settings.heading }}
+    </h2>
+
+    <div class="swiper js-product-recommendations-swiper">
+      <div class="swiper-wrapper">
+        {% if recommendations.performed and recommendations.products_count > 0 %}
+          {% for product in recommendations.products %}
+            <div class="swiper-slide">
+              {% render 'product-card', product: product, rating_value: rating_value %}
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-button-next"></div>
+      <div class="swiper-pagination"></div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Заголовок",
+      "default": "You may also like"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+}
+{% endschema %}
