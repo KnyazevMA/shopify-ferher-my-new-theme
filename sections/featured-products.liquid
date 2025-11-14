@@ -1,0 +1,107 @@
+{%- liquid
+  assign collection_handle = section.settings.collection.handle | default: collection.handle
+  assign collection = collections[collection_handle] | default: collection
+  assign rating_value = 2.0 | plus: 0
+-%}
+
+<section
+  class="featured-products"
+  style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
+  role="region"
+  aria-label="{{ section.settings.title | escape }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <h2 class="featured-products__title">{{ section.settings.title }}</h2>
+    {% endif %}
+
+    {% if collection != blank %}
+      <div class="featured-products__controls">
+        <label for="sort-select">{{ 'sections.featured_products.sort_label' | t: default: 'Sort by' }}</label>
+        <select id="sort-select" class="featured-products__sort">
+          <option value="best-selling" selected>
+            {{ 'sections.featured_products.sort_best' | t: default: 'Best selling' }}
+          </option>
+          <option value="price-ascending">
+            {{ 'sections.featured_products.sort_low' | t: default: 'Price: Low to High' }}
+          </option>
+          <option value="price-descending">
+            {{ 'sections.featured_products.sort_high' | t: default: 'Price: High to Low' }}
+          </option>
+          <option value="title-ascending">
+            {{ 'sections.featured_products.sort_az' | t: default: 'Title: A–Z' }}
+          </option>
+        </select>
+      </div>
+
+      <div class="featured-products__grid">
+        {%- for product in collection.products limit: section.settings.products_count -%}
+          {% render 'product-card', product: product, rating_value: rating_value %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>{{ 'sections.featured_products.no_collection' | t: default: 'Please select a collection' }}</p>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Section title",
+      "default": "Featured products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select collection"
+    },
+    {
+      "type": "range",
+      "id": "products_count",
+      "label": "Number of products",
+      "min": 2,
+      "max": 12,
+      "default": 4
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Show add to cart button",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "label": "Section padding bottom (px)",
+      "min": 0,
+      "max": 80,
+      "default": 40,
+      "step": 5
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured products",
+      "category": "Custom sections"
+    }
+  ]
+}
+{% endschema %}

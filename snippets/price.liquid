@@ -1,0 +1,7 @@
+{%- assign v = product.selected_or_first_available_variant -%}
+<span class="price">
+  {%- if v.compare_at_price > v.price -%}
+    <s class="price--compare">{{ v.compare_at_price | money }}</s>
+  {%- endif -%}
+  <span class="price--current">{{ v.price | money }}</span>
+</span>

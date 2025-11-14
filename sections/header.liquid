@@ -1,9 +1,92 @@
-<header class="site-header" role="banner">
-  <div class="container">
-    {% render 'logo' %}
-    {% render 'nav-main' %}
-    <a href="{{ routes.cart_url }}" aria-label="{{ 'a11y.open_cart' | t }}">
-      {{ 'header.cart' | t }}
-    </a>
+{%- assign sticky = section.settings.sticky -%}
+
+<header
+  class="header {% if sticky %}header--sticky{% endif %}"
+  style="margin-bottom: {{ section.settings.margin-bottom | append: 'px' }};"
+>
+  <div class="page-width">
+    <div class="header__wrapper" role="navigation" aria-label="{{ 'a11y.main_nav' | t }}">
+      <button
+        class="header__burger"
+        type="button"
+        aria-label="{{ 'a11y.open_menu' | t | default: 'Open menu' }}"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <span class="header__burger-lines" aria-hidden="true"></span>
+      </button>
+      <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ 'a11y.home_link' | t }}">
+        {%- if section.settings.logo != blank -%}
+          {%- assign img = section.settings.logo -%}
+          <img
+            class="header__logo-image"
+            src="{{ img | image_url: width: 180 }}"
+            srcset="{{ img | image_url: width: 180 }} 1x, {{ img | image_url: width: 360 }} 2x"
+            width="{{ img.width }}"
+            height="{{ img.height }}"
+            alt="{{ section.settings.logo_alt | default: shop.name | escape }}"
+            loading="eager"
+          >
+        {%- else -%}
+          <span class="header__logo-text">{{ shop.name }}</span>
+        {%- endif -%}
+      </a>
+
+      {%- render 'main-nav', main_menu: section.settings.main_menu -%}
+
+      <div class="header__right-menu">
+        <a class="header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'a11y.open_cart' | t }}">
+          <svg class="header__cart-icon" width="24" height="24" aria-hidden="true">
+            <use href="#cart-icon"></use>
+          </svg>
+        </a>
+      </div>
+    </div>
   </div>
 </header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky header",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "text",
+      "id": "logo_alt",
+      "label": "Logo alt text",
+      "default": "Shop logo"
+    },
+    {
+      "type": "link_list",
+      "id": "main_menu",
+      "label": "Main menu (Navigation)"
+    },
+    {
+      "type": "range",
+      "id": "margin-bottom",
+      "label": "Section margin bottom (px)",
+      "min": 0,
+      "max": 80,
+      "default": 40,
+      "step": 5
+    }
+  ],
+  "blocks": [],
+  "presets": [
+    {
+      "name": "Header",
+      "category": "Header"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,95 @@
+<div class="quantity">
+  <button
+    class="quantity-btn quantity-btn--minus"
+    type="button"
+    data-step="-1"
+    aria-label="Minus"
+    data-qty="minus"
+  >
+    –
+  </button>
+  <input
+    class="quantity-input"
+    id="Quantity-{{ product.id }}"
+    type="number"
+    name="quantity"
+    min="1"
+    value="1"
+    inputmode="numeric"
+    aria-describedby="QuantityHelp-{{ product.id }}{% if form.errors and form.errors['quantity'] %} FieldError-Quantity-{{ product.id }}{% endif %}"
+    {% if form.errors and form.errors.quantity %}
+      aria-invalid="true"
+    {% endif %}
+    required
+  >
+  <button class="quantity-btn quantity-btn--plus" type="button" data-step="1" aria-label="Plus" data-qty="plus">
+    +
+  </button>
+</div>
+
+<style>
+  .quantity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .quantity-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-bg, #fff);
+    color: var(--color-text, #111);
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .quantity-btn:hover {
+    border-color: var(--color-accent, #3b82f6);
+    background: color-mix(in srgb, var(--color-accent, #3b82f6) 7%, #fff);
+  }
+
+  .quantity-btn:active {
+    transform: translateY(1px);
+  }
+
+  .quantity-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent, #3b82f6) 20%, transparent);
+  }
+
+  .quantity-input {
+    width: 100px;
+    border: 1px solid var(--color-border, #e5e7eb);
+    border-radius: var(--radius-md, 8px);
+    background: var(--color-bg, #fff);
+    color: var(--color-text, #111);
+    text-align: center;
+    font-size: 1rem;
+    line-height: 1.2;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  .quantity-input:hover {
+    border-color: var(--color-accent, #3b82f6);
+  }
+
+  .quantity-input:focus {
+    outline: none;
+    border-color: var(--color-accent, #3b82f6);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent, #3b82f6) 20%, transparent);
+  }
+
+  .quantity-input[aria-invalid='true'] {
+    border-color: var(--color-danger, #ef4444);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-danger, #ef4444) 20%, transparent);
+  }
+
+  .quantity-input::-webkit-outer-spin-button,
+  .quantity-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+</style>

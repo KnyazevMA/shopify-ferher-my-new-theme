@@ -1,9 +1,109 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
-    "main": {
-      "type": "header",
-      "settings": {}
+    "featured_products_xqwcrY": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "title": "Featured products",
+        "collection": "summer-collection-under-100",
+        "products_count": 4,
+        "show_price": true,
+        "show_rating": true,
+        "show_add_to_cart": true,
+        "padding-bottom": 40
+      }
+    },
+    "designers_wiAGAB": {
+      "type": "designers",
+      "blocks": {
+        "designer_pRGdrU": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "olivia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_nwXnCw": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "kenji",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_VzQJqb": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "sofia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        },
+        "designer_gQgaEM": {
+          "type": "designer",
+          "settings": {
+            "designer_ref": "liam",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
+          }
+        }
+      },
+      "block_order": [
+        "designer_pRGdrU",
+        "designer_nwXnCw",
+        "designer_VzQJqb",
+        "designer_gQgaEM"
+      ],
+      "name": "Designers",
+      "settings": {
+        "title": "Наші дизайнери",
+        "description": "<p>Команда, що створює колекції.</p>",
+        "padding-bottom": 40
+      }
+    },
+    "feedback_rBYXNH": {
+      "type": "feedback",
+      "name": "Contact form",
+      "settings": {
+        "title": "Need help?",
+        "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
+        "show_phone": true
+      }
     }
   },
-  "order": ["main"]
+  "order": [
+    "featured_products_xqwcrY",
+    "designers_wiAGAB",
+    "feedback_rBYXNH"
+  ]
 }

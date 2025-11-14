@@ -1,8 +1,13 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
-  "header": {
-    "cart": "Кошик",
-    "shop": "Магазин"
-  },
   "footer": {
     "login": "Вхід",
     "search": "Пошук",
@@ -10,6 +15,73 @@
   },
   "a11y": {
     "open_cart": "Відкрити кошик",
-    "footer_nav": "Навігація у підвалі"
+    "footer_nav": "Навігація у підвалі",
+    "home_link": "Перейти на головну сторінку",
+    "main_nav": "Головне меню навігації",
+    "open_menu": "Відкрити меню",
+    "swiper_prev": "Кнопка для прокручування каруселі назад",
+    "swiper_next": "Кнопка для прокручування каруселі вперед"
+  },
+  "forms": {
+    "honeypot": "Залиште це поле порожнім"
+  },
+  "sections": {
+    "featured_products": {
+      "no_collection": "Будь ласка, виберіть колекцію",
+      "sort_label": "Сортувати за:",
+      "sort_best": "Найпопулярніші ",
+      "sort_low": "Ціна: від нижчої до вищої",
+      "sort_high": "Ціна: від вищої до нижчої",
+      "sort_az": "Назва: від А до Я"
+    },
+    "designers": {
+      "designer": "Дизайнер",
+      "bio": "Біографія",
+      "tags": "Теги",
+      "portfolio_links": "Посилання на портфоліо",
+      "dob": "Дата народження",
+      "verified": "Верифікований дизайнер",
+      "no_verified": "Неверифікований дизайнер"
+    },
+    "contact": {
+      "success": "Дякуємо! Ваше повідомлення надіслано.",
+      "name_label": "Ім’я",
+      "name_placeholder": "Введіть ім’я",
+      "phone_label": "Телефон",
+      "phone_placeholder": "Введіть номер телефону",
+      "email_label": "Email",
+      "email_placeholder": "Введіть email",
+      "message_label": "Повідомлення",
+      "message_placeholder": "Опишіть ваше питання",
+      "submit": "Надіслати",
+      "submit_aria": "Надіслати форму зворотного зв’язку",
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Додати до кошика",
+      "quantity": "Кількість",
+      "sold_out": "Продано",
+      "in_stock": "В наявності",
+      "in_stock_generic": "Є в наявності",
+      "quantity_help": "Введіть бажану кількість продукту для додавання до кошика.",
+      "inquiry_title": "Запит про товар",
+      "reason": "Причина звернення",
+      "preferred_contact": "Бажаний спосіб зв'язку",
+      "contact_email": "Електронна пошта",
+      "contact_phone": "Телефон",
+      "added_success": "Товар успішно додано",
+      "quantity_min_error": "Кількість повинна бути не менше 1",
+      "added_short": "Додано",
+      "added_to_cart": "Товар додано до кошика"
+    }
+  },
+  "cart": {
+    "missing_product_id": "Відсутній ідентифікатор товару",
+    "add_to_cart_failed": "Не вдалося додати до кошика",
+    "error_adding_to_cart": "Помилка додавання до кошика"
+  },
+  "general": {
+    "error_short": "Помилка"
   }
 }

@@ -1,0 +1,91 @@
+{%- liquid
+  assign rating_value = 2.0 | plus: 0
+-%}
+
+<section
+  class="product-recommendations"
+  data-section-type="product-recommendations"
+  data-product-id="{{ product.id }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="page-width">
+    <h2
+      class="
+        product-recommendations__title
+        tw:flex tw:justify-center
+        tw:text-3xl tw:leading-5 tw:mb-12
+        tw:md:mb-8
+        tw:max-md:text-2xl tw:max-md:leading-6
+      "
+    >
+      {{ section.settings.heading }}
+    </h2>
+    <div class="wrapper tw:relative">
+      <div class="swiper js-product-recommendations-swiper">
+        <ul class="swiper-wrapper tw:m-0 tw:p-0 tw:list-none">
+          {% if recommendations.performed and recommendations.products_count > 0 %}
+            {% for product in recommendations.products %}
+              <li class="swiper-slide">
+                {% render 'product-card', product: product, rating_value: rating_value %}
+              </li>
+            {% endfor %}
+          {% endif %}
+        </ul>
+      </div>
+      <button
+        class="
+          swiper-button-prev
+          tw:w-10! tw:h-10! tw:bg-white tw:border tw:rounded-full tw:border-gray-200 tw:opacity-100
+          tw:left-[-2%]! tw:rotate-180
+          tw:hover:bg-gray-300
+          tw:[&.swiper-button-disabled]:opacity-0!
+          tw:transition tw:duration-300 tw:ease-linear
+        "
+        aria-label="{{'a11y.swiper_prev' | t: default: 'Key to scroll back through the carousel' }}"
+        type="button"
+      >
+        <svg class="header__cart-icon tw:w-4! tw:h-4!" width="8" height="6" aria-hidden="true">
+          <use href="#icon-arrow"></use>
+        </svg>
+      </button>
+      <button
+        class="
+          swiper-button-next
+          tw:w-10! tw:h-10! tw:bg-white tw:border tw:rounded-full tw:border-gray-200 tw:opacity-100
+          tw:right-[-2%]!
+          tw:hover:bg-gray-300
+          tw:[&.swiper-button-disabled]:opacity-0!
+          tw:transition tw:duration-300 tw:ease-linear
+        "
+        aria-label="{{'a11y.swiper_next' | t: default: 'Key to scroll forward through the carousel' }}"
+        type="button"
+      >
+        <svg class="header__cart-icon tw:w-4! tw:h-4!" width="8" height="6" aria-hidden="true">
+          <use href="#icon-arrow"></use>
+        </svg>
+      </button>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product recommendations",
+  "enabled_on": {
+    "templates": ["product"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Заголовок",
+      "default": "You may also like"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product recommendations"
+    }
+  ]
+}
+{% endschema %}

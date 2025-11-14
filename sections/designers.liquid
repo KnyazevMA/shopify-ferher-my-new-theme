@@ -1,0 +1,223 @@
+<section
+  class="designers"
+  style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
+>
+  <div class="page-width">
+    {% if section.settings.title %}
+      <h2 class="designers__title">{{ section.settings.title }}</h2>
+    {% endif %}
+    {% if section.settings.description != blank %}
+      <div class="designers__description">{{ section.settings.description }}</div>
+    {% endif %}
+
+    <ul class="designers__grid">
+      {% for block in section.blocks %}
+        {% assign d = block.settings.designer_ref %}
+        <li class="designers__grid-item">
+          <article class="designer-card" {{ block.shopify_attributes }}>
+            <div class="designer-card__header">
+              {% assign avatar_file = null %}
+              {%- if d and d.avatar -%}
+                {%- assign avatar_file = d.avatar.value -%}
+              {%- elsif block.settings.avatar != blank -%}
+                {%- assign avatar_file = block.settings.avatar -%}
+              {%- else -%}
+                <svg class="designer-card__avatar" aria-hidden="true" focusable="false">
+                  <use href="#avatar-fallback" xlink:href="#avatar-fallback"></use>
+                </svg>
+              {%- endif -%}
+              {% if avatar_file != blank %}
+                {{ avatar_file | image_url: width: 600 | image_tag: class: 'designer-card__avatar', alt: block.name }}
+              {% endif %}
+
+              <h2 class="designer-card__name">
+                <span class="designer-card__first-name">{{ d.first_name | default: block.settings.first_name }}</span>
+                <span class="designer-card__last-name">{{ d.last_name | default: block.settings.last_name }}</span>
+              </h2>
+              <p class="designer-card__role">{{ 'sections.designers.designer' | t: default: 'Designer' }}</p>
+            </div>
+
+            {% if d and d.bio %}
+              {% assign bio_html = d.bio.value %}
+            {% else %}
+              {% assign bio_html = block.settings.bio %}
+            {% endif %}
+            {% if bio_html != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">{{ 'sections.designers.bio' | t: default: 'Bio' }}</h3>
+                <p class="designer-card__bio">{{ bio_html }}</p>
+              </div>
+            {% endif %}
+
+            {% if d and d.tags %}
+              {% assign tags = d.tags.value %}
+            {% else %}
+              {% assign tags_raw = block.settings.tags | default: '' %}
+              {% assign tags_norm = tags_raw | replace: ' і ', ',' | replace: ' and ', ',' | replace: ' & ', ',' %}
+              {% assign tags = tags_norm | split: ',' %}
+            {% endif %}
+            {% if tags != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">{{ 'sections.designers.tags' | t: default: 'Tags' }}</h3>
+                <div class="designer-card__tags">
+                  {% for tag in tags %}
+                    {% assign t = tag | strip %}
+                    {% if t != '' %}
+                      <span class="designer-card__chip">{{ t }}</span>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if d and d.links %}
+              {% assign links = d.links.value %}
+            {% else %}
+              {% assign links_raw = block.settings.links | default: '' %}
+              {% assign links_norm = links_raw | replace: ' і ', ',' | replace: ' and ', ',' | replace: ' & ', ',' %}
+              {% assign links = links_norm | split: ',' %}
+            {% endif %}
+            {% if links != blank %}
+              <div class="designer-card__section">
+                <h3 class="designer-card__section-title">
+                  {{ 'sections.designers.portfolio_links' | t: default: 'Portfolio links' }}
+                </h3>
+                <div class="designer-card__links">
+                  {% for link in links %}
+                    <a href="{{ link | strip }}" target="_blank">{{ link | strip }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+
+            {% if d and d.date_of_birth %}
+              {% assign dob = d.date_of_birth.value | date: '%d %B %Y' %}
+            {% else %}
+              {% assign dob = block.settings.date_of_birth | date: '%d %B %Y' %}
+            {% endif %}
+            {% if dob != blank %}
+              <div class="designer-card__section">
+                <div class="designer-card__label">{{ 'sections.designers.dob' | t: default: 'Date of birth' }}</div>
+                <div class="designer-card__date">{{ dob }}</div>
+              </div>
+            {% endif %}
+
+            {% if d and d.verified %}
+              {% assign verified = d.verified.value %}
+            {% else %}
+              {% assign verified = block.settings.verified %}
+            {% endif %}
+            {% if verified == true %}
+              <div class="designer-card__verified">
+                {{ 'sections.designers.verified' | t: default: 'Verified designer' }}
+              </div>
+            {% else %}
+              <div class="designer-card__no-verified">
+                {{ 'sections.designers.no_verified' | t: default: 'No verified designer' }}
+              </div>
+            {% endif %}
+          </article>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Designers (blocks only)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Наші дизайнери"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Команда, що створює колекції.</p>"
+    },
+    {
+      "type": "range",
+      "id": "padding-bottom",
+      "label": "Section padding bottom (px)",
+      "min": 0,
+      "max": 80,
+      "default": 40,
+      "step": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "designer",
+      "name": "Designer card",
+      "settings": [
+        {
+          "type": "metaobject",
+          "id": "designer_ref",
+          "label": "Designer (metaobject)",
+          "metaobject_type": "designer"
+        },
+        {
+          "type": "text",
+          "id": "first_name",
+          "label": "First name",
+          "default": "Name"
+        },
+        {
+          "type": "text",
+          "id": "last_name",
+          "label": "Last name",
+          "default": "Last name"
+        },
+        {
+          "type": "image_picker",
+          "id": "avatar",
+          "label": "Avatar"
+        },
+        {
+          "type": "richtext",
+          "id": "bio",
+          "label": "Bio",
+          "default": "<p>Bio<p>"
+        },
+
+        {
+          "type": "text",
+          "id": "tags",
+          "label": "Tags (comma separated)",
+          "default": "womenswear, knitwear"
+        },
+        {
+          "type": "text",
+          "id": "links",
+          "label": "Links (comma separated URLs)",
+          "default": "https://instagram.com/, https://behance.net/"
+        },
+
+        {
+          "type": "text",
+          "id": "date_of_birth",
+          "label": "Date of birth (YYYY-MM-DD)",
+          "default": "1888-10-01"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "Verified designer",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Designers",
+      "category": "Custom sections",
+      "blocks": [{ "type": "designer" }, { "type": "designer" }, { "type": "designer" }]
+    }
+  ]
+}
+{% endschema %}
