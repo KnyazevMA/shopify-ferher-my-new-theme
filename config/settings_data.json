@@ -10,6 +10,18 @@
 {
   "current": {
     "order": [],
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {
+          "sticky": true,
+          "logo": "shopify://shop_images/logo-icon.svg",
+          "logo_alt": "Shop logo",
+          "main_menu": "main-menu",
+          "margin-bottom": 40
+        }
+      }
+    },
     "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
