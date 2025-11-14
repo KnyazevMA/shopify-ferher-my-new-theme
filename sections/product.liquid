@@ -121,11 +121,9 @@
         <div class="product__inner-right">
           <h1 class="product__title tw:mb-3">{{ product.title }}</h1>
 
-          <!-- Start of Judge.me code -->
-          <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
-            {{ product.metafields.judgeme.badge }}
-          </div>
-          <!-- End of Judge.me code -->
+
+
+          <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}"></div>
 
           {%- form 'product', product, id: 'ProductForm', class: 'product__form' -%}
             <div class="product__wrapper-top tw:flex tw:justify-between tw:max-w-3/4 tw:gap-2.5">
