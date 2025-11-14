@@ -11,6 +11,7 @@
   <body>
     {{ 'main.css' | asset_url | stylesheet_tag }}
     {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+    {{ 'tailwind-output.css' | asset_url | stylesheet_tag }}
     {% render 'icon-sprite' %}
 
     {% section 'header' %}
