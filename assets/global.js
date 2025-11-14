@@ -14,12 +14,82 @@ function t(key, fallback = '') {
     }
 }
 
+function createSectionSwiper(rootEl, {
+    containerSelector,
+    nextSelector,
+    prevSelector,
+    paginationSelector,
+    options = {}
+} = {}) {
+    if (!window.Swiper) {
+        console.warn('Swiper is not loaded');
+        return null;
+    }
+
+    const container = rootEl.querySelector(containerSelector);
+    if (!container) {
+        console.warn('Swiper container not found:', containerSelector);
+        return null;
+    }
+
+    const nextEl = nextSelector ? rootEl.querySelector(nextSelector) : null;
+    const prevEl = prevSelector ? rootEl.querySelector(prevSelector) : null;
+    const paginationEl = paginationSelector ? rootEl.querySelector(paginationSelector) : null;
+
+    const baseConfig = {
+        slidesPerView: 4,
+        spaceBetween: 24,
+        loop: false,
+        breakpoints: {
+            0: { slidesPerView: 1.2, spaceBetween: 10 },
+            450: { slidesPerView: 1.3, spaceBetween: 10 },
+            568: { slidesPerView: 2, spaceBetween: 15 },
+            700: { slidesPerView: 2.2, spaceBetween: 15 },
+            768: { slidesPerView: 2.5, spaceBetween: 20 },
+            870: { slidesPerView: 3, spaceBetween: 20 },
+            1000: { slidesPerView: 4, spaceBetween: 24 },
+        },
+    };
+
+    if (nextEl && prevEl) {
+        baseConfig.navigation = {
+            nextEl,
+            prevEl,
+        };
+    }
+
+    if (paginationEl) {
+        baseConfig.pagination = {
+            el: paginationEl,
+            clickable: true,
+        };
+    }
+
+    const {
+        breakpoints: userBreakpoints,
+        pagination: _userPagination,
+        navigation: _userNavigation,
+        ...restOptions
+    } = options || {};
+
+    const finalConfig = {
+        ...baseConfig,
+        ...restOptions,
+        breakpoints: {
+            ...baseConfig.breakpoints,
+            ...(userBreakpoints || {}),
+        },
+    };
+
+    return new Swiper(container, finalConfig);
+}
+
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
         this.select = section.querySelector('#sort-select');
         this.grid = section.querySelector('.featured-products__grid');
-        this.items = Array.from(this.grid.querySelectorAll('.featured-products__item'));
+        this.items = Array.from(this.grid.querySelectorAll('.product-card'));
 
         this.items.forEach((el, i) => {
             if (!el.dataset.index) el.dataset.index = String(i);
@@ -69,13 +139,13 @@ class FeaturedProducts {
     getPrice(el) {
         const dp = el.dataset.price;
         if (dp && !Number.isNaN(Number(dp))) return Number(dp);
-        const txt = (el.querySelector('.featured-products__price')?.textContent || '').replace(/[^\d.,-]/g, '');
+        const txt = (el.querySelector('.product-card__price')?.textContent || '').replace(/[^\d.,-]/g, '');
         const num = Number(txt.replace(/\./g, '').replace(',', '.'));
         return Number.isNaN(num) ? Number.MAX_SAFE_INTEGER : Math.round(num * 100);
     }
 
     getTitle(el) {
-        return (el.dataset.title || el.querySelector('.featured-products__name')?.textContent || '').trim();
+        return (el.dataset.title || el.querySelector('.product-card__name')?.textContent || '').trim();
     }
 
     getIndex(el) {
@@ -92,7 +162,7 @@ class AddToCart {
 
     init() {
         this.context.addEventListener('click', (e) => {
-            const btn = e.target.closest('.featured-products__btn');
+            const btn = e.target.closest('.product-card__btn');
             if (!btn) return;
             e.preventDefault();
             this.handleAdd(btn);
@@ -581,6 +651,53 @@ class QuantityStepper {
     }
 }
 
+class ProductRecommendationsSection {
+    constructor(sectionEl) {
+        this.sectionEl = sectionEl;
+        this.productId = sectionEl.dataset.productId;
+        this.sectionId = sectionEl.dataset.sectionId;
+
+        if (!this.productId || !this.sectionId) return;
+
+        this.fetchRecommendations();
+    }
+
+    async fetchRecommendations() {
+        const url = `/recommendations/products?section_id=${this.sectionId}&product_id=${this.productId}`;
+
+        try {
+            const response = await fetch(url);
+            if (!response.ok) return;
+
+            const html = await response.text();
+
+            // Парсим HTML
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const newSection = doc.querySelector('[data-section-type="product-recommendations"]');
+
+            // Нічого не повернулося – ховаємо секцію
+            if (!newSection) {
+                this.sectionEl.style.display = 'none';
+                return;
+            }
+
+            // Замінюємо вміст поточної секції на новий
+            this.sectionEl.innerHTML = newSection.innerHTML;
+
+            // Ініціалізуємо Swiper
+            this.swiper = createSectionSwiper(this.sectionEl, {
+                containerSelector: '.js-product-recommendations-swiper',
+                nextSelector: '.swiper-button-next',
+                prevSelector: '.swiper-button-prev',
+            });
+
+        } catch (error) {
+            console.error('Failed to load product recommendations', error);
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
@@ -591,6 +708,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('input[name="quantity"]').forEach(inp => {
         new QuantityValidator(inp)
+    });
+
+    document.querySelectorAll('[data-section-type="product-recommendations"]').forEach(section => {
+        new ProductRecommendationsSection(section);
     });
 
     new AddToCart(document);
