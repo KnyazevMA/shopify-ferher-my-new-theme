@@ -178,136 +178,21 @@
             {% endif %}
 
             {%- if color_option_index >= 0 -%}
-              <fieldset class="product__option-color tw:border-none tw:p-0 tw:m-0 tw:mb-4">
-                <legend class="product__legend tw:m-0 tw:mb-3">{{ section.settings.color_text_title }}</legend>
-                <div class="product__color-label-inner tw:flex tw:gap-2 tw:flex-row">
-                  {%- assign color_option = product.options_with_values[color_option_index] -%}
-                  {%- assign unique_colors = color_option.values | uniq -%}
-
-                  {%- assign color_opt_number = color_option_index | plus: 1 -%}
-                  {%- assign color_option_key = 'option' | append: color_opt_number -%}
-
-                  {%- for color_value in unique_colors limit: 3 -%}
-                    {%- assign has_available_for_color = false -%}
-                    {%- assign first_image_for_color = '' -%}
-                    {%- for v in product.variants -%}
-                      {%- assign v_color = v[color_option_key] -%}
-                      {%- if v_color and v_color == color_value -%}
-                        {%- if first_image_for_color == '' and v.featured_image -%}
-                          {%- assign first_image_for_color = v.featured_image | image_url: width: 800 -%}
-                        {%- endif -%}
-                        {%- if v.available -%}
-                          {%- assign has_available_for_color = true -%}
-                        {%- endif -%}
-                      {%- endif -%}
-                    {%- endfor -%}
-                    <label class="custom-radio tw:cursor-pointer">
-                      <input
-                        class="custom-radio__field tw:peer tw:absolute tw:opacity-0 tw:size-0 tw:pointer-events-none"
-                        type="radio"
-                        name="color"
-                        value="{{ color_value }}"
-                        data-available="{{ has_available_for_color }}"
-                        data-image="{{ first_image_for_color }}"
-                        {% if forloop.first %}
-                          checked
-                        {% endif %}
-                        {% if form.errors and form.errors.color %}
-                          aria-invalid="true"
-                          aria-describedby="FieldError-Color-{{ product.id }}"
-                        {% endif %}
-                      >
-                      <span
-                        class="
-                          custom-radio__visual custom-radio__visual--color
-                          tw:size-8
-                          tw:flex tw:flex-wrap tw:justify-center tw:content-center
-                          tw:border-2 tw:border-black tw:rounded-full
-                          tw:p-4
-                          tw:peer-focus-visible:border-neutral-500
-                          tw:peer-focus-visible:opacity-80
-                          tw:peer-hover:border-neutral-500
-                          tw:peer-hover:opacity-80
-                          tw:peer-checked:border-neutral-500
-                          tw:peer-checked:opacity-70
-                        "
-                        style="background-color: {{ color_value | downcase }};"
-                      ></span>
-                    </label>
-                  {%- endfor -%}
-                </div>
-
-                {% if form.errors and form.errors.color %}
-                  <p
-                    id="FieldError-Color-{{ product.id }}"
-                    class="field-error"
-                    role="alert"
-                    aria-live="assertive"
-                  >
-                    {{ form.errors.color | join: ', ' }}
-                  </p>
-                {% endif %}
-              </fieldset>
+              {% render 'product-option-radio',
+                product: product,
+                option_index: color_option_index,
+                legend: section.settings.color_text_title,
+                mode: 'color'
+              %}
             {%- endif -%}
 
             {%- if size_option_index >= 0 -%}
-              <fieldset class="product__option-size tw:border-none tw:p-0 tw:m-0 tw:mb-4">
-                <legend class="product__legend tw:m-0 tw:mb-3">{{ section.settings.size_text_title }}</legend>
-                <div class="product__size-label-inner tw:grid tw:grid-cols-3 tw:gap-2 tw:w-full">
-                  {%- assign size_option = product.options_with_values[size_option_index] -%}
-                  {%- assign size_opt_number = size_option_index | plus: 1 -%}
-                  {%- assign size_option_key = 'option' | append: size_opt_number -%}
-                  {%- for size_value in size_option.values -%}
-                    {%- assign matched_variant_for_size = null -%}
-                    {%- for v in product.variants -%}
-                      {%- if v[size_option_key] == size_value -%}
-                        {%- assign matched_variant_for_size = v -%}
-                        {%- break -%}
-                      {%- endif -%}
-                    {%- endfor -%}
-                    <label class="custom-radio tw:cursor-pointer">
-                      <input
-                        class="custom-radio__field tw:peer tw:absolute tw:opacity-0 tw:size-0 tw:pointer-events-none"
-                        type="radio"
-                        name="size"
-                        value="{{ size_value }}"
-                        data-stock="{{ matched_variant_for_size.inventory_quantity }}"
-                        data-available="{{ matched_variant_for_size.available }}"
-                        {% if forloop.first %}
-                          checked
-                        {% endif %}
-                        {% if form.errors and form.errors.size %}
-                          aria-invalid="true"
-                          aria-describedby="FieldError-Size-{{ product.id }}"
-                        {% endif %}
-                      >
-                      <span
-                        class="
-                          custom-radio__visual
-                          tw:flex tw:flex-wrap tw:justify-center tw:content-center
-                          tw:border tw:border-gray-300 tw:rounded-lg
-                          tw:p-4
-                          tw:peer-focus-visible:border-black
-                          tw:peer-hover:border-black
-                          tw:peer-checked:border-black
-                        "
-                      >
-                        {{- size_value -}}
-                      </span>
-                    </label>
-                  {%- endfor -%}
-                </div>
-                {% if form.errors and form.errors.size %}
-                  <p
-                    id="FieldError-Size-{{ product.id }}"
-                    class="field-error"
-                    role="alert"
-                    aria-live="assertive"
-                  >
-                    {{ form.errors.size | join: ', ' }}
-                  </p>
-                {% endif %}
-              </fieldset>
+              {% render 'product-option-radio',
+                product: product,
+                option_index: size_option_index,
+                legend: section.settings.size_text_title,
+                mode: 'size'
+              %}
             {%- endif -%}
 
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
@@ -358,48 +243,53 @@
           </p>
         </div>
       </div>
-
-      <script type="application/json" id="ProductVariants-{{ product.id }}">
-        {
-          {%- for v in product.variants -%}
-            "{{ v.id }}": {
-              "id": {{ v.id | json }},
-              "available": {{ v.available | json }},
-              "inventory_quantity": {{ v.inventory_quantity | default: 0 | json }},
-              "option1": {{ v.option1 | json }},
-              "option2": {{ v.option2 | json }},
-              "inventory_management": {{ v.inventory_management | json }},
-              "inventory_policy": {{ v.inventory_policy | json }},
-              "featured_image": {{ v.featured_image | image_url: width: 800 | json }},
-              "price_money": {{ v.price | money | json }},
-              "compare_money": {{ v.compare_at_price | money | json }}
-            }{% unless forloop.last %},{% endunless %}
-          {%- endfor -%}
-        }
-      </script>
-
-      <script type="application/json" id="Translations">
-        {
-          "in_stock": {{ 'products.product.in_stock' | t: default: 'In stock: ' | json }},
-          "sold_out": {{ 'products.product.sold_out' | t: default: 'Sold out' | json }},
-          "in_stock_generic": {{ 'products.product.in_stock_generic' | t: default: 'In stock' | json }},
-          "quantity_min_error": {{ 'products.product.quantity_min_error' | t: default: 'Quantity must be at least 1' | json }},
-          "productId": {{ product.id | json }},
-          "locale": {{ request.locale.iso_code | default: shop.locale | json }},
-          "added_short": {{ 'products.product.added_short' | t: default: 'Added!' | json }},
-          "error_short": {{ 'general.error_short' | t: default: 'Error' | json }},
-          "added_to_cart": {{ 'products.product.added_to_cart' | t: default: 'Added to cart' | json }},
-          "missing_product_id": {{ 'cart.missing_product_id' | t: default: 'Missing product id' | json }},
-          "add_to_cart_failed": {{ 'cart.add_to_cart_failed' | t: default: 'Add to cart failed' | json }},
-          "error_adding_to_cart": {{ 'cart.error_adding_to_cart' | t: default: 'Error adding to cart' | json }}
-        }
-      </script>
-
     {% else %}
       <p>Product object is missing in this context.</p>
     {% endif %}
   </div>
 </section>
+
+<script type="application/json" id="ProductVariants-{{ product.id }}">
+  {
+    {%- for v in product.variants -%}
+      "{{ v.id }}": {
+        "id": {{ v.id | json }},
+        "available": {{ v.available | json }},
+        "inventory_quantity": {{ v.inventory_quantity | default: 0 | json }},
+        "option1": {{ v.option1 | json }},
+        "option2": {{ v.option2 | json }},
+        "inventory_management": {{ v.inventory_management | json }},
+        "inventory_policy": {{ v.inventory_policy | json }},
+        "featured_image": {{ v.featured_image | image_url: width: 800 | json }},
+        "price_money": {{ v.price | money | json }},
+        "compare_money": {{ v.compare_at_price | money | json }}
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  }
+</script>
+
+<script type="application/json" id="Translations">
+  {
+    "in_stock": {{ 'products.product.in_stock' | t: default: 'In stock: ' | json }},
+    "sold_out": {{ 'products.product.sold_out' | t: default: 'Sold out' | json }},
+    "in_stock_generic": {{ 'products.product.in_stock_generic' | t: default: 'In stock' | json }},
+    "quantity_min_error": {{ 'products.product.quantity_min_error' | t: default: 'Quantity must be at least 1' | json }},
+    "productId": {{ product.id | json }},
+    "locale": {{ request.locale.iso_code | default: shop.locale | json }},
+    "added_short": {{ 'products.product.added_short' | t: default: 'Added!' | json }},
+    "error_short": {{ 'general.error_short' | t: default: 'Error' | json }},
+    "added_to_cart": {{ 'products.product.added_to_cart' | t: default: 'Added to cart' | json }},
+    "missing_product_id": {{ 'cart.missing_product_id' | t: default: 'Missing product id' | json }},
+    "add_to_cart_failed": {{ 'cart.add_to_cart_failed' | t: default: 'Add to cart failed' | json }},
+    "error_adding_to_cart": {{ 'cart.error_adding_to_cart' | t: default: 'Error adding to cart' | json }}
+  }
+</script>
+
+{%- style -%}
+  .product {
+    margin-bottom: {{ section.settings.bottom_margin | default: 0 }}px;
+  }
+{%- endstyle -%}
 
 {% schema %}
 {
@@ -422,6 +312,15 @@
       "id": "size_text_title",
       "label": "Size label text",
       "default": "Виберіть розмір:"
+    },
+    {
+      "type": "range",
+      "id": "bottom_margin",
+      "label": "Відступ знизу (px)",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "default": 40
     }
   ]
 }
