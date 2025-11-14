@@ -9,54 +9,6 @@
  */
 {
   "sections": {
-    "promo_banners_mfdTkL": {
-      "type": "promo-banners",
-      "blocks": {
-        "banner_rCtc3z": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/Collection-1.jpg",
-            "title": "Осіння колекція",
-            "button_label": "Подивитись колекцію",
-            "button_link": "shopify://collections",
-            "aspect_ratio": "1-1"
-          }
-        },
-        "banner_feUJyM": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/Collection-2.webp",
-            "title": "Зимова колекція",
-            "button_label": "Переглянути колекцію",
-            "button_link": "shopify://collections",
-            "aspect_ratio": "1-1"
-          }
-        },
-        "banner_a4DVB3": {
-          "type": "banner",
-          "settings": {
-            "image": "shopify://shop_images/Collection-3.jpg",
-            "title": "Весіння колекція",
-            "button_label": "Ознайомитись з колекцією",
-            "button_link": "shopify://collections",
-            "aspect_ratio": "1-1"
-          }
-        }
-      },
-      "block_order": [
-        "banner_rCtc3z",
-        "banner_feUJyM",
-        "banner_a4DVB3"
-      ],
-      "name": "Promo banners",
-      "settings": {
-        "title": "Ознайомтеся з нашими колекціями",
-        "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
-        "text_align": "center",
-        "padding-bottom": 40,
-        "color_scheme": "light"
-      }
-    },
     "featured_products_xqwcrY": {
       "type": "featured-products",
       "name": "Featured products",
@@ -150,7 +102,6 @@
     }
   },
   "order": [
-    "promo_banners_mfdTkL",
     "featured_products_xqwcrY",
     "designers_wiAGAB",
     "feedback_rBYXNH"
