@@ -24,23 +24,6 @@
   color: var(--muted);
 }
 
-.featured-products__sort {
-  appearance: none;
-  background-color: var(--card-bg);
-  color: var(--color-text);
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 8px;
-  font-size: 0.95rem;
-  padding: 0.5rem 2rem 0.5rem 1rem;
-  line-height: 1.2;
-  cursor: pointer;
-  transition: border-color .25s ease, box-shadow .25s ease;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='rgba(0,0,0,0.5)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 0.75rem auto;
-}
-
 .featured-products__sort:hover,
 .featured-products__sort:focus {
   border-color: rgba(0, 0, 0, 0.4);
