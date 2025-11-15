@@ -35,8 +35,6 @@
     --tw-text-2xl--line-height: calc(2 / 1.5);
     --tw-text-3xl: 1.875rem;
     --tw-text-3xl--line-height: calc(2.25 / 1.875);
-    --tw-text-5xl: 3rem;
-    --tw-text-5xl--line-height: 1;
     --tw-font-weight-normal: 400;
     --tw-font-weight-medium: 500;
     --tw-font-weight-semibold: 600;
@@ -226,9 +224,6 @@
   .tw\:m-4 {
     margin: calc(var(--tw-spacing) * 4);
   }
-  .tw\:mx-0 {
-    margin-inline: calc(var(--tw-spacing) * 0);
-  }
   .tw\:mx-4 {
     margin-inline: calc(var(--tw-spacing) * 4);
   }
@@ -240,9 +235,6 @@
   }
   .tw\:mt-1 {
     margin-top: calc(var(--tw-spacing) * 1);
-  }
-  .tw\:mt-2 {
-    margin-top: calc(var(--tw-spacing) * 2);
   }
   .tw\:mr-0 {
     margin-right: calc(var(--tw-spacing) * 0);
@@ -258,9 +250,6 @@
   }
   .tw\:mb-4 {
     margin-bottom: calc(var(--tw-spacing) * 4);
-  }
-  .tw\:mb-6 {
-    margin-bottom: calc(var(--tw-spacing) * 6);
   }
   .tw\:mb-8 {
     margin-bottom: calc(var(--tw-spacing) * 8);
@@ -330,17 +319,8 @@
   .tw\:h-10\! {
     height: calc(var(--tw-spacing) * 10) !important;
   }
-  .tw\:h-25 {
-    height: calc(var(--tw-spacing) * 25);
-  }
-  .tw\:h-35 {
-    height: calc(var(--tw-spacing) * 35);
-  }
   .tw\:h-38 {
     height: calc(var(--tw-spacing) * 38);
-  }
-  .tw\:h-40 {
-    height: calc(var(--tw-spacing) * 40);
   }
   .tw\:h-\[88px\] {
     height: 88px;
@@ -456,9 +436,6 @@
   .tw\:justify-end {
     justify-content: flex-end;
   }
-  .tw\:justify-start {
-    justify-content: flex-start;
-  }
   .tw\:gap-2 {
     gap: calc(var(--tw-spacing) * 2);
   }
@@ -473,9 +450,6 @@
   }
   .tw\:gap-4 {
     gap: calc(var(--tw-spacing) * 4);
-  }
-  .tw\:gap-5 {
-    gap: calc(var(--tw-spacing) * 5);
   }
   .tw\:gap-6 {
     gap: calc(var(--tw-spacing) * 6);
@@ -545,9 +519,6 @@
   }
   .tw\:bg-black {
     background-color: var(--tw-color-black);
-  }
-  .tw\:bg-blue-600 {
-    background-color: var(--tw-color-blue-600);
   }
   .tw\:bg-current {
     background-color: currentcolor;
@@ -688,6 +659,9 @@
   .tw\:text-white {
     color: var(--tw-color-white);
   }
+  .tw\:no-underline {
+    text-decoration-line: none;
+  }
   .tw\:opacity-0 {
     opacity: 0%;
   }
@@ -696,6 +670,11 @@
   }
   .tw\:transition {
     transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--tw-default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--tw-default-transition-duration));
+  }
+  .tw\:transition-colors {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
     transition-timing-function: var(--tw-ease, var(--tw-default-transition-timing-function));
     transition-duration: var(--tw-duration, var(--tw-default-transition-duration));
   }
@@ -820,13 +799,6 @@
     &:hover {
       @media (hover: hover) {
         border-color: var(--tw-color-gray-500);
-      }
-    }
-  }
-  .tw\:hover\:bg-blue-600 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--tw-color-blue-600);
       }
     }
   }
@@ -974,11 +946,6 @@
       opacity: 50%;
     }
   }
-  .tw\:max-lg\:col-span-1 {
-    @media (width < 64rem) {
-      grid-column: span 1 / span 1;
-    }
-  }
   .tw\:max-md\:col-span-1 {
     @media (width < 48rem) {
       grid-column: span 1 / span 1;
@@ -1026,6 +993,11 @@
       margin-bottom: calc(var(--tw-spacing) * 8);
     }
   }
+  .tw\:md\:flex {
+    @media (width >= 48rem) {
+      display: flex;
+    }
+  }
   .tw\:md\:grid-cols-2 {
     @media (width >= 48rem) {
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1050,6 +1022,11 @@
   .tw\:lg\:gap-3 {
     @media (width >= 64rem) {
       gap: calc(var(--tw-spacing) * 3);
+    }
+  }
+  .tw\:lg\:gap-4 {
+    @media (width >= 64rem) {
+      gap: calc(var(--tw-spacing) * 4);
     }
   }
   .tw\:\[\&\.swiper-button-disabled\]\:opacity-0\! {
