@@ -19,6 +19,7 @@
         "show_price": true,
         "show_rating": true,
         "show_add_to_cart": true,
+        "enable_slider": true,
         "padding-bottom": 40
       }
     },
@@ -97,7 +98,9 @@
       "settings": {
         "title": "Need help?",
         "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
-        "show_phone": true
+        "show_phone": true,
+        "position": "center",
+        "padding_bottom": 60
       }
     }
   },
