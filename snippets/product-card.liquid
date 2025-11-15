@@ -42,39 +42,11 @@
       {{ product.price | money }}
     </span>
 
-    <div
-      class="
-        product-card__rating
-        tw:flex tw:items-center tw:gap-2 tw:mb-4
-      "
-      role="img"
-      aria-label="Rating {{ rating_value }} out of 5"
-    >
-      <div
-        class="
-          product-card__stars
-          tw:gap-1 tw:inline-flex tw:mx-4 tw:mt-0 tw:leading-0
-        "
-        data-rating="{{ rating_value }}"
-      >
-        {% for i in (1..5) %}
-          {% assign star_class = 'star' %}
-          {% if i <= rating_value %}
-            {% assign star_class = 'star is-filled' %}
-          {% endif %}
-          {% render 'icon-star', star_class: star_class %}
-        {% endfor %}
-        <span
-          class="
-            product-card__stars-value
-            tw:text-sm tw:text-gray-500
-          "
-          aria-hidden="true"
-        >
-          {{- rating_value -}}
-        </span>
-      </div>
+    <!-- Start of Judge.me code -->
+    <div class="jdgm-widget jdgm-preview-badge tw:mb-3" data-id="{{ product.id }}">
+      {{ product.metafields.judgeme.badge }}
     </div>
+    <!-- End of Judge.me code -->
 
     <button
       class="
