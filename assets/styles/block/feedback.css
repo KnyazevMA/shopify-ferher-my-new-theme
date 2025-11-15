@@ -84,12 +84,6 @@
     box-shadow: 0 0 0 3px var(--color-accent, #0a7cff);
 }
 
-/* .feedback__input[aria-invalid="true"],
-.feedback__textarea[aria-invalid="true"] {
-    border-color: var(--color-danger, #e5484d);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-danger, #e5484d) 18%, transparent);
-} */
-
 .feedback__error {
     margin: var(--space-150, 8px) 0 0;
     font-size: 13px;
