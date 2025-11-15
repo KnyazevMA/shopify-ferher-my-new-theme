@@ -1,19 +1,13 @@
-button.is-success,
-input[type="submit"].is-success,
-.featured-products__btn.is-success,
-.product__btn.is-success {
-    background: var(--success-600, #22c55e);
-    border-color: var(--success-600, #22c55e);
-    color: #fff;
+input[type="number"] {
+    appearance: none;
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
 }
 
-button.is-error,
-input[type="submit"].is-error,
-.featured-products__btn.is-error,
-.product__btn.is-error {
-    background: var(--danger-600, #ef4444);
-    border-color: var(--danger-600, #ef4444);
-    color: #fff;
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .featured-products__btn,
@@ -133,4 +127,11 @@ input[type="submit"] {
 .product__quantity-info:focus+.tooltip {
     display: flex;
     visibility: visible;
+}
+
+.featured-products__sort {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='rgba(0,0,0,0.5)' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.75rem auto;
 }

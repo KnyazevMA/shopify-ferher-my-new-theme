@@ -89,11 +89,26 @@ class FeaturedProducts {
         this.section = section;
         this.select = section.querySelector('#sort-select');
         this.grid = section.querySelector('.featured-products__grid');
-        this.items = Array.from(this.grid.querySelectorAll('.product-card'));
+        this.isSlider = section.dataset.isSlider === 'true';
+        this.wrapper = this.isSlider
+            ? this.grid.querySelector('.swiper-wrapper')
+            : this.grid;
+
+        this.items = Array.from(
+            this.isSlider
+                ? this.grid.querySelectorAll('.swiper-slide')
+                : this.grid.querySelectorAll('.product-card')
+        );
 
         this.items.forEach((el, i) => {
             if (!el.dataset.index) el.dataset.index = String(i);
         });
+
+        if (this.isSlider) {
+            this.initSwiper();
+        }
+
+        console.log('🤖 Swiper container:', this.swiper);
 
         if (this.select) {
             const urlSort = new URLSearchParams(window.location.search).get('sort_by');
@@ -131,9 +146,30 @@ class FeaturedProducts {
             sorted.sort((a, b) => this.getIndex(a) - this.getIndex(b));
         }
 
-        const frag = document.createDocumentFragment();
-        sorted.forEach(el => frag.appendChild(el));
-        this.grid.appendChild(frag);
+        if (this.isSlider && this.swiper && typeof this.swiper.destroy === 'function') {
+            this.swiper.destroy(true, true);
+            this.swiper = null;
+        }
+
+        if (this.isSlider) {
+            const wrapper = this.grid.querySelector('.swiper-wrapper');
+            if (wrapper) {
+                wrapper.innerHTML = '';
+                sorted.forEach(slide => wrapper.appendChild(slide));
+                this.initSwiper();
+            }
+        } else {
+            this.grid.innerHTML = '';
+            sorted.forEach(card => this.grid.appendChild(card));
+        }
+    }
+
+    initSwiper() {
+        this.swiper = createSectionSwiper(this.section, {
+            containerSelector: '.featured-products__grid',
+            nextSelector: '.swiper-button-next',
+            prevSelector: '.swiper-button-prev',
+        });
     }
 
     getPrice(el) {
