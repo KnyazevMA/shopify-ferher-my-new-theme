@@ -10,6 +10,7 @@
   role="region"
   aria-label="{{ section.settings.title | escape }}"
   data-section-id="{{ section.id }}"
+  data-is-slider="{{ section.settings.enable_slider }}"
 >
   <div class="page-width">
     {% if section.settings.title != blank %}
@@ -73,7 +74,7 @@
           {% if section.settings.enable_slider %}
             <ul class="swiper-wrapper tw:h-full tw:not-first:tw:list-none tw:p-0 tw:m-0">
               {%- for product in collection.products limit: section.settings.products_count -%}
-                <li class="swiper-slide tw:h-full">
+                <li class="swiper-slide">
                   {% render 'product-card', product: product, settings: section.settings %}
                 </li>
               {% endfor %}
