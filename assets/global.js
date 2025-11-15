@@ -95,6 +95,12 @@ class FeaturedProducts {
             if (!el.dataset.index) el.dataset.index = String(i);
         });
 
+        this.swiper = createSectionSwiper(this.section, {
+            containerSelector: '.featured-products__grid',
+            nextSelector: '.swiper-button-next',
+            prevSelector: '.swiper-button-prev',
+        });
+
         if (this.select) {
             const urlSort = new URLSearchParams(window.location.search).get('sort_by');
             const savedSort = urlSort || window.localStorage.getItem('fp_sort');
