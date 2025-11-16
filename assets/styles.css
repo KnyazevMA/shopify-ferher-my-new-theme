@@ -35,6 +35,24 @@ input[type="submit"] {
     }
 }
 
+.swiper-pagination {
+    margin: 0 0 24px 0;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+    width: 20px;
+    height: 6px;
+    border-radius: 3px;
+    background: #666;
+    opacity: 1;
+    transition: background 0.3s ease-in, width 0.3s ease-in;
+    margin: 0 4px;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+    background: #fff;
+}
+
 .header__burger-lines::before,
 .header__burger-lines::after {
     content: "";

@@ -69,17 +69,24 @@ function createSectionSwiper(rootEl, {
         breakpoints: userBreakpoints,
         pagination: _userPagination,
         navigation: _userNavigation,
+        mergeBreakpoints,
         ...restOptions
     } = options || {};
+
+    const shouldMergeBreakpoints = mergeBreakpoints !== false;
 
     const finalConfig = {
         ...baseConfig,
         ...restOptions,
-        breakpoints: {
-            ...baseConfig.breakpoints,
-            ...(userBreakpoints || {}),
-        },
     };
+
+    if (userBreakpoints) {
+        finalConfig.breakpoints = shouldMergeBreakpoints
+            ? { ...baseConfig.breakpoints, ...userBreakpoints }
+            : userBreakpoints;
+    } else if (!shouldMergeBreakpoints) {
+        delete finalConfig.breakpoints;
+    }
 
     return new Swiper(container, finalConfig);
 }
@@ -760,7 +767,80 @@ class FAQComponent extends HTMLElement {
     }
 }
 
-customElements.define('faq-component', FAQComponent);
+class MainBanner {
+    constructor(section) {
+        this.section = section;
+        this.initSwiper();
+        this.handleVideoSlides();
+    }
+
+    initSwiper() {
+        this.swiper = createSectionSwiper(this.section, {
+            containerSelector: '.js-main-banner',
+            paginationSelector: '.swiper-pagination',
+            options: {
+                loop: true,
+                slidesPerView: 1,
+                spaceBetween: 0,
+                mergeBreakpoints: false,
+                autoplay: {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                },
+            }
+        });
+    }
+
+    handleVideoSlides() {
+        if (!this.swiper) return;
+
+        const swiper = this.swiper;
+
+        const stopAutoplay = () => {
+            if (swiper.autoplay && swiper.autoplay.running) {
+                swiper.autoplay.stop();
+            }
+        };
+
+        const startAutoplay = () => {
+            if (swiper.params.autoplay && !swiper.autoplay.running) {
+                swiper.autoplay.start();
+            }
+        };
+
+        const handleSlideState = () => {
+            const activeSlide = swiper.slides[swiper.activeIndex];
+            const video = activeSlide.querySelector('video');
+
+            if (video) {
+                stopAutoplay();
+
+                // Снимаем loop — иначе onended НИКОГДА не сработает
+                video.loop = false;
+
+                // Сбрасываем время (если надо)
+                video.currentTime = 0;
+
+                video.play().catch(() => { });
+
+                video.onended = () => {
+                    // Переходим к следующему слайду
+                    swiper.slideNext();
+
+                    // Возвращаем autoplay
+                    startAutoplay();
+                };
+
+            } else {
+                startAutoplay();
+            }
+        };
+
+        swiper.on('slideChange', handleSlideState);
+
+        setTimeout(handleSlideState, 50);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
@@ -777,6 +857,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-section-type="product-recommendations"]').forEach(section => {
         new ProductRecommendationsSection(section);
     });
+
+    document.querySelectorAll('[data-component="MainBanner"]').forEach(section => {
+        new MainBanner(section);
+    });
+
+    customElements.define('faq-component', FAQComponent);
 
     new AddToCart(document);
     new BurgerToggle(document);
