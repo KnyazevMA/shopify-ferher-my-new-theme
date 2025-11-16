@@ -734,6 +734,34 @@ class ProductRecommendationsSection {
     }
 }
 
+class FAQComponent extends HTMLElement {
+    constructor() {
+        super();
+        this.init();
+    }
+
+    init() {
+        this.querySelectorAll('.dropdown-list__btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.dropdown-list__item');
+                const isActive = item.classList.contains('dropdown-list__item--active');
+
+                // Закрыть все
+                this.querySelectorAll('.dropdown-list__item').forEach((el) =>
+                    el.classList.remove('dropdown-list__item--active')
+                );
+
+                // Открытие по клику
+                if (!isActive) {
+                    item.classList.add('dropdown-list__item--active');
+                }
+            });
+        });
+    }
+}
+
+customElements.define('faq-component', FAQComponent);
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
