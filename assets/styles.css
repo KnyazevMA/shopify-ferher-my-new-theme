@@ -135,3 +135,38 @@ input[type="submit"] {
     background-position: right 0.75rem center;
     background-size: 0.75rem auto;
 }
+
+.dropdown-list__icon::after,
+.dropdown-list__icon::before {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 1px;
+    background-color: #000;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.dropdown-list__icon::after {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.dropdown-list__icon::before {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.dropdown-list__item--active .dropdown-list__btn {
+    margin: 0 0 24px 0;
+}
+
+.dropdown-list__item--active .dropdown-list__content {
+    max-height: 500px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.dropdown-list__item--active .dropdown-list__icon::before {
+    transform: translate(-50%, -50%) rotate(0deg);
+}
