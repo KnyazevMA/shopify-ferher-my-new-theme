@@ -19,9 +19,24 @@
         "position": "center",
         "padding_bottom": 60
       }
+    },
+    "featured_products_jMiCeJ": {
+      "type": "featured-products",
+      "name": "Featured products",
+      "settings": {
+        "title": "Featured products",
+        "collection": "summer-collection-under-100",
+        "products_count": 12,
+        "show_price": true,
+        "show_rating": false,
+        "show_add_to_cart": true,
+        "enable_slider": true,
+        "padding-bottom": 40
+      }
     }
   },
   "order": [
-    "feedback_rBYXNH"
+    "feedback_rBYXNH",
+    "featured_products_jMiCeJ"
   ]
 }
