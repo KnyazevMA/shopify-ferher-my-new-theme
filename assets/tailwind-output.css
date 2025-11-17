@@ -9,10 +9,10 @@
       "Courier New", monospace;
     --tw-color-red-500: oklch(63.7% 0.237 25.331);
     --tw-color-blue-600: oklch(54.6% 0.245 262.881);
-    --tw-color-slate-200: oklch(92.9% 0.013 255.508);
     --tw-color-slate-500: oklch(55.4% 0.046 257.417);
     --tw-color-gray-200: oklch(92.8% 0.006 264.531);
     --tw-color-gray-300: oklch(87.2% 0.01 258.338);
+    --tw-color-gray-400: oklch(70.7% 0.022 261.325);
     --tw-color-gray-400: oklch(70.7% 0.022 261.325);
     --tw-color-gray-500: oklch(55.1% 0.027 264.364);
     --tw-color-neutral-500: oklch(55.6% 0 0);
@@ -21,6 +21,7 @@
     --tw-color-black: #000;
     --tw-color-white: #fff;
     --tw-spacing: 0.25rem;
+    --tw-container-2xs: 18rem;
     --tw-container-2xs: 18rem;
     --tw-container-xl: 36rem;
     --tw-container-3xl: 48rem;
