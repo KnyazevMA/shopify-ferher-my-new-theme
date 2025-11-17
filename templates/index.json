@@ -36,22 +36,22 @@
         "faq_item_hgUTYV": {
           "type": "faq_item",
           "settings": {
-            "question": "Your question here",
-            "answer": "Your answer here"
+            "question": "What is&nbsp;Nike&rsquo;s returns policy?",
+            "answer": "When you shop Nike online, either in&nbsp;the Nike App or&nbsp;on&nbsp;Nike.com, you can return items\n                that\n                are unworn and\n                unwashed and still have their product tags attached within 30&nbsp;days of&nbsp;purchase (some\n                exceptions\n                apply). That\n                includes custom Nike By&nbsp;You sneakers."
           }
         },
         "faq_item_4iEkaK": {
           "type": "faq_item",
           "settings": {
-            "question": "Your question here",
-            "answer": "Your answer here"
+            "question": "Where is&nbsp;my&nbsp;Nike order?",
+            "answer": "After placing an&nbsp;order, you&rsquo;ll receive a&nbsp;confirmation email with tracking details once\n                your\n                package ships.\n                You can also track your order anytime in&nbsp;the Nike App or&nbsp;on&nbsp;Nike.com by&nbsp;signing\n                in&nbsp;to&nbsp;your account and\n                checking your order history."
           }
         },
         "faq_item_LHVHpA": {
           "type": "faq_item",
           "settings": {
-            "question": "Your question here",
-            "answer": "Your answer here"
+            "question": "How do&nbsp;I find the right size and fit?",
+            "answer": "Nike provides detailed size guides for every product and in&nbsp;the Nike App. You can compare your\n                measurements\n                with the guide to&nbsp;choose the best fit. Some items also feature &laquo;Find Your Fit&raquo; tools\n                for\n                extra accuracy."
           }
         }
       },
@@ -64,7 +64,7 @@
       "name": "FAQ",
       "settings": {
         "heading": "Frequently asked questions",
-        "subheading": "Answers to frequently asked questions .",
+        "subheading": "Answers to&nbsp;our most frequently asked questions are just one click away.",
         "content_alignment": "center",
         "padding_size": "medium"
       }
