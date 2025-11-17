@@ -1,9 +1,76 @@
-<footer class="site-footer" role="contentinfo">
-  <div class="container">
-    <nav aria-label="{{ 'a11y.footer_nav' | t }}">
-      <a href="{{ routes.account_login_url }}">{{ 'footer.login' | t }}</a>
-      <a href="{{ routes.search_url }}">{{ 'footer.search' | t }}</a>
-    </nav>
-    <small>&copy; {{ 'footer.copyright' | t }} {{ shop.name | escape }}</small>
+<footer
+  class="site-footer tw:p-15 tw:pb-6 tw:text-black"
+  role="contentinfo"
+  data-component="Footer"
+>
+  <div class="tw:grid tw:grid-cols-1 tw:sm:grid-cols-2 tw:lg:grid-cols-4 tw:gap-4 tw:gap-y-7 tw:lg:gap-2.5 tw:mb-12">
+    {% for block in section.blocks %}
+      <nav
+        class="footer__nav tw:border-b tw:border-gray-200 tw:sm:border-none tw:pb-4"
+        aria-labelledby="footer-title-{{ block.id }}"
+      >
+        <h3 class="footer__title tw:mb-4" id="footer-title-{{ block.id }}">
+          <button
+            class="footer__btn tw:w-full tw:flex tw:items-center tw:justify-between  tw:relative tw:text-left tw:bg-transparent tw:border-none tw:sm:pointer-events-none"
+            type="button"
+            aria-expanded="false"
+            aria-controls="footer-list-{{ block.id }}"
+          >
+            {{ block.settings.title }}
+            <span
+              class="footer__icon tw:block tw:sm:hidden tw:w-3 tw:h-3 tw:border-b tw:border-r tw:border-black tw:rotate-45 tw:transition-transform"
+              role="presentation"
+              aria-hidden="true"
+            ></span>
+          </button>
+        </h3>
+
+        <ul
+          class="
+            footer__list tw:max-h-0 tw:opacity-0 tw:overflow-hidden
+            tw:sm:flex tw:sm:flex-col tw:sm:gap-3 tw:sm:max-h-full tw:sm:opacity-100 tw:sm:overflow-visible
+            tw:transition-all tw:duration-300
+          "
+          id="footer-list-{{ block.id }}"
+          data-open="false"
+        >
+          {% for link in block.settings.menu.links %}
+            <li>
+              <a class="footer__link tw:text-gray-500 hover:tw:text-black" href="{{ link.url }}">{{ link.title }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endfor %}
+  </div>
+
+  <div class="tw:flex tw:flex-col tw:md:flex-row tw:gap-2.5 tw:md:gap-8 tw:items-start tw:lg:items-center tw:text-sm tw:text-black/70">
+    <div class="footer-bottom__copy">
+      © {{ 'now' | date: '%Y' }}
+      {{ shop.name }}. {{ 'footer.copyright' | t }}
+    </div>
+    <div class="footer-bottom__links tw:flex tw:flex-col tw:sm:flex-row tw:gap-3 sm:tw:gap-6">
+      <a href="#" class="tw:transition tw:hover:text-black">{{ 'footer.terms' | t }}</a>
+      <a href="#" class="tw:transition tw:hover:text-black">{{ 'footer.privacy' | t }}</a>
+      <a href="#" class="tw:transition tw:hover:text-black">{{ 'footer.cookies' | t }}</a>
+    </div>
   </div>
 </footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "column",
+      "name": "Footer column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Column title" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    }
+  ],
+  "settings": []
+}
+{% endschema %}
