@@ -9,17 +9,6 @@
  */
 {
   "sections": {
-    "feedback_rBYXNH": {
-      "type": "feedback",
-      "name": "Contact form",
-      "settings": {
-        "title": "Need help?",
-        "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
-        "show_phone": true,
-        "position": "center",
-        "padding_bottom": 60
-      }
-    },
     "featured_products_jMiCeJ": {
       "type": "featured-products",
       "name": "Featured products",
@@ -33,10 +22,68 @@
         "enable_slider": true,
         "padding-bottom": 40
       }
+    },
+    "faq_K6tYwp": {
+      "type": "faq",
+      "blocks": {
+        "faq_item_gHXpPH": {
+          "type": "faq_item",
+          "settings": {
+            "question": "What are Nike&rsquo;s delivery options?",
+            "answer": "Nike offers several delivery options depending on&nbsp;your location. Standard shipping usually takes\n                a&nbsp;few\n                business days, while faster methods like Express delivery are available at&nbsp;checkout. Shipping fees\n                and\n                times\n                are shown before you place your order."
+          }
+        },
+        "faq_item_hgUTYV": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Your question here",
+            "answer": "Your answer here"
+          }
+        },
+        "faq_item_4iEkaK": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Your question here",
+            "answer": "Your answer here"
+          }
+        },
+        "faq_item_LHVHpA": {
+          "type": "faq_item",
+          "settings": {
+            "question": "Your question here",
+            "answer": "Your answer here"
+          }
+        }
+      },
+      "block_order": [
+        "faq_item_gHXpPH",
+        "faq_item_hgUTYV",
+        "faq_item_4iEkaK",
+        "faq_item_LHVHpA"
+      ],
+      "name": "FAQ",
+      "settings": {
+        "heading": "Frequently asked questions",
+        "subheading": "Answers to frequently asked questions .",
+        "content_alignment": "center",
+        "padding_size": "medium"
+      }
+    },
+    "feedback_rBYXNH": {
+      "type": "feedback",
+      "name": "Contact form",
+      "settings": {
+        "title": "Need help?",
+        "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
+        "show_phone": true,
+        "position": "center",
+        "padding_bottom": 60
+      }
     }
   },
   "order": [
-    "feedback_rBYXNH",
-    "featured_products_jMiCeJ"
+    "featured_products_jMiCeJ",
+    "faq_K6tYwp",
+    "feedback_rBYXNH"
   ]
 }
