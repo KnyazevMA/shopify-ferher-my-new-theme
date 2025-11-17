@@ -842,6 +842,49 @@ class MainBanner {
     }
 }
 
+class FooterAccordion {
+    constructor(root) {
+        this.root = root;
+        this.buttons = root.querySelectorAll('.footer__btn');
+
+        this.buttons.forEach(btn => {
+            btn.addEventListener('click', () => this.toggle(btn));
+        });
+    }
+
+    toggle(btn) {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        const list = document.getElementById(btn.getAttribute('aria-controls'));
+        const icon = btn.querySelector('.footer__icon');
+
+        const isMobile = window.innerWidth < 640;
+        if (!isMobile) return; // на десктопе отключаем аккордеон
+
+        btn.setAttribute('aria-expanded', !expanded);
+        list.dataset.open = !expanded;
+
+        if (!expanded) {
+            list.dataset.open = "true";
+            list.setAttribute("aria-hidden", "false");
+
+            list.style.maxHeight = list.scrollHeight + 'px';
+            list.style.opacity = 1;
+
+            icon.classList.remove('tw:rotate-45');
+            icon.classList.add('tw:-rotate-135');
+        } else {
+            list.dataset.open = "false";
+            list.setAttribute("aria-hidden", "true");
+
+            list.style.maxHeight = '0px';
+            list.style.opacity = 0;
+
+            icon.classList.remove('tw:-rotate-135');
+            icon.classList.add('tw:rotate-45');
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
@@ -860,6 +903,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('[data-component="MainBanner"]').forEach(section => {
         new MainBanner(section);
+    });
+
+    document.querySelectorAll('[data-component="Footer"]').forEach(root => {
+        new FooterAccordion(root)
     });
 
     customElements.define('faq-component', FAQComponent);
