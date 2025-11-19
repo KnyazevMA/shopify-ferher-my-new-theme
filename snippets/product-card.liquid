@@ -20,8 +20,11 @@
   >
     {{
       product.featured_image
-      | image_url: width: 500
+      | image_url: width: 2000
       | image_tag:
+        widths: '200, 400, 600, 800, 1000, 1200, 1600, 2000',
+        sizes: '(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw',
+        loading: 'lazy',
         alt: product.title,
         class: 'tw:block tw:w-full tw:h-auto tw:object-cover tw:flex-shrink-0 tw:aspect-square'
     }}

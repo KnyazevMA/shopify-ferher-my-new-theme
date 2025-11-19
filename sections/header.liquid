@@ -46,20 +46,21 @@
         href="{{ routes.root_url }}"
         aria-label="{{ 'a11y.home_link' | t }}"
       >
-        {%- if section.settings.logo != blank -%}
-          {%- assign img = section.settings.logo -%}
-          <img
-            class="header__logo-image tw:block tw:h-7 tw:w-auto tw:lg:h-6"
-            src="{{ img | image_url: width: 180 }}"
-            srcset="{{ img | image_url: width: 180 }} 1x, {{ img | image_url: width: 360 }} 2x"
-            width="{{ img.width }}"
-            height="{{ img.height }}"
-            alt="{{ section.settings.logo_alt | default: shop.name | escape }}"
-            loading="eager"
-          >
-        {%- else -%}
+        {% if section.settings.logo %}
+          {{
+            section.settings.logo
+            | image_url: width: 540
+            | image_tag:
+              widths: '180, 360, 540',
+              class: 'header__logo-image tw:block tw:h-7 tw:w-auto tw:lg:h-6',
+              alt: section.settings.logo_alt,
+              loading: 'eager',
+              fetchpriority: 'high',
+              media: '(min-width: 768px)'
+          }}
+        {% else %}
           <span class="header__logo-text tw:font-bold tw:text-xl tw:leading-none">{{ shop.name }}</span>
-        {%- endif -%}
+        {% endif %}
       </a>
 
       {%- render 'main-nav', main_menu: section.settings.main_menu -%}
