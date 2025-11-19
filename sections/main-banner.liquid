@@ -50,25 +50,24 @@
                   block.settings.slide_image
                   | image_url: width: 3000
                   | image_tag:
-                    widths: '400, 600, 900, 1200, 1800, 2400, 3000',
-                    sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
-                    class: 'tw:w-full tw:h-full tw:object-cover',
-                    alt: block.settings.slide_title
-                    format: 'webp',
-                    loading: 'eager',
-                    
+                  widths: '400, 600, 900, 1200, 1800, 2400, 3000',
+                  sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
+                  class: 'tw:w-full tw:h-full tw:object-cover',
+                  alt: block.settings.slide_title,
+                  format: 'webp',
+                  loading: 'eager',
                 }}
               {% else %}
                 {{
                   block.settings.slide_image
                   | image_url: width: 3000
                   | image_tag:
-                    widths: '400, 600, 900, 1200, 1800, 2400, 3000',
-                    sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
-                    alt: block.settings.slide_title,
-                    class: 'tw:w-full tw:h-full tw:object-cover'
-                    format: 'webp',
-                    loading: 'lazy',
+                  widths: '400, 600, 900, 1200, 1800, 2400, 3000',
+                  sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
+                  alt: block.settings.slide_title,
+                  class: 'tw:w-full tw:h-full tw:object-cover',
+                  format: 'webp',
+                  loading: 'lazy',
                 }}
               {% endif %}
             {% endif %}
@@ -153,6 +152,11 @@
     }
   ],
   "max_blocks": 8,
-  "presets": [{ "name": "Main Banner" }]
+  "presets": [
+    {
+      "name": "Main Banner",
+      "category": "Banner"
+    }
+  ]
 }
 {% endschema %}
