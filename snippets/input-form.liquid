@@ -1,0 +1,74 @@
+{% comment %}
+  field: 'name' / 'email' / 'message'
+  type: 'text' / 'email' / 'textarea'
+  tw-style
+{% endcomment %}
+
+{% assign name = 'contact[' | append: field | append: ']' %}
+{% assign label = 'forms.' | append: field | append: '.label' | t %}
+{% assign placeholder = 'forms.' | append: field | append: '.placeholder' | t %}
+{% assign error = form.errors.translated_messages[field] | default: blank -%}
+<label
+  class="
+    feedback__field
+    tw:flex tw:flex-col tw:gap-2
+    {% if flat %}tw:col-span-2 tw:max-md:col-span-1{% endif %}
+    {{ tw-style }}
+  "
+>
+  <span class="feedback__label tw:text-base tw:leading-snug tw:font-normal">{{ label }}</span>
+
+  {% if type == 'textarea' %}
+    <textarea
+      class="
+        feedback__textarea
+        tw:text-base tw:leading-snug
+        tw:text-gray-500
+        tw:border tw:border-gray-300
+        tw:rounded-lg
+        tw:p-4 tw:h-38 tw:resize-none
+        tw:focus-visible:outline-none
+        tw:focus-visible:border-gray-500
+        tw:hover:border-gray-500
+      "
+      name="{{ name }}"
+      placeholder="{{ placeholder }}"
+      {% if required %}
+        required
+      {% endif %}
+      {% if error %}
+        aria-invalid="true"
+      {% endif %}
+    >{{ form[field] | escape }}</textarea>
+  {% else %}
+    <input
+      class="
+        feedback__input
+        tw:text-base tw:leading-snug
+        tw:text-gray-500
+        tw:border tw:border-gray-300
+        tw:rounded-lg
+        tw:p-4
+        tw:focus-visible:outline-none
+        tw:focus-visible:border-gray-500
+        tw:hover:border-gray-500
+      "
+      type="{{ type }}"
+      name="{{ name }}"
+      placeholder="{{ placeholder }}"
+      value="{{ form[field] | default: customer[field] | escape }}"
+      {% if required %}
+        required
+      {% endif %}
+      {% if error %}
+        aria-invalid="true"
+      {% endif %}
+    >
+  {% endif %}
+
+  {% if error %}
+    <p class="feedback__error tw:text-red-500 tw:text-sm tw:mt-1">
+      {{ form.errors.translated_messages[field] }}
+    </p>
+  {% endif %}
+</label>

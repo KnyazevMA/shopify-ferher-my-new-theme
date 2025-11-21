@@ -1,0 +1,162 @@
+<section
+  id="MainBanner-{{ section.id }}"
+  class="hero-swiper tw:relative tw:w-full tw:text-white tw:mb-20 md:tw:mb-16 tw:overflow-hidden tw:min-h-[calc(100vh-64px)] lg:tw:min-h-[calc(100vh-72px)]"
+  data-component="MainBanner"
+>
+  {% if section.index == 1 %}
+    {% style %}
+      header {
+        margin-bottom: 0 !important;
+      }
+    {% endstyle %}
+  {% endif %}
+  <div class="swiper js-main-banner tw:w-full tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)]">
+    <div class="swiper-wrapper">
+      {% for block in section.blocks %}
+        <div class="swiper-slide tw:relative tw:w-full! tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)] tw:overflow-hidden">
+          <!-- MEDIA LAYER -->
+          <div class="tw:absolute tw:inset-0 tw:z-0 tw:overflow-hidden">
+            {%- assign is_first = forloop.first -%}
+
+            {% if block.settings.slide_video %}
+              {% if is_first %}
+                {{
+                  block.settings.slide_video
+                  | video_tag:
+                    autoplay: true,
+                    muted: true,
+                    playsinline: true,
+                    loop: true,
+                    controls: false,
+                    class: 'tw:w-full tw:h-full tw:object-cover'
+                }}
+              {% else %}
+                {{
+                  block.settings.slide_video
+                  | video_tag:
+                    autoplay: true,
+                    muted: true,
+                    playsinline: true,
+                    loop: true,
+                    controls: false,
+                    class: 'tw:w-full tw:h-full tw:object-cover',
+                    preload: 'none'
+                }}
+              {% endif %}
+
+            {% elsif block.settings.slide_image %}
+              {% if is_first %}
+                {{
+                  block.settings.slide_image
+                  | image_url: width: 3000
+                  | image_tag:
+                  widths: '400, 600, 900, 1200, 1800, 2400, 3000',
+                  sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
+                  class: 'tw:w-full tw:h-full tw:object-cover',
+                  alt: block.settings.slide_title,
+                  format: 'webp',
+                  loading: 'eager',
+                }}
+              {% else %}
+                {{
+                  block.settings.slide_image
+                  | image_url: width: 3000
+                  | image_tag:
+                  widths: '400, 600, 900, 1200, 1800, 2400, 3000',
+                  sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
+                  alt: block.settings.slide_title,
+                  class: 'tw:w-full tw:h-full tw:object-cover',
+                  format: 'webp',
+                  loading: 'lazy',
+                }}
+              {% endif %}
+            {% endif %}
+          </div>
+
+          <!-- OVERLAY -->
+          <div class="tw:absolute tw:inset-0 tw:bg-black/40 tw:z-10"></div>
+
+          <!-- CONTENT (LIKE DAWN!) -->
+          <div class="tw:absolute tw:ml-15 tw:inset-0 tw:flex tw:items-center tw:z-20">
+            <div class="tw:px-6 md:tw:px-20 lg:tw:px-28 tw:max-w-[700px] tw:flex tw:flex-col tw:gap-6">
+              {% if block.settings.slide_title %}
+                <h2 class="tw:text-4xl md:tw:text-6xl tw:font-extrabold tw:uppercase tw:leading-[1.1]">
+                  {{ block.settings.slide_title }}
+                </h2>
+              {% endif %}
+
+              {% if block.settings.slide_text %}
+                <p class="tw:text-lg md:tw:text-xl tw:opacity-90 tw:max-w-[520px]">
+                  {{ block.settings.slide_text }}
+                </p>
+              {% endif %}
+
+              {% if block.settings.slide_button_text %}
+                <a
+                  href="{{ block.settings.slide_button_link }}"
+                  class="tw:inline-flex tw:h-12 tw:w-56 tw:items-center tw:justify-center tw:rounded-lg tw:bg-white tw:text-black tw:font-semibold tw:hover:bg-gray-200"
+                >
+                  {{ block.settings.slide_button_text }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="swiper-pagination tw:bottom-6! tw:mb-6"></div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Banner",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "video",
+          "id": "slide_video",
+          "label": "Slide Video"
+        },
+        {
+          "type": "image_picker",
+          "id": "slide_image",
+          "label": "Slide Image"
+        },
+        {
+          "type": "text",
+          "id": "slide_title",
+          "label": "Slide Title"
+        },
+        {
+          "type": "textarea",
+          "id": "slide_text",
+          "label": "Slide Text"
+        },
+        {
+          "type": "text",
+          "id": "slide_button_text",
+          "label": "Button Text"
+        },
+        {
+          "type": "url",
+          "id": "slide_button_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 8,
+  "presets": [
+    {
+      "name": "Main Banner",
+      "category": "Banner"
+    }
+  ]
+}
+{% endschema %}

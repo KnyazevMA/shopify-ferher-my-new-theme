@@ -5,21 +5,49 @@
 -%}
 
 <section
-  class="featured-products"
+  class="featured-products tw:bg-white tw:text-black tw:max-md:py-10"
   style="padding-bottom: {{ section.settings.padding-bottom | append: 'px' }};"
   role="region"
   aria-label="{{ section.settings.title | escape }}"
   data-section-id="{{ section.id }}"
+  data-is-slider="{{ section.settings.enable_slider }}"
 >
   <div class="page-width">
     {% if section.settings.title != blank %}
-      <h2 class="featured-products__title">{{ section.settings.title }}</h2>
+      <h2
+        class="
+          featured-products__title
+          tw:text-center tw:text-black tw:text-3xl tw:font-semibold tw:mb-10
+          tw:max-md:text-2xl tw:max-md:mb-6
+        "
+      >
+        {{ section.settings.title }}
+      </h2>
     {% endif %}
 
     {% if collection != blank %}
-      <div class="featured-products__controls">
-        <label for="sort-select">{{ 'sections.featured_products.sort_label' | t: default: 'Sort by' }}</label>
-        <select id="sort-select" class="featured-products__sort">
+      <div
+        class="
+          featured-products__controls
+          tw:flex tw:items-center tw:justify-end tw:gap-2 tw:mb-8
+        "
+      >
+        <label class="tw:text-sm tw:text-gray-500" for="sort-select">
+          {{- 'sections.featured_products.sort_label' | t: default: 'Sort by' -}}
+        </label>
+        <select
+          id="sort-select"
+          class="
+            featured-products__sort
+            tw:appearance-none tw:bg-white tw:text-black
+            tw:border tw:border-black/15 rounded-lg
+            tw:py-2 tw:pr-8 tw:pl-4
+            tw:text-xs tw:leading-5 tw:cursor-pointer
+            tw:transition tw:duration-300 tw:ease-in-out
+            tw:hover:border-black/40  tw:hover:ring-2 tw:hover:ring-black/10
+            tw:focus-visible:border-black/40  tw:focus-visible:ring-2 tw:focus-visible:ring-black/10
+          "
+        >
           <option value="best-selling" selected>
             {{ 'sections.featured_products.sort_best' | t: default: 'Best selling' }}
           </option>
@@ -34,57 +62,63 @@
           </option>
         </select>
       </div>
-
-      <div class="featured-products__grid">
-        {%- for product in collection.products limit: section.settings.products_count -%}
-          <div
-            class="featured-products__item"
-            data-price="{{ product.price }}"
-            data-title="{{ product.title | escape }}"
-            data-index="{{ forloop.index0 }}"
-            {{ product.shopify_attributes }}
+      <div class="wrapper tw:relative">
+        <div
+          class="
+            featured-products__grid tw:h-full {% if section.settings.enable_slider %}swiper{% else %}
+            tw:grid tw:gap-8 tw:grid-cols-[repeat(auto-fit,minmax(250px,1fr))]
+            tw:max-md:gap-5
+            {% endif %}
+          "
+        >
+          {% if section.settings.enable_slider %}
+            <ul class="swiper-wrapper tw:h-full tw:not-first:tw:list-none tw:p-0 tw:m-0">
+              {%- for product in collection.products limit: section.settings.products_count -%}
+                <li class="swiper-slide">
+                  {% render 'product-card', product: product, settings: section.settings %}
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            {%- for product in collection.products limit: section.settings.products_count -%}
+              {% render 'product-card', product: product, rating_value: rating_value, settings: section.settings %}
+            {% endfor %}
+          {% endif %}
+        </div>
+        {% if section.settings.enable_slider %}
+          <button
+            class="
+              swiper-button-prev tw:absolute
+              tw:w-10! tw:h-10! tw:bg-white tw:border tw:rounded-full tw:border-gray-200 tw:opacity-100
+              tw:left-[-2%]! tw:rotate-180
+              tw:hover:bg-gray-300
+              tw:[&.swiper-button-disabled]:opacity-0!
+              tw:transition tw:duration-300 tw:ease-linear
+            "
+            aria-label="{{'a11y.swiper_prev' | t: default: 'Key to scroll back through the carousel' }}"
+            type="button"
           >
-            <a href="{{ product.url }}" class="featured-products__link">
-              {{ product.featured_image | image_url: width: 500 | image_tag: alt: product.title }}
-              <h3 class="featured-products__name">{{ product.title }}</h3>
-
-              {% if section.settings.show_price %}
-                <span class="featured-products__price">
-                  {{ product.price | money }}
-                </span>
-              {% endif %}
-
-              {% if section.settings.show_rating %}
-                <div
-                  class="featured-products__rating"
-                  role="img"
-                  aria-label="Rating {{ rating_value }} out of 5"
-                >
-                  <div class="featured-products__stars" data-rating="{{ rating_value }}">
-                    {% for i in (1..5) %}
-                      {% assign star_class = 'star' %}
-                      {% if i <= rating_value %}
-                        {% assign star_class = 'star is-filled' %}
-                      {% endif %}
-                      {% render 'icon-star', star_class: star_class %}
-                    {% endfor %}
-                    <span class="featured-products__stars-value" aria-hidden="true">{{ rating_value }}</span>
-                  </div>
-                </div>
-              {% endif %}
-
-              {% if section.settings.show_add_to_cart %}
-                <button
-                  class="featured-products__btn"
-                  type="button"
-                  data-product-id="{{ product.selected_or_first_available_variant.id }}"
-                >
-                  {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
-                </button>
-              {% endif %}
-            </a>
-          </div>
-        {% endfor %}
+            <svg class="header__cart-icon tw:w-4! tw:h-4!" width="8" height="6" aria-hidden="true">
+              <use href="#icon-arrow"></use>
+            </svg>
+          </button>
+          <button
+            class="
+              swiper-button-next
+              tw:w-10! tw:h-10! tw:bg-white tw:border tw:rounded-full tw:border-gray-200 tw:opacity-100
+              tw:right-[-2%]!
+              tw:hover:bg-gray-300
+              tw:[&.swiper-button-disabled]:opacity-0!
+              tw:transition tw:duration-300 tw:ease-linear
+            "
+            aria-label="{{'a11y.swiper_next' | t: default: 'Key to scroll forward through the carousel' }}"
+            type="button"
+          >
+            <svg class="header__cart-icon tw:w-4! tw:h-4!" width="8" height="6" aria-hidden="true">
+              <use href="#icon-arrow"></use>
+            </svg>
+          </button>
+        {% endif %}
       </div>
     {% else %}
       <p>{{ 'sections.featured_products.no_collection' | t: default: 'Please select a collection' }}</p>
@@ -132,6 +166,12 @@
       "id": "show_add_to_cart",
       "label": "Show add to cart button",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_slider",
+      "label": "Enable slider mode",
+      "default": false
     },
     {
       "type": "range",
