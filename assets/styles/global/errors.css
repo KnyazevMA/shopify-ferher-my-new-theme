@@ -1,0 +1,24 @@
+button.is-success,
+input[type="submit"].is-success,
+.featured-products__btn.is-success,
+.product__btn.is-success {
+    background: var(--success-600, #22c55e);
+    border-color: var(--success-600, #22c55e);
+    color: #fff;
+}
+
+button.is-error,
+input[type="submit"].is-error,
+.featured-products__btn.is-error,
+.product__btn.is-error {
+    background: var(--danger-600, #ef4444);
+    border-color: var(--danger-600, #ef4444);
+    color: #fff;
+}
+
+.featured-products__btn,
+.product__btn,
+button[type="submit"],
+input[type="submit"] {
+    transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+}

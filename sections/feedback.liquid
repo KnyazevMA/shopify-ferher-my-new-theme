@@ -1,73 +1,133 @@
-{%- liquid
-  assign position_section = ' '
-  assign position_form = 'feedback__form tw:max-w-3xl '
+{% comment %}
+  Contact form section (meets a11y + honeypot + translations)
+{% endcomment %}
 
-  case section.settings.position
-    when 'left'
-      assign position_section = position_section | append: 'tw:text-left tw:items-start'
-      assign position_form = position_form | append: 'tw:ml-0 tw:mr-auto'
-    when 'center'
-      assign position_section = position_section | append: 'tw:text-center tw:items-center'
-      assign position_form = position_form | append: 'tw:mx-auto'
-    when 'right'
-      assign position_section = position_section | append: 'tw:text-right tw:items-end'
-      assign position_form = position_form | append: 'tw:ml-auto tw:mr-0'
-  endcase
--%}
-
-<section class="feedback {{ position_section }}" role="region" aria-labelledby="ContactForm-Title-{{ section.id }}">
+<section class="feedback" role="region" aria-labelledby="ContactForm-Title-{{ section.id }}">
   <div class="page-width">
     {% if section.settings.title != blank %}
-      <h2
-        class="
-          feedback__title
-          tw:mb-4 tw:text-2xl tw:leading-6 tw:text-neutral-900
-          tw:md:text-3xl
-        "
-        id="ContactForm-Title-{{ section.id }}"
-      >
+      <h2 id="ContactForm-Title-{{ section.id }}" class="feedback__title">
         {{ section.settings.title | escape }}
       </h2>
     {% endif %}
 
     {% if section.settings.text != blank %}
-      <div
-        class="
-          feedback__intro
-          tw:mb-4
-          tw:text-xl md:text-2xl lg:text-3xl
-          tw:leading-tight
-          tw:text-neutral-900
-        "
-      >
-        {{ section.settings.text }}
-      </div>
+      <div class="feedback__intro">{{ section.settings.text }}</div>
     {% endif %}
 
-    {%- form 'contact', id: 'ContactForm', class: position_form -%}
+    {%- form 'contact', id: 'ContactForm', class: 'feedback__form', novalidate: true -%}
       {% if form.posted_successfully? %}
         <p class="feedback__success" role="status" aria-live="polite">
           {{ 'sections.contact.success' | t: default: 'Thank you! Your message has been sent.' }}
         </p>
       {% endif %}
 
-      <div
-        class="
-          feedback__wrapper
-          tw:grid grid-cols-1 tw:gap-6 tw:m-0 tw:mb-8 tw:max-w-4xl
-          tw:md:grid-cols-2
-        "
-      >
-        {% render 'input-form', field: 'name', type: 'text', required: true %}
-        {% render 'input-form', field: 'phone', type: 'text' %}
-        {% render 'input-form', field: 'email', type: 'email', required: true, flat: true %}
-        {% render 'input-form', field: 'message', type: 'textarea', required: true, flat: true %}
+      {% if form.errors %}
+        <div class="feedback__errors" role="alert" aria-live="assertive">
+          {{ form.errors | default_errors }}
+        </div>
+      {% endif %}
+
+      <div class="feedback__wrapper">
+        {%- assign name_error = form.errors.translated_fields.name | default: blank -%}
+        <label class="feedback__field" for="ContactForm-Name-{{ section.id }}">
+          <span class="feedback__label">{{ 'sections.contact.name_label' | t: default: 'Name' }}</span>
+          <input
+            id="ContactForm-Name-{{ section.id }}"
+            class="feedback__input"
+            type="text"
+            name="contact[name]"
+            autocomplete="name"
+            placeholder="{{ 'sections.contact.name_placeholder' | t: default: 'Enter your name' }}"
+            {% if name_error %}
+              aria-invalid="true" aria-describedby="ContactForm-NameError-{{ section.id }}"
+            {% endif %}
+            value="{{ form.name | default: customer.name | escape }}"
+          >
+          {% if name_error %}
+            <p id="ContactForm-NameError-{{ section.id }}" class="feedback__error">
+              {{ name_error | capitalize }}
+              {{ form.errors.messages.name }}
+            </p>
+          {% endif %}
+        </label>
+
+        {%- assign phone_error = form.errors.translated_fields.phone | default: blank -%}
+        {% if section.settings.show_phone %}
+          <label class="feedback__field" for="ContactForm-Phone-{{ section.id }}">
+            <span class="feedback__label">{{ 'sections.contact.phone_label' | t: default: 'Phone' }}</span>
+            <input
+              id="ContactForm-Phone-{{ section.id }}"
+              class="feedback__input"
+              type="tel"
+              name="contact[phone]"
+              autocomplete="tel"
+              placeholder="{{ 'sections.contact.phone_placeholder' | t: default: 'Enter phone number' }}"
+              pattern="\+?[0-9\-() ]*"
+              {% if phone_error %}
+                aria-invalid="true" aria-describedby="ContactForm-PhoneError-{{ section.id }}"
+              {% endif %}
+              value="{{ form.phone | escape }}"
+            >
+            {% if phone_error %}
+              <p id="ContactForm-PhoneError-{{ section.id }}" class="feedback__error">
+                {{ phone_error | capitalize }}
+                {{ form.errors.messages.phone }}
+              </p>
+            {% endif %}
+          </label>
+        {% endif %}
+
+        {%- assign email_error = form.errors.translated_fields.email | default: blank -%}
+        <label class="feedback__field feedback__field--flat" for="ContactForm-Email-{{ section.id }}">
+          <span class="feedback__label">{{ 'sections.contact.email_label' | t: default: 'Email' }}</span>
+          <input
+            id="ContactForm-Email-{{ section.id }}"
+            class="feedback__input"
+            type="email"
+            name="contact[email]"
+            autocomplete="email"
+            placeholder="{{ 'sections.contact.email_placeholder' | t: default: 'Enter email' }}"
+            required
+            {% if email_error %}
+              aria-invalid="true" aria-describedby="ContactForm-EmailError-{{ section.id }}"
+            {% endif %}
+            value="{{ form.email | default: customer.email | escape }}"
+          >
+          {% if email_error %}
+            <p id="ContactForm-EmailError-{{ section.id }}" class="feedback__error">
+              {{ email_error | capitalize }}
+              {{ form.errors.messages.email }}
+            </p>
+          {% endif %}
+        </label>
+
+        {%- assign body_error = form.errors.translated_fields.body | default: blank -%}
+        <label class="feedback__field feedback__field--flat" for="ContactForm-Message-{{ section.id }}">
+          <span class="feedback__label">{{ 'sections.contact.message_label' | t: default: 'Message' }}</span>
+          <textarea
+            id="ContactForm-Message-{{ section.id }}"
+            class="feedback__textarea"
+            name="contact[body]"
+            rows="5"
+            placeholder="{{ 'sections.contact.message_placeholder' | t: default: 'Enter your message' }}"
+            required
+            {% if body_error %}
+              aria-invalid="true" aria-describedby="ContactForm-BodyError-{{ section.id }}"
+            {% endif %}
+          >{{ form.body | escape }}</textarea>
+          {% if body_error %}
+            <p id="ContactForm-BodyError-{{ section.id }}" class="feedback__error">
+              {{ body_error | capitalize }}
+              {{ form.errors.messages.body }}
+            </p>
+          {% endif %}
+        </label>
 
         {%- comment -%}
           Honeypot: приховане поле, яке не повинно заповнюватися людиною.
           Якщо воно заповнене — JS не дасть відправити форму.
         {%- endcomment -%}
-        <div class="tw:hidden" aria-hidden="true">
+        <div class="visually-hidden" aria-hidden="true">
           <label for="ContactForm-HP-{{ section.id }}">
             {{ 'forms.honeypot' | t: default: 'Leave this field empty' }}
           </label>
@@ -82,30 +142,16 @@
       </div>
 
       <button
-        class="
-          feedback__btn
-          tw:inline-flex tw:items-center tw:justify-center tw:gap-2
-          tw:min-h-11 tw:px-5 tw:py-0 tw:cursor-pointer
-          tw:rounded-lg tw:border tw:border-transparent
-          tw:bg-black  tw:text-white tw:font-semibold
-          tw:hover:bg-white tw:hover:text-black tw:hover:border-black
-          tw:active:translate-y-px
-          tw:transition tw:duration-200 tw:ease-in-out
-        "
+        class="btn feedback__btn"
         type="submit"
         aria-label="{{ 'sections.contact.submit_aria' | t: default: 'Send contact form' }}"
+        data-contact-submit
       >
         {{ 'sections.contact.submit' | t: default: 'Submit' }}
       </button>
     {%- endform -%}
   </div>
 </section>
-
-{%- style -%}
-  .feedback {
-    margin-bottom: {{ section.settings.padding_bottom }}px;
-  ]
-{%- endstyle -%}
 
 {% schema %}
 {
@@ -128,26 +174,6 @@
       "id": "show_phone",
       "label": "Show phone field",
       "default": true
-    },
-    {
-      "type": "radio",
-      "id": "position",
-      "label": "Form position",
-      "options": [
-        { "value": "left", "label": "Left" },
-        { "value": "center", "label": "Center" },
-        { "value": "right", "label": "Right" }
-      ],
-      "default": "center"
-    },
-    {
-      "type": "range",
-      "id": "padding_bottom",
-      "label": "Bottom padding",
-      "min": 0,
-      "max": 120,
-      "step": 5,
-      "default": 60
     }
   ],
   "presets": [{ "name": "Contact form" }]

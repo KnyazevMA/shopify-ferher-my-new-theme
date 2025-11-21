@@ -1,81 +1,42 @@
+{%- assign sticky = section.settings.sticky -%}
+
 <header
-  class="
-    header
-    tw:w-full tw:bg-white tw:text-black shadow-sm
-  "
+  class="header {% if sticky %}header--sticky{% endif %}"
+  style="margin-bottom: {{ section.settings.margin-bottom | append: 'px' }};"
 >
   <div class="page-width">
-    <div
-      class="
-        header__wrapper page-width
-        tw:flex tw:justify-between
-        tw:items-center tw:min-h-18 tw:lg:min-h-16
-        tw:mx-auto tw:gap-4 tw:lg:gap-3
-      "
-      role="navigation"
-      aria-label="{{ 'a11y.main_nav' | t }}"
-    >
+    <div class="header__wrapper" role="navigation" aria-label="{{ 'a11y.main_nav' | t }}">
       <button
-        class="
-          header__burger
-          tw:hidden tw:max-md:flex tw:flex-col tw:justify-center tw:items-center
-          tw:text-black tw:border-none tw:bg-transparent tw:cursor-pointer tw:size-6
-        "
+        class="header__burger"
         type="button"
         aria-label="{{ 'a11y.open_menu' | t | default: 'Open menu' }}"
         aria-controls="mobile-menu"
         aria-expanded="false"
       >
-        <span
-          class="
-            header__burger-lines
-            tw:relative tw:w-5 tw:h-0.5 tw:bg-current
-            transition-colors duration-300 ease-in delay-300
-          "
-          aria-hidden="true"
-        ></span>
+        <span class="header__burger-lines" aria-hidden="true"></span>
       </button>
-      <a
-        class="
-          header__logo
-          tw:justify-self-start tw:inline-flex tw:items-center tw:gap-2 tw:max-md:hidden
-          tw:text-inherit no-underline
-          transition-opacity duration-200 ease-in-out
-          tw:hover:opacity-80
-        "
-        href="{{ routes.root_url }}"
-        aria-label="{{ 'a11y.home_link' | t }}"
-      >
-        {% if section.settings.logo %}
-          {{
-            section.settings.logo
-            | image_url: width: 540
-            | image_tag:
-              widths: '180, 360, 540',
-              class: 'header__logo-image tw:block tw:h-7 tw:w-auto tw:lg:h-6',
-              alt: section.settings.logo_alt,
-              loading: 'eager',
-              fetchpriority: 'high',
-              media: '(min-width: 768px)'
-          }}
-        {% else %}
-          <span class="header__logo-text tw:font-bold tw:text-xl tw:leading-none">{{ shop.name }}</span>
-        {% endif %}
+      <a class="header__logo" href="{{ routes.root_url }}" aria-label="{{ 'a11y.home_link' | t }}">
+        {%- if section.settings.logo != blank -%}
+          {%- assign img = section.settings.logo -%}
+          <img
+            class="header__logo-image"
+            src="{{ img | image_url: width: 180 }}"
+            srcset="{{ img | image_url: width: 180 }} 1x, {{ img | image_url: width: 360 }} 2x"
+            width="{{ img.width }}"
+            height="{{ img.height }}"
+            alt="{{ section.settings.logo_alt | default: shop.name | escape }}"
+            loading="eager"
+          >
+        {%- else -%}
+          <span class="header__logo-text">{{ shop.name }}</span>
+        {%- endif -%}
       </a>
 
       {%- render 'main-nav', main_menu: section.settings.main_menu -%}
 
-      <div class="header__right-menu tw:justify-self-end tw:inline-flex tw:items-center tw:gap-3">
-        <a
-          class="
-            header__cart
-            tw:text-black tw:size-10 tw:flex tw:content-center tw:items-center
-            tw:hover:text-blue-600 tw:hover:cursor-pointer
-          "
-          href="{{ routes.cart_url }}"
-          aria-label="{{ 'a11y.open_cart' | t }}"
-        >
-          <svg class="header__cart-icon tw:inline-block tw:text-current" width="24" height="24" aria-hidden="true">
+      <div class="header__right-menu">
+        <a class="header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'a11y.open_cart' | t }}">
+          <svg class="header__cart-icon" width="24" height="24" aria-hidden="true">
             <use href="#cart-icon"></use>
           </svg>
         </a>
@@ -84,16 +45,16 @@
   </div>
 </header>
 
-{%- style -%}
-  .header {
-      margin-bottom: {{ section.settings.margin-bottom | append: 'px' }};
-    }
-{%- endstyle -%}
-
 {% schema %}
 {
   "name": "Header",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "sticky",
+      "label": "Sticky header",
+      "default": true
+    },
     {
       "type": "image_picker",
       "id": "logo",

@@ -18,8 +18,7 @@
         "products_count": 11,
         "show_price": true,
         "show_rating": false,
-        "show_add_to_cart": true,
-        "padding-bottom": 40
+        "show_add_to_cart": true
       }
     }
   },

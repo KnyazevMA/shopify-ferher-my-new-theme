@@ -1,38 +1,12 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "main-product": {
       "type": "product",
       "settings": {
-        "show_thumbnails": true,
-        "color_text_title": "Виберіть колір:",
-        "size_text_title": "Виберіть розмір:",
-        "bottom_margin": 40
-      }
-    },
-    "1763148394e6e1f059": {
-      "type": "apps",
-      "settings": {}
-    },
-    "product_recommendations_qGUwKw": {
-      "type": "product-recommendations",
-      "name": "Product recommendations",
-      "settings": {
-        "heading": "You may also like"
+        "show_vendor": true,
+        "show_sku": false
       }
     }
   },
-  "order": [
-    "main-product",
-    "1763148394e6e1f059",
-    "product_recommendations_qGUwKw"
-  ]
+  "order": ["main-product"]
 }
