@@ -9,81 +9,143 @@
  */
 {
   "sections": {
-    "featured_products_jMiCeJ": {
+    "main": {
+      "type": "featured-products",
+      "settings": {}
+    },
+    "promo_banners_mfdTkL": {
+      "type": "promo-banners",
+      "blocks": {
+        "banner_rCtc3z": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-1.jpg",
+            "title": "Осіння колекція",
+            "button_label": "Подивитись колекцію",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_feUJyM": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-2.webp",
+            "title": "Зимова колекція",
+            "button_label": "Переглянути колекцію",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
+        },
+        "banner_a4DVB3": {
+          "type": "banner",
+          "settings": {
+            "image": "shopify://shop_images/Collection-3.jpg",
+            "title": "Весіння колекція",
+            "button_label": "Ознайомитись з колекцією",
+            "button_link": "shopify://collections",
+            "aspect_ratio": "1-1"
+          }
+        }
+      },
+      "block_order": [
+        "banner_rCtc3z",
+        "banner_feUJyM",
+        "banner_a4DVB3"
+      ],
+      "name": "Promo banners",
+      "settings": {
+        "title": "Ознайомтеся з нашими колекціями",
+        "subtitle": "<p>Ознайомтеся з новинками та сезонними пропозиціями</p>",
+        "text_align": "center",
+        "padding": 60,
+        "color_scheme": "light"
+      }
+    },
+    "featured_products_xqwcrY": {
       "type": "featured-products",
       "name": "Featured products",
       "settings": {
         "title": "Featured products",
         "collection": "summer-collection-under-100",
-        "products_count": 12,
+        "products_count": 4,
         "show_price": true,
-        "show_rating": false,
-        "show_add_to_cart": true,
-        "enable_slider": true,
-        "padding-bottom": 40
+        "show_rating": true,
+        "show_add_to_cart": true
       }
     },
-    "faq_K6tYwp": {
-      "type": "faq",
+    "designers_wiAGAB": {
+      "type": "designers",
       "blocks": {
-        "faq_item_gHXpPH": {
-          "type": "faq_item",
+        "designer_pRGdrU": {
+          "type": "designer",
           "settings": {
-            "question": "What are Nike&rsquo;s delivery options?",
-            "answer": "Nike offers several delivery options depending on&nbsp;your location. Standard shipping usually takes\n                a&nbsp;few\n                business days, while faster methods like Express delivery are available at&nbsp;checkout. Shipping fees\n                and\n                times\n                are shown before you place your order."
+            "designer_ref": "olivia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
           }
         },
-        "faq_item_hgUTYV": {
-          "type": "faq_item",
+        "designer_nwXnCw": {
+          "type": "designer",
           "settings": {
-            "question": "What is&nbsp;Nike&rsquo;s returns policy?",
-            "answer": "When you shop Nike online, either in&nbsp;the Nike App or&nbsp;on&nbsp;Nike.com, you can return items\n                that\n                are unworn and\n                unwashed and still have their product tags attached within 30&nbsp;days of&nbsp;purchase (some\n                exceptions\n                apply). That\n                includes custom Nike By&nbsp;You sneakers."
+            "designer_ref": "kenji",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
           }
         },
-        "faq_item_4iEkaK": {
-          "type": "faq_item",
+        "designer_VzQJqb": {
+          "type": "designer",
           "settings": {
-            "question": "Where is&nbsp;my&nbsp;Nike order?",
-            "answer": "After placing an&nbsp;order, you&rsquo;ll receive a&nbsp;confirmation email with tracking details once\n                your\n                package ships.\n                You can also track your order anytime in&nbsp;the Nike App or&nbsp;on&nbsp;Nike.com by&nbsp;signing\n                in&nbsp;to&nbsp;your account and\n                checking your order history."
+            "designer_ref": "sofia",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
           }
         },
-        "faq_item_LHVHpA": {
-          "type": "faq_item",
+        "designer_gQgaEM": {
+          "type": "designer",
           "settings": {
-            "question": "How do&nbsp;I find the right size and fit?",
-            "answer": "Nike provides detailed size guides for every product and in&nbsp;the Nike App. You can compare your\n                measurements\n                with the guide to&nbsp;choose the best fit. Some items also feature &laquo;Find Your Fit&raquo; tools\n                for\n                extra accuracy."
+            "designer_ref": "liam",
+            "first_name": "Name",
+            "last_name": "Last name",
+            "bio": "<p>Bio</p><p></p>",
+            "tags": "womenswear, knitwear",
+            "links": "https://instagram.com/, https://behance.net/",
+            "date_of_birth": "1888-10-01",
+            "verified": false
           }
         }
       },
       "block_order": [
-        "faq_item_gHXpPH",
-        "faq_item_hgUTYV",
-        "faq_item_4iEkaK",
-        "faq_item_LHVHpA"
+        "designer_pRGdrU",
+        "designer_nwXnCw",
+        "designer_VzQJqb",
+        "designer_gQgaEM"
       ],
-      "name": "FAQ",
+      "name": "Designers",
       "settings": {
-        "heading": "Frequently asked questions",
-        "subheading": "Answers to&nbsp;our most frequently asked questions are just one click away.",
-        "content_alignment": "center",
-        "padding_size": "medium"
-      }
-    },
-    "feedback_rBYXNH": {
-      "type": "feedback",
-      "name": "Contact form",
-      "settings": {
-        "title": "Need help?",
-        "text": "<p>Ask us anything. We’ll get back to you soon.</p>",
-        "show_phone": true,
-        "position": "center",
-        "padding_bottom": 60
+        "title": "Наші дизайнери",
+        "description": "<p>Команда, що створює колекції.</p>"
       }
     }
   },
   "order": [
-    "featured_products_jMiCeJ",
-    "faq_K6tYwp",
-    "feedback_rBYXNH"
+    "main",
+    "promo_banners_mfdTkL",
+    "featured_products_xqwcrY",
+    "designers_wiAGAB"
   ]
 }

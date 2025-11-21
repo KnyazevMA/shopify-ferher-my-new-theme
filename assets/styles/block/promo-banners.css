@@ -1,0 +1,145 @@
+.promo-banners {
+    width: 100%;
+    position: relative;
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+}
+
+.promo-banners__title {
+    font-size: 2rem;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+}
+
+.promo-banners__subtitle {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+.promo-banners__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+}
+
+@media (min-width: 600px) {
+    .promo-banners__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .promo-banners__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.promo-banners__item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    text-align: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.promo-banners__item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.promo-banners__item img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    object-fit: cover;
+}
+
+.promo-banners__item-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.promo-banners__btn {
+    display: inline-block;
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+    border: 1px solid var(--scheme-light-border);
+    padding: 0.6em 1.2em;
+    border-radius: 0.3em;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background .18s ease, color .18s ease, opacity .18s ease;
+}
+
+.promo-banners__btn:hover {
+    opacity: 0.95;
+}
+
+/* ────────────────   COLOR SCHEMES.  ──────────────── */
+.promo-banners--dark {
+    background-color: var(--scheme-dark-bg);
+    color: var(--scheme-dark-text);
+}
+
+.promo-banners--dark .promo-banners__btn {
+    background-color: var(--scheme-dark-bg);
+    color: var(--scheme-dark-text);
+    border: 1px solid var(--scheme-dark-border);
+}
+
+.promo-banners--dark .promo-banners__btn:hover {
+    background-color: var(--btn-dark-hover-bg);
+    color: var(--btn-dark-hover-text);
+}
+
+.promo-banners--light {
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+}
+
+.promo-banners--light .promo-banners__btn {
+    background-color: var(--scheme-light-bg);
+    color: var(--scheme-light-text);
+    border: 1px solid var(--scheme-light-border);
+}
+
+.promo-banners--light .promo-banners__btn:hover {
+    background-color: var(--btn-light-hover-bg);
+    color: var(--btn-light-hover-text);
+}
+
+.promo-banners--accent {
+    background-color: var(--scheme-accent-bg);
+    color: var(--scheme-accent-text);
+}
+
+.promo-banners--accent .promo-banners__btn {
+    background-color: var(--scheme-accent-bg);
+    color: var(--scheme-accent-text);
+    border: 1px solid var(--scheme-accent-border);
+}
+
+.promo-banners--accent .promo-banners__btn:hover {
+    background-color: var(--scheme-accent-hover);
+    color: var(--scheme-accent-text);
+}
+
+/* ────────────────   ASPECT RATIO.  ──────────────── */
+
+.promo-banners__item--16-9 img {
+    aspect-ratio: 16 / 9;
+}
+
+.promo-banners__item--1-1 img {
+    aspect-ratio: 1 / 1;
+}
+
+.promo-banners__item--3-2 img {
+    aspect-ratio: 3 / 2;
+}

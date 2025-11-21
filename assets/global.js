@@ -14,108 +14,16 @@ function t(key, fallback = '') {
     }
 }
 
-function createSectionSwiper(rootEl, {
-    containerSelector,
-    nextSelector,
-    prevSelector,
-    paginationSelector,
-    options = {}
-} = {}) {
-    if (!window.Swiper) {
-        console.warn('Swiper is not loaded');
-        return null;
-    }
-
-    const container = rootEl.querySelector(containerSelector);
-    if (!container) {
-        console.warn('Swiper container not found:', containerSelector);
-        return null;
-    }
-
-    const nextEl = nextSelector ? rootEl.querySelector(nextSelector) : null;
-    const prevEl = prevSelector ? rootEl.querySelector(prevSelector) : null;
-    const paginationEl = paginationSelector ? rootEl.querySelector(paginationSelector) : null;
-
-    const baseConfig = {
-        slidesPerView: 4,
-        spaceBetween: 24,
-        loop: false,
-        breakpoints: {
-            0: { slidesPerView: 1.2, spaceBetween: 10 },
-            450: { slidesPerView: 1.3, spaceBetween: 10 },
-            568: { slidesPerView: 2, spaceBetween: 15 },
-            700: { slidesPerView: 2.2, spaceBetween: 15 },
-            768: { slidesPerView: 2.5, spaceBetween: 20 },
-            870: { slidesPerView: 3, spaceBetween: 20 },
-            1000: { slidesPerView: 4, spaceBetween: 24 },
-        },
-    };
-
-    if (nextEl && prevEl) {
-        baseConfig.navigation = {
-            nextEl,
-            prevEl,
-        };
-    }
-
-    if (paginationEl) {
-        baseConfig.pagination = {
-            el: paginationEl,
-            clickable: true,
-        };
-    }
-
-    const {
-        breakpoints: userBreakpoints,
-        pagination: _userPagination,
-        navigation: _userNavigation,
-        mergeBreakpoints,
-        ...restOptions
-    } = options || {};
-
-    const shouldMergeBreakpoints = mergeBreakpoints !== false;
-
-    const finalConfig = {
-        ...baseConfig,
-        ...restOptions,
-    };
-
-    if (userBreakpoints) {
-        finalConfig.breakpoints = shouldMergeBreakpoints
-            ? { ...baseConfig.breakpoints, ...userBreakpoints }
-            : userBreakpoints;
-    } else if (!shouldMergeBreakpoints) {
-        delete finalConfig.breakpoints;
-    }
-
-    return new Swiper(container, finalConfig);
-}
-
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
         this.select = section.querySelector('#sort-select');
         this.grid = section.querySelector('.featured-products__grid');
-        this.isSlider = section.dataset.isSlider === 'true';
-        this.wrapper = this.isSlider
-            ? this.grid.querySelector('.swiper-wrapper')
-            : this.grid;
-
-        this.items = Array.from(
-            this.isSlider
-                ? this.grid.querySelectorAll('.swiper-slide')
-                : this.grid.querySelectorAll('.product-card')
-        );
+        this.items = Array.from(this.grid.querySelectorAll('.featured-products__item'));
 
         this.items.forEach((el, i) => {
             if (!el.dataset.index) el.dataset.index = String(i);
         });
-
-        if (this.isSlider) {
-            this.initSwiper();
-        }
-
-        console.log('🤖 Swiper container:', this.swiper);
 
         if (this.select) {
             const urlSort = new URLSearchParams(window.location.search).get('sort_by');
@@ -153,42 +61,21 @@ class FeaturedProducts {
             sorted.sort((a, b) => this.getIndex(a) - this.getIndex(b));
         }
 
-        if (this.isSlider && this.swiper && typeof this.swiper.destroy === 'function') {
-            this.swiper.destroy(true, true);
-            this.swiper = null;
-        }
-
-        if (this.isSlider) {
-            const wrapper = this.grid.querySelector('.swiper-wrapper');
-            if (wrapper) {
-                wrapper.innerHTML = '';
-                sorted.forEach(slide => wrapper.appendChild(slide));
-                this.initSwiper();
-            }
-        } else {
-            this.grid.innerHTML = '';
-            sorted.forEach(card => this.grid.appendChild(card));
-        }
-    }
-
-    initSwiper() {
-        this.swiper = createSectionSwiper(this.section, {
-            containerSelector: '.featured-products__grid',
-            nextSelector: '.swiper-button-next',
-            prevSelector: '.swiper-button-prev',
-        });
+        const frag = document.createDocumentFragment();
+        sorted.forEach(el => frag.appendChild(el));
+        this.grid.appendChild(frag);
     }
 
     getPrice(el) {
         const dp = el.dataset.price;
         if (dp && !Number.isNaN(Number(dp))) return Number(dp);
-        const txt = (el.querySelector('.product-card__price')?.textContent || '').replace(/[^\d.,-]/g, '');
+        const txt = (el.querySelector('.featured-products__price')?.textContent || '').replace(/[^\d.,-]/g, '');
         const num = Number(txt.replace(/\./g, '').replace(',', '.'));
         return Number.isNaN(num) ? Number.MAX_SAFE_INTEGER : Math.round(num * 100);
     }
 
     getTitle(el) {
-        return (el.dataset.title || el.querySelector('.product-card__name')?.textContent || '').trim();
+        return (el.dataset.title || el.querySelector('.featured-products__name')?.textContent || '').trim();
     }
 
     getIndex(el) {
@@ -205,7 +92,7 @@ class AddToCart {
 
     init() {
         this.context.addEventListener('click', (e) => {
-            const btn = e.target.closest('.product-card__btn');
+            const btn = e.target.closest('.featured-products__btn');
             if (!btn) return;
             e.preventDefault();
             this.handleAdd(btn);
@@ -694,197 +581,6 @@ class QuantityStepper {
     }
 }
 
-class ProductRecommendationsSection {
-    constructor(sectionEl) {
-        this.sectionEl = sectionEl;
-        this.productId = sectionEl.dataset.productId;
-        this.sectionId = sectionEl.dataset.sectionId;
-
-        if (!this.productId || !this.sectionId) return;
-
-        this.fetchRecommendations();
-    }
-
-    async fetchRecommendations() {
-        const url = `/recommendations/products?section_id=${this.sectionId}&product_id=${this.productId}`;
-
-        try {
-            const response = await fetch(url);
-            if (!response.ok) return;
-
-            const html = await response.text();
-
-            // Парсим HTML
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newSection = doc.querySelector('[data-section-type="product-recommendations"]');
-
-            // Нічого не повернулося – ховаємо секцію
-            if (!newSection) {
-                this.sectionEl.style.display = 'none';
-                return;
-            }
-
-            // Замінюємо вміст поточної секції на новий
-            this.sectionEl.innerHTML = newSection.innerHTML;
-
-            // Ініціалізуємо Swiper
-            this.swiper = createSectionSwiper(this.sectionEl, {
-                containerSelector: '.js-product-recommendations-swiper',
-                nextSelector: '.swiper-button-next',
-                prevSelector: '.swiper-button-prev',
-            });
-
-        } catch (error) {
-            console.error('Failed to load product recommendations', error);
-        }
-    }
-}
-
-class FAQComponent extends HTMLElement {
-    constructor() {
-        super();
-        this.init();
-    }
-
-    init() {
-        this.querySelectorAll('.dropdown-list__btn').forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const item = btn.closest('.dropdown-list__item');
-                const isActive = item.classList.contains('dropdown-list__item--active');
-
-                // Закрыть все
-                this.querySelectorAll('.dropdown-list__item').forEach((el) =>
-                    el.classList.remove('dropdown-list__item--active')
-                );
-
-                // Открытие по клику
-                if (!isActive) {
-                    item.classList.add('dropdown-list__item--active');
-                }
-            });
-        });
-    }
-}
-
-class MainBanner {
-    constructor(section) {
-        this.section = section;
-        this.initSwiper();
-        this.handleVideoSlides();
-    }
-
-    initSwiper() {
-        this.swiper = createSectionSwiper(this.section, {
-            containerSelector: '.js-main-banner',
-            paginationSelector: '.swiper-pagination',
-            options: {
-                loop: true,
-                slidesPerView: 1,
-                spaceBetween: 0,
-                mergeBreakpoints: false,
-                autoplay: {
-                    delay: 4000,
-                    disableOnInteraction: false,
-                },
-            }
-        });
-    }
-
-    handleVideoSlides() {
-        if (!this.swiper) return;
-
-        const swiper = this.swiper;
-
-        const stopAutoplay = () => {
-            if (swiper.autoplay && swiper.autoplay.running) {
-                swiper.autoplay.stop();
-            }
-        };
-
-        const startAutoplay = () => {
-            if (swiper.params.autoplay && !swiper.autoplay.running) {
-                swiper.autoplay.start();
-            }
-        };
-
-        const handleSlideState = () => {
-            const activeSlide = swiper.slides[swiper.activeIndex];
-            const video = activeSlide.querySelector('video');
-
-            if (video) {
-                stopAutoplay();
-
-                // Снимаем loop — иначе onended НИКОГДА не сработает
-                video.loop = false;
-
-                // Сбрасываем время (если надо)
-                video.currentTime = 0;
-
-                video.play().catch(() => { });
-
-                video.onended = () => {
-                    // Переходим к следующему слайду
-                    swiper.slideNext();
-
-                    // Возвращаем autoplay
-                    startAutoplay();
-                };
-
-            } else {
-                startAutoplay();
-            }
-        };
-
-        swiper.on('slideChange', handleSlideState);
-
-        setTimeout(handleSlideState, 50);
-    }
-}
-
-class FooterAccordion {
-    constructor(root) {
-        this.root = root;
-        this.buttons = root.querySelectorAll('.footer__btn');
-
-        this.buttons.forEach(btn => {
-            btn.addEventListener('click', () => this.toggle(btn));
-        });
-    }
-
-    toggle(btn) {
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        const list = document.getElementById(btn.getAttribute('aria-controls'));
-        const icon = btn.querySelector('.footer__icon');
-
-        const isMobile = window.innerWidth < 640;
-        if (!isMobile) return; // на десктопе отключаем аккордеон
-
-        btn.setAttribute('aria-expanded', !expanded);
-        list.dataset.open = !expanded;
-
-        if (!expanded) {
-            list.dataset.open = "true";
-            list.setAttribute("aria-hidden", "false");
-
-            list.style.maxHeight = list.scrollHeight + 'px';
-            list.style.opacity = 1;
-
-            icon.classList.remove('tw:rotate-45');
-            icon.classList.add('tw:-rotate-135');
-        } else {
-            list.dataset.open = "false";
-            list.setAttribute("aria-hidden", "true");
-
-            list.style.maxHeight = '0px';
-            list.style.opacity = 0;
-
-            icon.classList.remove('tw:-rotate-135');
-            icon.classList.add('tw:rotate-45');
-        }
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
@@ -896,20 +592,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('input[name="quantity"]').forEach(inp => {
         new QuantityValidator(inp)
     });
-
-    document.querySelectorAll('[data-section-type="product-recommendations"]').forEach(section => {
-        new ProductRecommendationsSection(section);
-    });
-
-    document.querySelectorAll('[data-component="MainBanner"]').forEach(section => {
-        new MainBanner(section);
-    });
-
-    document.querySelectorAll('[data-component="Footer"]').forEach(root => {
-        new FooterAccordion(root)
-    });
-
-    customElements.define('faq-component', FAQComponent);
 
     new AddToCart(document);
     new BurgerToggle(document);
