@@ -7,12 +7,7 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --tw-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --tw-color-red-50: oklch(97.1% 0.013 17.38);
-    --tw-color-red-100: oklch(93.6% 0.032 17.717);
-    --tw-color-red-200: oklch(88.5% 0.062 18.334);
     --tw-color-red-500: oklch(63.7% 0.237 25.331);
-    --tw-color-red-600: oklch(57.7% 0.245 27.325);
-    --tw-color-green-300: oklch(87.1% 0.15 154.449);
     --tw-color-green-400: oklch(79.2% 0.209 151.711);
     --tw-color-blue-600: oklch(54.6% 0.245 262.881);
     --tw-color-slate-500: oklch(55.4% 0.046 257.417);
@@ -222,29 +217,11 @@
   .tw\:inset-0 {
     inset: calc(var(--tw-spacing) * 0);
   }
-  .tw\:top-\[-15px\] {
-    top: -15px;
-  }
-  .tw\:top-\[15px\] {
-    top: 15px;
-  }
   .tw\:right-\[-2\%\]\! {
     right: -2% !important;
   }
-  .tw\:bottom-1\.5 {
-    bottom: calc(var(--tw-spacing) * 1.5);
-  }
-  .tw\:bottom-3 {
-    bottom: calc(var(--tw-spacing) * 3);
-  }
   .tw\:bottom-6\! {
     bottom: calc(var(--tw-spacing) * 6) !important;
-  }
-  .tw\:bottom-\[-5px\] {
-    bottom: -5px;
-  }
-  .tw\:bottom-\[-15px\] {
-    bottom: -15px;
   }
   .tw\:bottom-\[-25px\] {
     bottom: -25px;
@@ -267,6 +244,9 @@
   .tw\:col-span-2 {
     grid-column: span 2 / span 2;
   }
+  .tw\:col-span-full {
+    grid-column: 1 / -1;
+  }
   .tw\:m-0 {
     margin: calc(var(--tw-spacing) * 0);
   }
@@ -281,15 +261,6 @@
   }
   .tw\:mt-0 {
     margin-top: calc(var(--tw-spacing) * 0);
-  }
-  .tw\:mt-1 {
-    margin-top: calc(var(--tw-spacing) * 1);
-  }
-  .tw\:mt-1\.5 {
-    margin-top: calc(var(--tw-spacing) * 1.5);
-  }
-  .tw\:mt-\[5px\] {
-    margin-top: 5px;
   }
   .tw\:mr-0 {
     margin-right: calc(var(--tw-spacing) * 0);
@@ -640,9 +611,6 @@
   .tw\:border-gray-300 {
     border-color: var(--tw-color-gray-300);
   }
-  .tw\:border-red-500 {
-    border-color: var(--tw-color-red-500);
-  }
   .tw\:border-transparent {
     border-color: transparent;
   }
@@ -661,20 +629,8 @@
   .tw\:bg-gray-500 {
     background-color: var(--tw-color-gray-500);
   }
-  .tw\:bg-green-300 {
-    background-color: var(--tw-color-green-300);
-  }
   .tw\:bg-green-400 {
     background-color: var(--tw-color-green-400);
-  }
-  .tw\:bg-red-50 {
-    background-color: var(--tw-color-red-50);
-  }
-  .tw\:bg-red-100 {
-    background-color: var(--tw-color-red-100);
-  }
-  .tw\:bg-red-200 {
-    background-color: var(--tw-color-red-200);
   }
   .tw\:bg-transparent {
     background-color: transparent;
@@ -858,9 +814,6 @@
   .tw\:text-red-500 {
     color: var(--tw-color-red-500);
   }
-  .tw\:text-red-600 {
-    color: var(--tw-color-red-600);
-  }
   .tw\:text-slate-500 {
     color: var(--tw-color-slate-500);
   }
@@ -918,26 +871,6 @@
     --tw-ease: linear;
     transition-timing-function: linear;
   }
-  .tw\:group-\[\.has-error\]\:border-red-500 {
-    &:is(:where(.tw\:group):is(.has-error) *) {
-      border-color: var(--tw-color-red-500);
-    }
-  }
-  .tw\:group-\[\.has-error\]\:bg-red-50 {
-    &:is(:where(.tw\:group):is(.has-error) *) {
-      background-color: var(--tw-color-red-50);
-    }
-  }
-  .tw\:group-\[\.has-error\=\'true\'\]\:border-red-500 {
-    &:is(:where(.tw\:group):is(.has-error='true') *) {
-      border-color: var(--tw-color-red-500);
-    }
-  }
-  .tw\:group-\[\.has-error\=\'true\'\]\:bg-red-50 {
-    &:is(:where(.tw\:group):is(.has-error='true') *) {
-      background-color: var(--tw-color-red-50);
-    }
-  }
   .tw\:peer-checked\:border-black {
     &:is(:where(.tw\:peer):checked ~ *) {
       border-color: var(--tw-color-black);
@@ -987,16 +920,6 @@
   .tw\:peer-focus-visible\:opacity-80 {
     &:is(:where(.tw\:peer):focus-visible ~ *) {
       opacity: 80%;
-    }
-  }
-  .tw\:invalid\:border-red-500 {
-    &:invalid {
-      border-color: var(--tw-color-red-500);
-    }
-  }
-  .tw\:invalid\:bg-red-50 {
-    &:invalid {
-      background-color: var(--tw-color-red-50);
     }
   }
   .tw\:hover\:-translate-y-1 {
@@ -1397,16 +1320,6 @@
   .tw\:lg\:gap-4 {
     @media (width >= 64rem) {
       gap: calc(var(--tw-spacing) * 4);
-    }
-  }
-  .tw\:\[\&\.feedback__input--error\]\:border-red-500 {
-    &.feedback  input--error {
-      border-color: var(--tw-color-red-500);
-    }
-  }
-  .tw\:\[\&\.feedback__input--error\]\:bg-red-50 {
-    &.feedback  input--error {
-      background-color: var(--tw-color-red-50);
     }
   }
   .tw\:\[\&\.swiper-button-disabled\]\:opacity-0\! {

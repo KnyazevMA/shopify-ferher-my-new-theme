@@ -271,6 +271,60 @@ class FormValidator {
     }
 }
 
+class ProductSorter {
+    constructor(items) {
+        this.items = Array.from(items);
+    }
+
+    sortBy(method) {
+        let sorted = [...this.items];
+
+        switch (method) {
+            case 'price-ascending':
+                sorted.sort((a, b) => this.getPrice(a) - this.getPrice(b));
+                break;
+
+            case 'price-descending':
+                sorted.sort((a, b) => this.getPrice(b) - this.getPrice(a));
+                break;
+
+            case 'title-ascending':
+                sorted.sort((a, b) =>
+                    this.getTitle(a).localeCompare(this.getTitle(b), undefined, { sensitivity: 'base' })
+                );
+                break;
+
+            default:
+                sorted.sort((a, b) => this.getIndex(a) - this.getIndex(b));
+                break;
+        }
+
+        return sorted;
+    }
+
+    getPrice(el) {
+        if (el.dataset.price && !Number.isNaN(Number(el.dataset.price))) {
+            return Number(el.dataset.price);
+        }
+
+        const txt = (el.querySelector('.product-card__price')?.textContent || '')
+            .replace(/[^\d.,-]/g, '')
+            .replace(/\./g, '')
+            .replace(',', '.');
+
+        const num = Number(txt);
+        return Number.isNaN(num) ? Number.MAX_SAFE_INTEGER : Math.round(num * 100);
+    }
+
+    getTitle(el) {
+        return (el.dataset.title || el.querySelector('.product-card__name')?.textContent || '').trim();
+    }
+
+    getIndex(el) {
+        return Number(el.dataset.index || 0);
+    }
+}
+
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
@@ -295,41 +349,32 @@ class FeaturedProducts {
             this.initSwiper();
         }
 
+        this.sorter = new ProductSorter(this.items);
+
         if (this.select) {
             const urlSort = new URLSearchParams(window.location.search).get('sort_by');
             const savedSort = urlSort || window.localStorage.getItem('fp_sort');
-            if (savedSort && this.hasOption(savedSort)) {
+
+            if (savedSort) {
                 this.select.value = savedSort;
-                this.sortBy(savedSort);
+                this.applySort(savedSort);
             }
 
             this.select.addEventListener('change', (e) => {
                 const value = e.target.value;
-                this.sortBy(value);
+                this.applySort(value);
+
                 const url = new URL(window.location.href);
                 url.searchParams.set('sort_by', value);
                 window.history.replaceState({}, '', url);
+
                 window.localStorage.setItem('fp_sort', value);
             });
         }
     }
 
-    hasOption(val) {
-        return Array.from(this.select.options).some(o => o.value === val);
-    }
-
-    sortBy(value) {
-        let sorted = [...this.items];
-
-        if (value === 'price-ascending') {
-            sorted.sort((a, b) => this.getPrice(a) - this.getPrice(b));
-        } else if (value === 'price-descending') {
-            sorted.sort((a, b) => this.getPrice(b) - this.getPrice(a));
-        } else if (value === 'title-ascending') {
-            sorted.sort((a, b) => this.getTitle(a).localeCompare(this.getTitle(b), undefined, { sensitivity: 'base' }));
-        } else {
-            sorted.sort((a, b) => this.getIndex(a) - this.getIndex(b));
-        }
+    applySort(method) {
+        const sorted = this.sorter.sortBy(method);
 
         if (this.isSlider && this.swiper && typeof this.swiper.destroy === 'function') {
             this.swiper.destroy(true, true);
@@ -356,22 +401,44 @@ class FeaturedProducts {
             prevSelector: '.swiper-button-prev',
         });
     }
+}
 
-    getPrice(el) {
-        const dp = el.dataset.price;
-        if (dp && !Number.isNaN(Number(dp))) return Number(dp);
-        const txt = (el.querySelector('.product-card__price')?.textContent || '').replace(/[^\d.,-]/g, '');
-        const num = Number(txt.replace(/\./g, '').replace(',', '.'));
-        return Number.isNaN(num) ? Number.MAX_SAFE_INTEGER : Math.round(num * 100);
+class CollectionPage {
+    constructor(section) {
+        this.section = section;
+        this.container = section;
+        if (!this.container) return;
+
+        this.grid = this.container.querySelector('.collection-grid');
+        this.select = this.container.querySelector('#sort-select');
+        if (!this.grid || !this.select) return;
+
+        this.items = Array.from(this.grid.querySelectorAll('.product-card'));
+        this.sorter = new ProductSorter(this.items);
+
+        this.initSort();
     }
 
-    getTitle(el) {
-        return (el.dataset.title || el.querySelector('.product-card__name')?.textContent || '').trim();
+    initSort() {
+        // apply saved sort (optional)
+        const saved = window.localStorage.getItem('collection_sort');
+        if (saved) {
+            this.select.value = saved;
+            this.applySort(saved);
+        }
+
+        this.select.addEventListener('change', (e) => {
+            const val = e.target.value;
+            this.applySort(val);
+            window.localStorage.setItem('collection_sort', val);
+        });
     }
 
-    getIndex(el) {
-        const di = el.dataset.index;
-        return di ? Number(di) : 0;
+    applySort(method) {
+        const sorted = this.sorter.sortBy(method);
+
+        this.grid.innerHTML = '';
+        sorted.forEach(card => this.grid.appendChild(card));
     }
 }
 
@@ -1071,6 +1138,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
     });
+
+    document.querySelectorAll('.collection').forEach(section => {
+        new CollectionPage(section);
+    });
+
     document.querySelectorAll('.product').forEach(section => {
         new ProductPage(section);
     });
