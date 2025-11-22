@@ -10,7 +10,7 @@
 {
   "sections": {
     "featured_products_jMiCeJ": {
-      "type": "featured-products",
+      "type": "section-featured-products",
       "name": "Featured products",
       "settings": {
         "title": "Featured products",
@@ -24,7 +24,7 @@
       }
     },
     "faq_K6tYwp": {
-      "type": "faq",
+      "type": "section-faq",
       "blocks": {
         "faq_item_gHXpPH": {
           "type": "faq_item",
@@ -70,7 +70,7 @@
       }
     },
     "feedback_rBYXNH": {
-      "type": "feedback",
+      "type": "section-feedback",
       "name": "Contact form",
       "settings": {
         "title": "Need help?",

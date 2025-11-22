@@ -10,7 +10,7 @@
 {
   "sections": {
     "main-product": {
-      "type": "product",
+      "type": "page-product",
       "settings": {
         "show_thumbnails": true,
         "color_text_title": "Виберіть колір:",
@@ -23,7 +23,7 @@
       "settings": {}
     },
     "product_recommendations_qGUwKw": {
-      "type": "product-recommendations",
+      "type": "section-product-recommendations",
       "name": "Product recommendations",
       "settings": {
         "heading": "You may also like"

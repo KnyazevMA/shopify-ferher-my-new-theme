@@ -10,7 +10,6 @@ input[type="number"]::-webkit-outer-spin-button {
     margin: 0;
 }
 
-.featured-products__btn,
 .product__btn,
 button[type="submit"],
 input[type="submit"] {
@@ -33,10 +32,6 @@ input[type="submit"] {
     .page-width {
         padding-inline: 32px;
     }
-}
-
-.swiper-pagination {
-    margin: 0 0 24px 0;
 }
 
 .hero-swiper .swiper-pagination-bullet {
