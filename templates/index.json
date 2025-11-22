@@ -9,10 +9,10 @@
  */
 {
   "sections": {
-    "main_banner_JBKmx8": {
-      "type": "main-banner",
+    "section_main_banner_gcQdxw": {
+      "type": "section-main-banner",
       "blocks": {
-        "slide_RqFdjQ": {
+        "slide_MGqVr4": {
           "type": "slide",
           "settings": {
             "slide_image": "shopify://shop_images/Slide-1-1.webp",
@@ -22,7 +22,7 @@
             "slide_button_link": "shopify://collections"
           }
         },
-        "slide_Wzt9K4": {
+        "slide_9PUFAR": {
           "type": "slide",
           "settings": {
             "slide_image": "shopify://shop_images/Slide-2-2.webp",
@@ -32,7 +32,7 @@
             "slide_button_link": "shopify://collections"
           }
         },
-        "slide_WCjTHD": {
+        "slide_Uktxpw": {
           "type": "slide",
           "settings": {
             "slide_image": "shopify://shop_images/Slide-3-3.webp",
@@ -44,9 +44,9 @@
         }
       },
       "block_order": [
-        "slide_RqFdjQ",
-        "slide_Wzt9K4",
-        "slide_WCjTHD"
+        "slide_MGqVr4",
+        "slide_9PUFAR",
+        "slide_Uktxpw"
       ],
       "name": "Main Banner",
       "settings": {}
@@ -124,7 +124,7 @@
     }
   },
   "order": [
-    "main_banner_JBKmx8",
+    "section_main_banner_gcQdxw",
     "featured_products_jMiCeJ",
     "faq_K6tYwp",
     "feedback_rBYXNH"
