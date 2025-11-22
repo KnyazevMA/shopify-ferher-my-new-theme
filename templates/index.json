@@ -9,6 +9,48 @@
  */
 {
   "sections": {
+    "main_banner_JBKmx8": {
+      "type": "main-banner",
+      "blocks": {
+        "slide_RqFdjQ": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-1-1.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        },
+        "slide_Wzt9K4": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-2-2.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        },
+        "slide_WCjTHD": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-3-3.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        }
+      },
+      "block_order": [
+        "slide_RqFdjQ",
+        "slide_Wzt9K4",
+        "slide_WCjTHD"
+      ],
+      "name": "Main Banner",
+      "settings": {}
+    },
     "featured_products_jMiCeJ": {
       "type": "featured-products",
       "name": "Featured products",
@@ -82,6 +124,7 @@
     }
   },
   "order": [
+    "main_banner_JBKmx8",
     "featured_products_jMiCeJ",
     "faq_K6tYwp",
     "feedback_rBYXNH"
