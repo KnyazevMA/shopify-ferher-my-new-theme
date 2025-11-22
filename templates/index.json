@@ -9,6 +9,48 @@
  */
 {
   "sections": {
+    "main_banner_JBKmx8": {
+      "type": "main-banner",
+      "blocks": {
+        "slide_RqFdjQ": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-1-1.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        },
+        "slide_Wzt9K4": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-2-2.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        },
+        "slide_WCjTHD": {
+          "type": "slide",
+          "settings": {
+            "slide_image": "shopify://shop_images/Slide-3-3.webp",
+            "slide_title": "More than just shoes — it’s a part of your story.",
+            "slide_text": "Original sneakers from Nike and other top brands that make every step feel special.",
+            "slide_button_text": "Shop the Collection",
+            "slide_button_link": "shopify://collections"
+          }
+        }
+      },
+      "block_order": [
+        "slide_RqFdjQ",
+        "slide_Wzt9K4",
+        "slide_WCjTHD"
+      ],
+      "name": "Main Banner",
+      "settings": {}
+    },
     "featured_products_jMiCeJ": {
       "type": "section-featured-products",
       "name": "Featured products",
@@ -29,7 +71,7 @@
         "faq_item_gHXpPH": {
           "type": "faq_item",
           "settings": {
-            "question": "What are Nike&rsquo;s delivery options?",
+            "question": "What are Nike’s delivery options?",
             "answer": "Nike offers several delivery options depending on&nbsp;your location. Standard shipping usually takes\n                a&nbsp;few\n                business days, while faster methods like Express delivery are available at&nbsp;checkout. Shipping fees\n                and\n                times\n                are shown before you place your order."
           }
         },
@@ -64,7 +106,7 @@
       "name": "FAQ",
       "settings": {
         "heading": "Frequently asked questions",
-        "subheading": "Answers to&nbsp;our most frequently asked questions are just one click away.",
+        "subheading": "Answers to our most frequently asked questions are just one click away.",
         "content_alignment": "center",
         "padding_size": "medium"
       }
@@ -82,6 +124,7 @@
     }
   },
   "order": [
+    "main_banner_JBKmx8",
     "featured_products_jMiCeJ",
     "faq_K6tYwp",
     "feedback_rBYXNH"
