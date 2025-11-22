@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "main": {
+      "type": "collections-list",
+      "settings": {}
+    }
+  },
+  "order": ["main"]
+}
