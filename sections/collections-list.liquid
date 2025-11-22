@@ -1,0 +1,99 @@
+{% comment %}
+  Collections List Section
+  Вывод списка всех колекцій з адмінки (динамічний або автоматичний)
+{% endcomment %}
+
+<section id="collections-list-{{ section.id }}" class="tw:py-16">
+  <div class="page-width">
+    {%- if section.settings.title != blank -%}
+      <h2 class="tw:text-3xl tw:font-bold tw:mb-8 tw:text-center">
+        {{ section.settings.title }}
+      </h2>
+    {%- endif -%}
+
+    <div
+      class="
+        tw:grid
+        tw:gap-8
+        tw:grid-cols-1
+        tw:sm:grid-cols-2
+        tw:md:grid-cols-3
+      "
+    >
+      {%- assign collections_to_show = section.settings.collections | default: collections -%}
+
+      {%- for collection in collections_to_show -%}
+        {% if collection.all_products_count > 0 %}
+          <a
+            href="{{ collection.url }}"
+            class="tw:flex tw:flex-col tw:rounded-lg tw:shadow-sm tw:border tw:border-gray-200 hover:tw:shadow-md tw:transition"
+          >
+            <div class="tw:aspect-square tw:w-full tw:overflow-hidden tw:bg-gray-100 tw:rounded-md tw:shrink-0 ">
+              {% if collection.image %}
+                {{
+                  collection.image
+                  | image_url: width: 600
+                  | image_tag:
+                    loading: 'lazy',
+                    sizes: '(max-width: 768px) 100vw, 25vw',
+                    widths: '300, 450, 600, 900',
+                    alt: collection.title,
+                    class: 'tw:w-full tw:h-full tw:object-cover group-hover:tw:scale-105 tw:transition'
+                }}
+              {% else %}
+                {{ 'collection-1' | placeholder_svg_tag }}
+              {% endif %}
+            </div>
+            <div class="tw:flex tw:flex-col tw:items-center tw:justify-between tw:h-full"> 
+              <div class="tw:px-4 tw:pb-0 tw:pt-4 tw:w-full tw:flex tw:flex-col tw:items-center">
+                <h3 class="tw:text-2xl tw:font-bold tw:mb-2 tw:text-center">
+                  {{ collection.title }}
+                </h3>
+
+                {% if collection.description != blank %}
+                  <p class="tw:text-gray-700 tw:text-base tw:mb-4 tw:line-clamp-3">
+                    {{ collection.description | strip_html | truncate: 100 }}
+                  </p>
+                {% endif %}
+
+                <p class="tw:text-gray-600 tw:text-base tw:text-center">{{ collection.all_products_count }} товарів</p>
+              </div>
+              <button
+                href="{{ collection.url }}"
+                class="tw:inline-block tw:mt-2 tw:px-6 tw:py-2 tw:bg-black tw:text-white tw:rounded-lg tw:text-center tw:hover:bg-gray-800 tw:transition tw:cursor-pointer tw:w-full"
+              >
+                {{ section.settings.button_label }}
+              </button>
+            </div>
+          </a>
+        {% endif %}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Список колекцій",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Заголовок",
+      "default": "Наші колекції"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Текст кнопки",
+      "default": "Переглянути"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Список колекцій"
+    }
+  ]
+}
+{% endschema %}
