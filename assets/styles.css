@@ -188,3 +188,10 @@ input[type="submit"] {
 .dropdown-list__item--active .dropdown-list__icon::before {
     transform: translate(-50%, -50%) rotate(0deg);
 }
+
+.feedback__field--error input,
+.feedback__field--error textarea {
+    border-color: #f87171;
+    background-color: #fef2f2;
+    color: #b91c1c;
+}

@@ -91,6 +91,186 @@ function createSectionSwiper(rootEl, {
     return new Swiper(container, finalConfig);
 }
 
+class FormValidator {
+    constructor(formElement) {
+        this.form = formElement;
+
+        this.fields = Array.from(this.form.querySelectorAll("[data-validate]"));
+
+        this.init();
+    }
+
+    init() {
+        if (!this.form) return;
+
+        this.form.addEventListener("submit", (e) => {
+            const isValid = this.validateForm();
+
+            if (!isValid) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+
+            // SUCCESS STATE — show green button + text
+            const btn = this.form.querySelector('button[type="submit"]');
+
+            if (btn) {
+                const originalText = btn.textContent;
+
+                btn.classList.add("tw:bg-green-400");
+                btn.textContent = t('submitted');
+
+                setTimeout(() => {
+                    btn.classList.remove("tw:bg-green-400");
+                    btn.textContent = originalText;
+                }, 5000);
+            }
+        });
+
+        this.fields.forEach((field) => {
+            field.addEventListener("blur", () => {
+                this.validateField(field);
+            });
+        });
+    }
+
+    validateForm() {
+        let isValid = true;
+
+        this.fields.forEach((field) => {
+            const localValid = this.validateField(field);
+            if (!localValid) isValid = false;
+        });
+
+        return isValid;
+    }
+
+    validateField(field) {
+        const isRequired = field.hasAttribute('data-required');
+        const type = field.dataset.type || field.type;
+        const value = field.value.trim();
+
+        let errorMessage = "";
+
+        // REQUIRED
+        if (isRequired && value === "") {
+            errorMessage = t('required');
+        }
+
+        // EMAIL
+        if (!errorMessage && type === "email" && value !== "") {
+            const emailError = this.validateEmail(value);
+            if (emailError) {
+                errorMessage = emailError;
+            }
+        }
+
+        // PHONE
+        if (!errorMessage && type === "tel" && value !== "") {
+            const phoneError = this.validatePhone(value);
+            if (phoneError) {
+                errorMessage = phoneError;
+            }
+        }
+
+        // MESSAGE length
+        if (!errorMessage && field.dataset.type === "message") {
+            if (value.length < 10) {
+                errorMessage = t('message_short');
+            }
+        }
+
+        // OUTPUT ERROR
+        this.setFieldError(field, errorMessage);
+        return !errorMessage;
+    }
+
+    validateEmail(value) {
+        const trimmed = value.trim();
+
+        if (!trimmed) return null;
+
+        if (!trimmed.includes("@")) {
+            return t('email_format');
+        }
+
+        const [local, domain] = trimmed.split("@");
+
+        if (!domain) {
+            return t('email_domain_required');
+        }
+
+        if (!domain.includes(".")) {
+            return t('email_dot_required');
+        }
+
+        if (domain.length < 3) {
+            return t('email_domain_required');
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        if (!emailRegex.test(trimmed)) {
+            return t('email_invalid');
+        }
+
+        return null;
+    }
+
+    validatePhone(value) {
+        const trimmed = value.trim();
+
+        if (!trimmed) return null;
+
+        if (!trimmed.startsWith("+")) {
+            return t('phone_plus');
+        }
+
+        const raw = trimmed.slice(1);
+
+        if (!/^[0-9]+$/.test(raw)) {
+            return t('phone_digits');
+        }
+
+        if (raw.length < 7) {
+            return t('phone_short');
+        }
+
+        if (raw.length > 15) {
+            return t('phone_long');
+        }
+
+        return null;
+    }
+
+    setFieldError(field, message) {
+        const wrapper = field.closest('.feedback__field');
+        if (!wrapper) return;
+
+        const errorContainer = wrapper.querySelector(
+            `[data-error-container="${field.getAttribute('name').replace('contact[', '').replace(']', '')}"]`
+        );
+
+        const label = wrapper;
+
+        if (!message) {
+            if (label) label.classList.remove("feedback__field--error");
+            if (errorContainer) {
+                errorContainer.textContent = "";
+                errorContainer.classList.add("tw:hidden");
+            }
+            return;
+        }
+
+        if (label) label.classList.add("feedback__field--error");
+
+        if (errorContainer) {
+            errorContainer.textContent = message;
+            errorContainer.classList.remove("tw:hidden");
+        }
+    }
+}
+
 class FeaturedProducts {
     constructor(section) {
         this.section = section;
@@ -114,8 +294,6 @@ class FeaturedProducts {
         if (this.isSlider) {
             this.initSwiper();
         }
-
-        console.log('🤖 Swiper container:', this.swiper);
 
         if (this.select) {
             const urlSort = new URLSearchParams(window.location.search).get('sort_by');
@@ -886,6 +1064,10 @@ class FooterAccordion {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-validate-form="true"]').forEach((form) => {
+        new FormValidator(form);
+    });
+
     document.querySelectorAll('.featured-products').forEach(section => {
         new FeaturedProducts(section);
     });

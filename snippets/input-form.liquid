@@ -7,12 +7,12 @@
 {% assign name = 'contact[' | append: field | append: ']' %}
 {% assign label = 'forms.' | append: field | append: '.label' | t %}
 {% assign placeholder = 'forms.' | append: field | append: '.placeholder' | t %}
-{% assign error = form.errors.translated_messages[field] | default: blank -%}
 <label
   class="
     feedback__field
     tw:flex tw:flex-col tw:gap-2
     {% if flat %}tw:col-span-2 tw:max-md:col-span-1{% endif %}
+    tw:relative
     {{ tw-style }}
   "
 >
@@ -33,11 +33,10 @@
       "
       name="{{ name }}"
       placeholder="{{ placeholder }}"
+      data-validate="{{ type }}"
+      data-type="message"
       {% if required %}
-        required
-      {% endif %}
-      {% if error %}
-        aria-invalid="true"
+        data-required="true"
       {% endif %}
     >{{ form[field] | escape }}</textarea>
   {% else %}
@@ -55,20 +54,33 @@
       "
       type="{{ type }}"
       name="{{ name }}"
+      data-validate="{{ type }}"
       placeholder="{{ placeholder }}"
       value="{{ form[field] | default: customer[field] | escape }}"
       {% if required %}
-        required
-      {% endif %}
-      {% if error %}
-        aria-invalid="true"
+        data-required="true"
       {% endif %}
     >
   {% endif %}
 
-  {% if error %}
-    <p class="feedback__error tw:text-red-500 tw:text-sm tw:mt-1">
-      {{ form.errors.translated_messages[field] }}
-    </p>
-  {% endif %}
+  <p
+    class="feedback__error tw:absolute tw:left-0 tw:bottom-[-25px] tw:text-red-500 tw:text-sm tw:hidden"
+    data-error-container="{{ field }}"
+  ></p>
 </label>
+
+<script id="Translations" type="application/json">
+  {
+    "submitted": "{{ 'forms.submitted' | t }}",
+    "required": "{{ 'forms.validations.required' | t }}",
+    "message_short": "{{ 'forms.validations.message_short' | t }}",
+    "phone_long": "{{ 'forms.validations.phone_long' | t }}",
+    "phone_short": "{{ 'forms.validations.phone_short' | t }}",
+    "phone_digits": "{{ 'forms.validations.phone_digits' | t }}",
+    "phone_plus": "{{ 'forms.validations.phone_plus' | t }}",
+    "email_invalid": "{{ 'forms.validations.email_invalid' | t }}",
+    "email_dot_required": "{{ 'forms.validations.email_dot_required' | t }}",
+    "email_format": "{{ 'forms.validations.email_format' | t }}",
+    "email_domain_required": "{{ 'forms.validations.email_domain_required' | t }}"
+  }
+</script>
