@@ -71,7 +71,7 @@
         "faq_item_gHXpPH": {
           "type": "faq_item",
           "settings": {
-            "question": "What are Nike&rsquo;s delivery options?",
+            "question": "What are Nike’s delivery options?",
             "answer": "Nike offers several delivery options depending on&nbsp;your location. Standard shipping usually takes\n                a&nbsp;few\n                business days, while faster methods like Express delivery are available at&nbsp;checkout. Shipping fees\n                and\n                times\n                are shown before you place your order."
           }
         },
@@ -106,7 +106,7 @@
       "name": "FAQ",
       "settings": {
         "heading": "Frequently asked questions",
-        "subheading": "Answers to&nbsp;our most frequently asked questions are just one click away.",
+        "subheading": "Answers to our most frequently asked questions are just one click away.",
         "content_alignment": "center",
         "padding_size": "medium"
       }
