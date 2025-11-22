@@ -8,6 +8,7 @@
     --tw-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
     --tw-color-red-500: oklch(63.7% 0.237 25.331);
+    --tw-color-green-400: oklch(79.2% 0.209 151.711);
     --tw-color-blue-600: oklch(54.6% 0.245 262.881);
     --tw-color-slate-500: oklch(55.4% 0.046 257.417);
     --tw-color-gray-100: oklch(96.7% 0.003 264.542);
@@ -227,6 +228,12 @@
   .tw\:bottom-6\! {
     bottom: calc(var(--tw-spacing) * 6) !important;
   }
+  .tw\:bottom-\[-25px\] {
+    bottom: -25px;
+  }
+  .tw\:left-0 {
+    left: calc(var(--tw-spacing) * 0);
+  }
   .tw\:left-\[-2\%\]\! {
     left: -2% !important;
   }
@@ -241,6 +248,9 @@
   }
   .tw\:col-span-2 {
     grid-column: span 2 / span 2;
+  }
+  .tw\:col-span-full {
+    grid-column: 1 / -1;
   }
   .tw\:m-0 {
     margin: calc(var(--tw-spacing) * 0);
@@ -671,6 +681,9 @@
   }
   .tw\:bg-gray-500 {
     background-color: var(--tw-color-gray-500);
+  }
+  .tw\:bg-green-400 {
+    background-color: var(--tw-color-green-400);
   }
   .tw\:bg-transparent {
     background-color: transparent;

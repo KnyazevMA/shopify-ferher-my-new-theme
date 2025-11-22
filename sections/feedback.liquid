@@ -44,13 +44,7 @@
       </div>
     {% endif %}
 
-    {%- form 'contact', id: 'ContactForm', class: position_form -%}
-      {% if form.posted_successfully? %}
-        <p class="feedback__success" role="status" aria-live="polite">
-          {{ 'sections.contact.success' | t: default: 'Thank you! Your message has been sent.' }}
-        </p>
-      {% endif %}
-
+    {%- form 'contact', id: 'ContactForm', class: position_form, data-validate-form: 'true' -%}
       <div
         class="
           feedback__wrapper
@@ -59,14 +53,10 @@
         "
       >
         {% render 'input-form', field: 'name', type: 'text', required: true %}
-        {% render 'input-form', field: 'phone', type: 'text' %}
+        {% render 'input-form', field: 'phone', type: 'tel', required: false %}
         {% render 'input-form', field: 'email', type: 'email', required: true, flat: true %}
         {% render 'input-form', field: 'message', type: 'textarea', required: true, flat: true %}
 
-        {%- comment -%}
-          Honeypot: приховане поле, яке не повинно заповнюватися людиною.
-          Якщо воно заповнене — JS не дасть відправити форму.
-        {%- endcomment -%}
         <div class="tw:hidden" aria-hidden="true">
           <label for="ContactForm-HP-{{ section.id }}">
             {{ 'forms.honeypot' | t: default: 'Leave this field empty' }}
