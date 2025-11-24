@@ -1,0 +1,8 @@
+{
+  "sections": {
+    "not-found-content": {
+      "type": "page-404"
+    }
+  },
+  "order": ["not-found-content"]
+}
