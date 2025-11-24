@@ -22,6 +22,42 @@
       },
       "section-footer": {
         "type": "section-footer",
+        "blocks": {
+          "column_PwE63y": {
+            "type": "column",
+            "settings": {
+              "title": "Resources",
+              "menu": "footer"
+            }
+          },
+          "column_BQiAtn": {
+            "type": "column",
+            "settings": {
+              "title": "Help",
+              "menu": "help"
+            }
+          },
+          "column_JF3zm3": {
+            "type": "column",
+            "settings": {
+              "title": "Company",
+              "menu": "footer-company"
+            }
+          },
+          "column_D6Qgzq": {
+            "type": "column",
+            "settings": {
+              "title": "Menu",
+              "menu": "main-menu"
+            }
+          }
+        },
+        "block_order": [
+          "column_PwE63y",
+          "column_BQiAtn",
+          "column_JF3zm3",
+          "column_D6Qgzq"
+        ],
         "settings": {}
       }
     },
