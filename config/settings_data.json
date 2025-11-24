@@ -11,14 +11,18 @@
   "current": {
     "order": [],
     "sections": {
-      "header": {
-        "type": "header",
+      "section-header": {
+        "type": "section-header",
         "settings": {
           "logo": "shopify://shop_images/logo-icon.svg",
           "logo_alt": "Shop logo",
           "main_menu": "main-menu",
           "margin-bottom": 40
         }
+      },
+      "section-footer": {
+        "type": "section-footer",
+        "settings": {}
       }
     },
     "content_for_index": [],
