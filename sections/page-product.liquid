@@ -48,7 +48,7 @@
             {% endif %}
           </div>
 
-          {% if section.settings.show_thumbnails %}
+          {% if section.settings.show_thumbnails and product.media.size > 1 %}
             <div class="product__thumb-group-list" data-thumbs>
               {%- if color_option_index >= 0 -%}
                 {%- assign color_option = product.options_with_values[color_option_index] -%}
@@ -120,6 +120,12 @@
 
         <div class="product__inner-right">
           <h1 class="product__title tw:mb-3">{{ product.title }}</h1>
+
+          <!-- Start of Judge.me code -->
+          <div class="jdgm-widget jdgm-preview-badge" data-id="{{ product.id }}">
+            {{ product.metafields.judgeme.badge }}
+          </div>
+          <!-- End of Judge.me code -->
 
           {%- form 'product', product, id: 'ProductForm', class: 'product__form' -%}
             <div class="product__wrapper-top tw:flex tw:justify-between tw:max-w-3/4 tw:gap-2.5">
@@ -256,6 +262,18 @@
         </div>
         <!-- End of Judge.me code -->
       </div>
+      <!-- Start of Judge.me code -->
+      <div style="clear:both"></div>
+      <div
+        id="judgeme_product_reviews"
+        class="jdgm-widget jdgm-review-widget"
+        data-product-title="{{ product.title | escape }}"
+        data-id="{{ product.id }}"
+        data-auto-install="false"
+      >
+        {{ product.metafields.judgeme.widget }}
+      </div>
+      <!-- End of Judge.me code -->
     {% else %}
       <p>Product object is missing in this context.</p>
     {% endif %}
@@ -306,7 +324,7 @@
 
 {% schema %}
 {
-  "name": "Main product (adapted)",
+  "name": "Main product",
   "settings": [
     {
       "type": "checkbox",
@@ -317,19 +335,19 @@
     {
       "type": "text",
       "id": "color_text_title",
-      "label": "Color label text",
-      "default": "Виберіть колір:"
+      "label": "Color label",
+      "default": "Choose color:"
     },
     {
       "type": "text",
       "id": "size_text_title",
-      "label": "Size label text",
-      "default": "Виберіть розмір:"
+      "label": "Size label",
+      "default": "Choose size:"
     },
     {
       "type": "range",
       "id": "bottom_margin",
-      "label": "Відступ знизу (px)",
+      "label": "Bottom spacing (px)",
       "min": 0,
       "max": 120,
       "step": 5,

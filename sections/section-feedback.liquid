@@ -1,0 +1,158 @@
+{%- liquid
+  assign position_section = ' '
+  assign position_form = 'feedback__form tw:max-w-3xl '
+
+  case section.settings.position
+    when 'left'
+      assign position_section = position_section | append: 'tw:text-left tw:items-start'
+      assign position_form = position_form | append: 'tw:ml-0 tw:mr-auto'
+    when 'center'
+      assign position_section = position_section | append: 'tw:text-center tw:items-center'
+      assign position_form = position_form | append: 'tw:mx-auto'
+    when 'right'
+      assign position_section = position_section | append: 'tw:text-right tw:items-end'
+      assign position_form = position_form | append: 'tw:ml-auto tw:mr-0'
+  endcase
+-%}
+
+<section class="feedback {{ position_section }}" role="region" aria-labelledby="ContactForm-Title-{{ section.id }}">
+  <div class="page-width">
+    {% if section.settings.title != blank %}
+      <h2
+        class="
+          feedback__title
+          tw:mb-4 tw:text-2xl tw:leading-6 tw:text-neutral-900
+          tw:md:text-3xl
+        "
+        id="ContactForm-Title-{{ section.id }}"
+      >
+        {{ section.settings.title | escape }}
+      </h2>
+    {% endif %}
+
+    {% if section.settings.text != blank %}
+      <div
+        class="
+          feedback__intro
+          tw:mb-4
+          tw:text-xl md:text-2xl lg:text-3xl
+          tw:leading-tight
+          tw:text-neutral-900
+        "
+      >
+        {{ section.settings.text }}
+      </div>
+    {% endif %}
+
+    {%- form 'contact', id: 'ContactForm', class: position_form, data-validate-form: 'true' -%}
+      <div
+        class="
+          feedback__wrapper
+          tw:grid grid-cols-1 tw:gap-6 tw:m-0 tw:mb-8 tw:max-w-4xl
+          tw:md:grid-cols-2
+        "
+      >
+        {% render 'input-form', field: 'name', type: 'text', required: true %}
+        {% render 'input-form', field: 'phone', type: 'tel', required: false %}
+        {% render 'input-form', field: 'email', type: 'email', required: true, flat: true %}
+        {% render 'input-form', field: 'message', type: 'textarea', required: true, flat: true %}
+
+        <div class="tw:hidden" aria-hidden="true">
+          <label for="ContactForm-HP-{{ section.id }}">
+            {{ 'forms.honeypot' | t: default: 'Leave this field empty' }}
+          </label>
+          <input
+            id="ContactForm-HP-{{ section.id }}"
+            type="text"
+            name="hp"
+            tabindex="-1"
+            autocomplete="off"
+          >
+        </div>
+      </div>
+
+      <button
+        class="
+          feedback__btn
+          tw:inline-flex tw:items-center tw:justify-center tw:gap-2
+          tw:min-h-11 tw:px-5 tw:py-0 tw:cursor-pointer
+          tw:rounded-lg tw:border tw:border-transparent
+          tw:bg-black  tw:text-white tw:font-semibold
+          tw:hover:bg-white tw:hover:text-black tw:hover:border-black
+          tw:active:translate-y-px
+          tw:transition tw:duration-200 tw:ease-in-out
+        "
+        type="submit"
+        aria-label="{{ 'sections.contact.submit_aria' | t: default: 'Send contact form' }}"
+      >
+        {{ 'sections.contact.submit' | t: default: 'Submit' }}
+      </button>
+    {%- endform -%}
+  </div>
+</section>
+
+{%- style -%}
+  .feedback {
+    margin-bottom: {{ section.settings.padding_bottom }}px;
+  ]
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "Contact form",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Need help?"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Intro text",
+      "default": "<p>Ask us anything. We\u2019ll get back to you soon.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "radio",
+      "id": "position",
+      "label": "Form position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 5,
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact form"
+    }
+  ]
+}
+{% endschema %}

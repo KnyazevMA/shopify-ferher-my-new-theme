@@ -9,7 +9,7 @@
     <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
   </head>
   <body>
-    {{ 'main.css' | asset_url | stylesheet_tag }}
+    {{ 'styles.css' | asset_url | stylesheet_tag }}
     {{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
     {{ 'tailwind-output.css' | asset_url | stylesheet_tag }}
 
@@ -17,13 +17,11 @@
       {% render 'icon-sprite' %}
     </div>
 
-    {% section 'header' %}
+    {% section 'section-header' %}
 
     <main id="main" role="main" aria-labelledby="page-title">
       {{ content_for_layout }}
     </main>
-    {% comment %}
-      {% section 'footer' %}
-    {% endcomment %}
+    {% section 'section-footer' %}
   </body>
 </html>

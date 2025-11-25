@@ -3,7 +3,7 @@
     product-card
     tw:bg-white tw:border tw:rounded-2xl tw:border-black/10 tw:overflow-hidden
     tw:hover:-translate-y-1 tw:hover:shadow-[0_12px_32px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)]
-    tw:transition tw:duration-300 tw:ease-in-out
+    tw:transition tw:duration-300 tw:ease-in-out tw:h-full tw:flex tw:flex-col
   "
   data-price="{{ product.price }}"
   data-title="{{ product.title | escape }}"
@@ -19,8 +19,11 @@
   >
     {{
       product.featured_image
-      | image_url: width: 500
+      | image_url: width: 2000
       | image_tag:
+        widths: '200, 400, 600, 800, 1000, 1200, 1600, 2000',
+        sizes: '(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw',
+        loading: 'lazy',
         alt: product.title,
         class: 'tw:block tw:w-full tw:h-auto tw:object-cover tw:flex-shrink-0 tw:aspect-square'
     }}
@@ -33,63 +36,41 @@
       {{ product.title }}
     </h3>
 
-    <span
-      class="
-        product-card__price
-        tw:block tw:font-medium tw:text-neutral-900 tw:mt-0 tw:mx-4 tw:mb-1
-      "
-    >
-      {{ product.price | money }}
-    </span>
-
-    <div
-      class="
-        product-card__rating
-        tw:flex tw:items-center tw:gap-2 tw:mb-4
-      "
-      role="img"
-      aria-label="Rating {{ rating_value }} out of 5"
-    >
-      <div
+    {%- if settings.show_price -%}
+      <span
         class="
-          product-card__stars
-          tw:gap-1 tw:inline-flex tw:mx-4 tw:mt-0 tw:leading-0
+          product-card__price
+          tw:block tw:font-medium tw:text-neutral-900 tw:mt-0 tw:mx-4 tw:mb-1
         "
-        data-rating="{{ rating_value }}"
       >
-        {% for i in (1..5) %}
-          {% assign star_class = 'star' %}
-          {% if i <= rating_value %}
-            {% assign star_class = 'star is-filled' %}
-          {% endif %}
-          {% render 'icon-star', star_class: star_class %}
-        {% endfor %}
-        <span
-          class="
-            product-card__stars-value
-            tw:text-sm tw:text-gray-500
-          "
-          aria-hidden="true"
-        >
-          {{- rating_value -}}
-        </span>
-      </div>
-    </div>
+        {{ product.price | money }}
+      </span>
+    {%- endif -%}
 
-    <button
-      class="
-        product-card__btn
-        tw:block tw:w-full tw:py-3 tw:px-4
-        tw:bg-black tw:text-white tw:text-center tw:font-medium
-        tw:border tw:rounded-md tw:border-black/10 tw:cursor-pointer
-        tw:hover:bg-white tw:hover:text-neutral-950
-        tw:active:translate-y-0.5
-        tw:transition tw:duration-200 tw:ease-in-out
-      "
-      type="button"
-      data-product-id="{{ product.selected_or_first_available_variant.id }}"
-    >
-      {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
-    </button>
+    {%- if settings.show_rating -%}
+      <!-- Start of Judge.me code -->
+      <div class="jdgm-widget jdgm-preview-badge tw:mb-3" data-id="{{ product.id }}">
+        {{ product.metafields.judgeme.badge }}
+      </div>
+      <!-- End of Judge.me code -->
+    {%- endif -%}
+
+    {%- if settings.show_add_to_cart -%}
+      <button
+        class="
+          product-card__btn
+          tw:block tw:w-full tw:py-3 tw:px-4
+          tw:bg-black tw:text-white tw:text-center tw:font-medium
+          tw:border tw:rounded-md tw:border-black/10 tw:cursor-pointer
+          tw:hover:bg-white tw:hover:text-neutral-950
+          tw:active:translate-y-0.5
+          tw:transition tw:duration-200 tw:ease-in-out
+        "
+        type="button"
+        data-product-id="{{ product.selected_or_first_available_variant.id }}"
+      >
+        {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
+      </button>
+    {%- endif -%}
   </a>
 </div>
