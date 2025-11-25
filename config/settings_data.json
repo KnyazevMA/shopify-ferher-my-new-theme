@@ -16,7 +16,7 @@
         "settings": {
           "logo": "shopify://shop_images/logo-icon.svg",
           "logo_alt": "Shop logo",
-          "main_menu": "main-menu",
+          "main_menu": "",
           "margin-bottom": 40
         }
       },
