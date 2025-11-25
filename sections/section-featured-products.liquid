@@ -37,13 +37,13 @@
           "
         >
           {% if section.settings.enable_slider %}
-            <ul class="swiper-wrapper tw:h-full tw:not-first:tw:list-none tw:p-0 tw:m-0">
+            <div class="swiper-wrapper tw:h-full tw:not-first:tw:list-none tw:p-0 tw:m-0">
               {%- for product in collection.products limit: section.settings.products_count -%}
-                <li class="swiper-slide">
+                <div class="swiper-slide">
                   {% render 'product-card', product: product, settings: section.settings %}
-                </li>
+                </div>
               {% endfor %}
-            </ul>
+            </div>
           {% else %}
             {%- for product in collection.products limit: section.settings.products_count -%}
               {% render 'product-card', product: product, rating_value: rating_value, settings: section.settings %}
