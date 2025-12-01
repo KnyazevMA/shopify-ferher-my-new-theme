@@ -245,41 +245,8 @@
   .tw\:-top-1\.5 {
     top: calc(var(--tw-spacing) * -1.5);
   }
-  .tw\:top-2 {
-    top: calc(var(--tw-spacing) * 2);
-  }
-  .tw\:top-5 {
-    top: calc(var(--tw-spacing) * 5);
-  }
-  .tw\:top-\[-5px\] {
-    top: -5px;
-  }
-  .tw\:top-\[-6px\] {
-    top: -6px;
-  }
-  .tw\:top-\[-15px\] {
-    top: -15px;
-  }
-  .tw\:-right-1\.5 {
-    right: calc(var(--tw-spacing) * -1.5);
-  }
-  .tw\:-right-3 {
-    right: calc(var(--tw-spacing) * -3);
-  }
-  .tw\:right-0 {
-    right: calc(var(--tw-spacing) * 0);
-  }
   .tw\:right-1 {
     right: calc(var(--tw-spacing) * 1);
-  }
-  .tw\:right-2 {
-    right: calc(var(--tw-spacing) * 2);
-  }
-  .tw\:right-3 {
-    right: calc(var(--tw-spacing) * 3);
-  }
-  .tw\:right-5 {
-    right: calc(var(--tw-spacing) * 5);
   }
   .tw\:right-\[-2\%\]\! {
     right: -2% !important;
@@ -337,9 +304,6 @@
   }
   .tw\:mt-6 {
     margin-top: calc(var(--tw-spacing) * 6);
-  }
-  .tw\:mt-10 {
-    margin-top: calc(var(--tw-spacing) * 10);
   }
   .tw\:mr-0 {
     margin-right: calc(var(--tw-spacing) * 0);
@@ -514,9 +478,6 @@
   .tw\:w-10\! {
     width: calc(var(--tw-spacing) * 10) !important;
   }
-  .tw\:w-16 {
-    width: calc(var(--tw-spacing) * 16);
-  }
   .tw\:w-24 {
     width: calc(var(--tw-spacing) * 24);
   }
@@ -570,9 +531,6 @@
   }
   .tw\:max-w-full {
     max-width: 100%;
-  }
-  .tw\:min-w-5 {
-    min-width: calc(var(--tw-spacing) * 5);
   }
   .tw\:flex-1 {
     flex: 1;
@@ -732,9 +690,6 @@
   .tw\:overflow-hidden {
     overflow: hidden;
   }
-  .tw\:rounded {
-    border-radius: 0.25rem;
-  }
   .tw\:rounded-2xl {
     border-radius: var(--tw-radius-2xl);
   }
@@ -757,10 +712,6 @@
   .tw\:border-2 {
     border-style: var(--tw-border-style);
     border-width: 2px;
-  }
-  .tw\:border-t {
-    border-top-style: var(--tw-border-style);
-    border-top-width: 1px;
   }
   .tw\:border-r {
     border-right-style: var(--tw-border-style);
@@ -863,12 +814,6 @@
   .tw\:p-0 {
     padding: calc(var(--tw-spacing) * 0);
   }
-  .tw\:p-1 {
-    padding: calc(var(--tw-spacing) * 1);
-  }
-  .tw\:p-2 {
-    padding: calc(var(--tw-spacing) * 2);
-  }
   .tw\:p-2\.5 {
     padding: calc(var(--tw-spacing) * 2.5);
   }
@@ -880,9 +825,6 @@
   }
   .tw\:p-15 {
     padding: calc(var(--tw-spacing) * 15);
-  }
-  .tw\:px-1 {
-    padding-inline: calc(var(--tw-spacing) * 1);
   }
   .tw\:px-4 {
     padding-inline: calc(var(--tw-spacing) * 4);
@@ -919,9 +861,6 @@
   }
   .tw\:pt-4 {
     padding-top: calc(var(--tw-spacing) * 4);
-  }
-  .tw\:pt-6 {
-    padding-top: calc(var(--tw-spacing) * 6);
   }
   .tw\:pt-\[117px\] {
     padding-top: 117px;

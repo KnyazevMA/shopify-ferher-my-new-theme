@@ -855,14 +855,16 @@ class ProductPage {
         const qty = Number(found.inventory_quantity || 0);
         const policy = found.inventory_policy || 'deny';
 
-        const canOversell = !managed || policy === 'continue';
-        let isAvailable = typeof found.available === 'boolean' ? found.available : undefined;
+        let isAvailable;
 
-        if (isAvailable === undefined) {
-            isAvailable = canOversell || qty > 0;
-        } else if (!isAvailable && (canOversell || qty > 0)) {
-            // Some stores report `available = false` for untracked/continue variants even though they can be sold.
+        if (!managed) {
             isAvailable = true;
+        } else if (policy === 'continue') {
+            isAvailable = true;
+        } else if (qty > 0) {
+            isAvailable = true;
+        } else {
+            isAvailable = false;
         }
 
         if (isAvailable) {
