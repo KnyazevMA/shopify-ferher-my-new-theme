@@ -10,7 +10,7 @@
       }
     {% endstyle %}
   {% endif %}
-  <div class="swiper js-main-banner tw:w-full tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)]">
+  <div class="swiper js-main-banner tw:w-full tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)] tw:bg-black/50">
     <div class="swiper-wrapper">
       {% for block in section.blocks %}
         <div class="swiper-slide tw:relative tw:w-full! tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)] tw:overflow-hidden">
@@ -50,9 +50,10 @@
           </div>
 
           <!-- OVERLAY -->
-          <div class="tw:absolute tw:inset-0 tw:bg-black/40 tw:z-10"></div>
-
-          <!-- CONTENT (LIKE DAWN!) -->
+          <div
+            class="tw:absolute tw:inset-0 tw:bg-linear-to-b tw:from-black/80 tw:via-black/50 tw:to-transparent"
+          ></div>
+          <!-- CONTENT -->
           <div class="tw:absolute tw:ml-15 tw:inset-0 tw:flex tw:items-center tw:z-20">
             <div class="tw:px-6 md:tw:px-20 lg:tw:px-28 tw:max-w-[700px] tw:flex tw:flex-col tw:gap-6">
               {% if block.settings.slide_title %}
@@ -130,7 +131,7 @@
   "max_blocks": 8,
   "presets": [
     {
-      "name": "Main Banner",
+      "name": "Main Banner"
     }
   ]
 }
