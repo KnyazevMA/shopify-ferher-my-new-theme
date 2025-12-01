@@ -442,6 +442,66 @@ class CollectionPage {
     }
 }
 
+class CartAPI {
+    static async add(id, quantity = 1, properties = {}) {
+        try {
+            const res = await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id, quantity, properties })
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data?.message || 'Error adding to cart');
+
+            CartAPI.fireCartUpdated(data);
+            return data;
+
+        } catch (err) {
+            console.error('CartAPI.add error:', err);
+            throw err;
+        }
+    }
+
+    static async change(key, quantity = 0, options = {}) {
+        try {
+            const payload = { id: key, quantity, ...options };
+
+            const res = await fetch('/cart/change.js', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data?.message || 'Error changing cart');
+
+            CartAPI.fireCartUpdated(data);
+            return data;
+
+        } catch (err) {
+            console.error('CartAPI.change error:', err);
+            throw err;
+        }
+    }
+
+    static async get() {
+        try {
+            const res = await fetch('/cart.js', { method: 'GET' });
+            return await res.json();
+        } catch (err) {
+            console.error('CartAPI.get error:', err);
+            throw err;
+        }
+    }
+
+    static fireCartUpdated(data) {
+        document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
+    }
+}
+
 class AddToCart {
     constructor(context = document) {
         this.context = context;
@@ -449,184 +509,148 @@ class AddToCart {
     }
 
     init() {
+        // 👉 Клик по кнопкам карточек
         this.context.addEventListener('click', (e) => {
-            const btn = e.target.closest('.product-card__btn');
+            const btn = e.target.closest('[data-add-to-cart]');
             if (!btn) return;
+
             e.preventDefault();
-            this.handleAdd(btn);
+            this.handleButton(btn);
+        });
+
+        // 👉 Сабмит форм /cart/add и /cart/change
+        this.context.addEventListener('submit', (e) => {
+            const form = e.target;
+            if (!form || form.tagName !== 'FORM') return;
+
+            const action = (form.getAttribute('action') || '').toLowerCase();
+            if (!action.includes('/cart/add') && !action.includes('/cart/change')) return;
+
+            e.preventDefault();
+            this.handleForm(form);
         });
     }
 
-    async handleAdd(btn) {
-        const id = btn.dataset.productId;
+    async handleButton(btn) {
+        const id = Number(btn.dataset.productId);
+        const qty = Number(btn.dataset.quantity || 1);
+
         if (!id) return;
 
-        const originalText = btn.textContent;
         btn.disabled = true;
+        const original = btn.textContent;
 
         try {
-            const res = await fetch('/cart/add.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: Number(id), quantity: 1 })
-            });
-
-            if (!res.ok) throw new Error(`Add to cart failed (${res.status})`);
-            const data = await res.json();
-            this.flash(btn, t('added_short', 'Додано!'), 1200, originalText);
-
-            document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
-        } catch (err) {
-            console.error('Error adding to cart:', err);
-            this.flash(btn, t('error_short', 'Помилка'), 1200, originalText);
-        } finally {
-            btn.disabled = false;
+            await CartAPI.add(id, qty);
+            document.dispatchEvent(new CustomEvent('cart:updated', { detail: await CartAPI.get() }));
+            btn.textContent = t('added_short', 'Додано!');
+        } catch {
+            btn.textContent = t('error_short', 'Помилка');
         }
+
+        setTimeout(() => {
+            btn.textContent = original;
+            btn.disabled = false;
+        }, 1200);
     }
 
-    flash(btn, temp, ms, fallback) {
-        btn.textContent = temp;
-        setTimeout(() => (btn.textContent = fallback), ms);
+    async handleForm(form) {
+        const action = form.getAttribute('action').toLowerCase();
+        const fd = new FormData(form);
+
+        try {
+            if (action.includes('/cart/add')) {
+                await CartAPI.add(
+                    Number(fd.get('id')),
+                    Number(fd.get('quantity') || 1)
+                );
+            }
+
+            if (action.includes('/cart/change')) {
+                await CartAPI.change(
+                    fd.get('id'),
+                    Number(fd.get('quantity'))
+                );
+            }
+
+            document.dispatchEvent(new CustomEvent('cart:updated', { detail: await CartAPI.get() }));
+        } catch (e) {
+            console.error('AddToCart form error:', e);
+        }
     }
 }
 
-class AjaxCart {
+class RemoveFromCart {
     constructor(context = document) {
         this.context = context;
         this.init();
     }
 
     init() {
-        this.context.addEventListener('submit', this.onSubmit.bind(this), true);
+        this.context.addEventListener("click", async (e) => {
+            const btn = e.target.closest("[data-cart-remove]");
+            if (!btn) return;
+
+            e.preventDefault();
+            await this.handle(btn);
+        });
     }
 
-    async onSubmit(event) {
-        const form = event.target;
-        if (!form || form.tagName !== 'FORM') return;
-
-        // Honeypot check (anti-spam)
-        const hp = form.querySelector('input[name="hp"], input[name="honeypot"]');
-        if (hp && hp.value.trim() !== '') {
-            event.preventDefault();
-            this.flashSubmit(form, t('spam_detected', 'Підозра на спам'), 'error');
-            console.warn('Honeypot triggered, form blocked');
-            return;
-        }
-
-        const action = (form.getAttribute('action') || '').toLowerCase();
-        const hasAddAction = action.indexOf('/cart/add') !== -1;
-        const hasIdField = !!form.querySelector('input[name="id"]');
-        if (!hasAddAction && !hasIdField) return;
-
-        event.preventDefault();
+    async handle(btn) {
+        const key = btn.dataset.cartRemove;
+        btn.disabled = true;
 
         try {
-            form.setAttribute('aria-busy', 'true');
-            const submitButtons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
-            submitButtons.forEach(b => b.disabled = true);
-
-            const fd = new FormData(form);
-            const payload = {};
-            const properties = {};
-            for (const [key, value] of fd.entries()) {
-                if (key.startsWith('properties[')) {
-                    const m = key.match(/^properties\[(.*)\]$/);
-                    const propName = m ? m[1] : key;
-                    properties[propName] = value;
-                } else {
-                    payload[key] = value;
-                }
+            await CartAPI.change(key, 0);
+            if (window.location.pathname.includes('/cart')) {
+                window.location.reload();
             }
-            if (Object.keys(properties).length) payload.properties = properties;
-
-            const body = {
-                id: payload.id ? Number(payload.id) : undefined,
-                quantity: payload.quantity ? Number(payload.quantity) : (payload.quantity === undefined ? 1 : Number(payload.quantity)),
-                properties: payload.properties || {}
-            };
-
-            if (!body.id) {
-                this.flashSubmit(form, t('missing_product_id', 'Відсутній ідентифікатор товару'), 'error');
-                return;
-            }
-
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-                event: 'form_submit',
-                formType: 'product',
-                productId: (ctx && ctx.productId) || null,
-                locale: (ctx && ctx.locale) || null,
-                timestamp: Date.now()
-            });
-
-            const res = await fetch('/cart/add.js', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body)
-            });
-
-            let data;
-            try { data = await res.json(); } catch (e) { data = null; }
-
-            if (!res.ok) {
-                const msg = (data && (data.description || data.message || data.error)) ? (data.description || data.message || data.error) : `Add to cart failed (${res.status})`;
-                throw new Error(msg);
-            }
-
-            const successText = t('added_to_cart', 'Додано до кошика');
-            this.flashSubmit(form, successText, 'success');
-
-            const ctxLocal = ctx || {};
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-                event: 'form_success',
-                formType: 'product',
-                productId: ctxLocal.productId ?? null,
-                locale: ctxLocal.locale ?? null
-            });
-
-            document.dispatchEvent(new CustomEvent('cart:updated', { detail: data }));
-
         } catch (err) {
-            const message = err && err.message ? err.message : t('error_adding_to_cart', 'Помилка додавання до кошика');
-            this.flashSubmit(form, message, 'error');
-
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-                event: 'form_error',
-                formType: 'product',
-                message
-            });
-
-            console.error('AjaxCart error:', err);
+            console.error(err);
         } finally {
-            try { form.removeAttribute('aria-busy'); } catch (e) { }
-            const submitButtons = Array.from(form.querySelectorAll('button[type="submit"], input[type="submit"]'));
-            submitButtons.forEach(b => b.disabled = false);
+            btn.disabled = false;
+        }
+    }
+}
+
+class CartCounter {
+    constructor() {
+        this.counterEl = document.getElementById('MiniCartCount');
+        this.init();
+    }
+
+    init() {
+        if (!this.counterEl) return;
+
+        this.updateFromServer();
+
+        document.addEventListener('cart:updated', (e) => {
+            const cart = e.detail;
+            if (!cart) return;
+
+            this.update(cart);
+        });
+    }
+
+    async updateFromServer() {
+        try {
+            const cart = await CartAPI.get();
+            this.update(cart);
+        } catch (err) {
+            console.error('CartCounter initial load error:', err);
         }
     }
 
-    showMessage(form, text, type = 'success') { }
+    update(cart) {
+        if (!cart || typeof cart.item_count !== 'number') return;
 
-    flashSubmit(form, text, type = 'success') {
-        const btn = form.querySelector('button[type="submit"], input[type="submit"]');
-        if (!btn) return;
+        this.counterEl.textContent = cart.item_count;
 
-        const isInput = btn.tagName === 'INPUT';
-        const original = isInput ? (btn.value ?? '') : (btn.textContent ?? '');
-        const duration = 3000;
-
-        btn.disabled = true;
-        if (isInput) btn.value = text; else btn.textContent = text;
-        btn.classList.toggle('is-success', type === 'success');
-        btn.classList.toggle('is-error', type === 'error');
-
-        setTimeout(() => {
-            if (isInput) btn.value = original; else btn.textContent = original;
-            btn.disabled = false;
-            btn.classList.remove('is-success');
-            btn.classList.remove('is-error');
-        }, duration);
+        if (cart.item_count > 0) {
+            this.counterEl.classList.add('cart-count--active');
+        } else {
+            this.counterEl.classList.remove('cart-count--active');
+        }
     }
 }
 
@@ -677,6 +701,12 @@ class ProductPage {
 
         this.bindEvents();
         this.renderDefaultState();
+
+        const savedQty = localStorage.getItem("product_qty");
+        if (savedQty) {
+            const qtyInput = this.section.querySelector('input[name="quantity"]');
+            if (qtyInput) qtyInput.value = savedQty;
+        }
     }
 
     bindEvents() {
@@ -693,6 +723,10 @@ class ProductPage {
                 }
                 btn.classList.add('product__btn-img--active');
             });
+            const qtyInput = this.section.querySelector('input[name="quantity"]');
+            const qty = qtyInput ? Number(qtyInput.value) : 1;
+
+            document.dispatchEvent(new CustomEvent('product:qty', { detail: qty }));
         });
 
         this.section.querySelectorAll('input[name="color"]').forEach(input => {
@@ -942,6 +976,42 @@ class QuantityStepper {
 
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));
+        this.updateCartTotal(input);
+    }
+
+    updateCartTotal(input) {
+        const container = input.closest('[data-item-key]');
+        if (!container) return;
+
+        const key = container.dataset.itemKey;
+        if (!key) return;
+
+        const cartSection = document.querySelector('[data-section-type="cart"]');
+        const sectionId = cartSection?.dataset.sectionId;
+
+        const newQty = Number(input.value) || 1;
+
+        CartAPI.change(
+            key,
+            newQty,
+            sectionId ? { sections: [sectionId] } : {}
+        ).then((cart) => {
+            if (cart.sections && sectionId && cart.sections[sectionId]) {
+                this.replaceCartSection(cart.sections[sectionId]);
+            }
+        });
+    }
+
+    replaceCartSection(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const newSection = doc.querySelector('[data-section-type="cart"]');
+        const currentSection = document.querySelector('[data-section-type="cart"]');
+
+        if (!newSection || !currentSection) return;
+
+        currentSection.innerHTML = newSection.innerHTML;
     }
 
     getInput(btn) {
@@ -959,6 +1029,7 @@ class QuantityStepper {
         return null;
     }
 }
+
 
 class ProductRecommendationsSection {
     constructor(sectionEl) {
@@ -1186,8 +1257,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     customElements.define('faq-component', FAQComponent);
 
-    new AddToCart(document);
+    new RemoveFromCart(document);
+    new CartCounter();
     new BurgerToggle(document);
-    new AjaxCart(document);
     new QuantityStepper(document);
+    new AddToCart(document);
 });

@@ -73,6 +73,7 @@
           tw:transition tw:duration-200 tw:ease-in-out
         "
         type="button"
+        data-add-to-cart
         data-product-id="{{ product.selected_or_first_available_variant.id }}"
       >
         {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
