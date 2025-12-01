@@ -16,7 +16,12 @@
   endfor
 %}
 
-<section class="product" data-product-id="{{ product.id }}">
+<section
+  class="product"
+  data-product-id="{{ product.id }}"
+  data-color-index="{{ color_option_index }}"
+  data-size-index="{{ size_option_index }}"
+>
   <div class="page-width">
     {% if product %}
       <div
@@ -40,6 +45,7 @@
             {% if product.featured_image %}
               {{
                 product.featured_image
+                | default: ''
                 | image_url: width: 536
                 | image_tag: class: 'product__main-img tw:block tw:h-full tw:w-full tw:object-cover', alt: product.title
               }}
@@ -278,7 +284,11 @@
         "option2": {{ v.option2 | json }},
         "inventory_management": {{ v.inventory_management | json }},
         "inventory_policy": {{ v.inventory_policy | json }},
-        "featured_image": {{ v.featured_image | image_url: width: 800 | json }},
+        "featured_image": {% if v.featured_image %}
+          {{ v.featured_image | image_url: width: 800 | json }}
+        {% else %}
+          null
+        {% endif %},
         "price_money": {{ v.price | money | json }},
         "compare_money": {{ v.compare_at_price | money | json }}
       }{% unless forloop.last %},{% endunless %}

@@ -694,6 +694,11 @@ class ProductPage {
             console.error('Failed to parse product variants JSON', e);
         }
 
+        this.colorIndex = Number.parseInt(this.section.dataset.colorIndex ?? '-1', 10);
+        if (Number.isNaN(this.colorIndex)) this.colorIndex = -1;
+        this.sizeIndex = Number.parseInt(this.section.dataset.sizeIndex ?? '-1', 10);
+        if (Number.isNaN(this.sizeIndex)) this.sizeIndex = -1;
+
         this.bindEvents();
         this.renderDefaultState();
 
@@ -799,28 +804,28 @@ class ProductPage {
     }
 
     findMatchingVariant(color, size) {
-        const norm = v => (v ?? "").toString().trim().toLowerCase();
-        const c = norm(color);
-        const s = norm(size);
+        const norm = v => (v ?? '').toString().trim().toLowerCase();
+        const list = Object.values(this.variantsData || {});
+        if (!list.length) return null;
 
-        const list = Object.values(this.variantsData || []);
+        const selection = new Map();
+        if (this.colorIndex >= 0 && typeof color !== 'undefined' && color !== null && color !== '') {
+            selection.set(this.colorIndex, norm(color));
+        }
+        if (this.sizeIndex >= 0 && typeof size !== 'undefined' && size !== null && size !== '') {
+            selection.set(this.sizeIndex, norm(size));
+        }
 
-        if (color && size) {
-            return list.find(v =>
-                norm(v.option1) === c && norm(v.option2) === s
-            ) || null;
-        }
-        if (color && !size) {
-            return list.find(v =>
-                norm(v.option1) === c || norm(v.option2) === c
-            ) || null;
-        }
-        if (!color && size) {
-            return list.find(v =>
-                norm(v.option1) === s || norm(v.option2) === s
-            ) || null;
-        }
-        return list[0] || null;
+        const match = list.find(variant => {
+            if (!selection.size) return true;
+            for (const [index, value] of selection.entries()) {
+                const key = `option${index + 1}`;
+                if (norm(variant[key]) !== value) return false;
+            }
+            return true;
+        });
+
+        return match || list[0] || null;
     }
 
     updateVariantState() {
@@ -836,37 +841,39 @@ class ProductPage {
             this.setSoldOut();
             return;
         }
-        if (found.price_money) priceEl.textContent = found.price_money;
-        if (found.compare_money && found.compare_money !== found.price_money) {
-            compareEl.textContent = found.compare_money;
-            compareEl.hidden = false;
-        } else {
-            compareEl.hidden = true;
+        if (priceEl && found.price_money) priceEl.textContent = found.price_money;
+        if (compareEl) {
+            if (found.compare_money && found.compare_money !== found.price_money) {
+                compareEl.textContent = found.compare_money;
+                compareEl.hidden = false;
+            } else {
+                compareEl.hidden = true;
+            }
         }
 
         const managed = found.inventory_management === 'shopify';
         const qty = Number(found.inventory_quantity || 0);
         const policy = found.inventory_policy || 'deny';
 
-        let isAvailable = false;
+        let isAvailable;
 
         if (!managed) {
             isAvailable = true;
         } else if (policy === 'continue') {
             isAvailable = true;
+        } else if (qty > 0) {
+            isAvailable = true;
         } else {
-            isAvailable = qty > 0;
+            isAvailable = false;
         }
 
         if (isAvailable) {
-            if (managed && policy !== 'continue' && qty > 0) {
-                this.setAvailable(qty);
-            } else {
-                this.setAvailable();
-            }
+            const showQty = managed && policy !== 'continue' && qty > 0;
+            this.setAvailable(showQty ? qty : undefined);
         } else {
             this.setSoldOut();
         }
+
         const inputId = this.section.querySelector('input[name="id"]');
         if (inputId) inputId.value = found.id;
 
