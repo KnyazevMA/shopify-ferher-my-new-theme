@@ -71,6 +71,7 @@
             header__cart
             tw:text-black tw:size-10 tw:flex tw:content-center tw:items-center
             tw:hover:text-blue-600 tw:hover:cursor-pointer
+            tw:relative
           "
           href="{{ routes.cart_url }}"
           aria-label="{{ 'a11y.open_cart' | t }}"
@@ -78,6 +79,19 @@
           <svg class="header__cart-icon tw:inline-block tw:text-current" width="24" height="24" aria-hidden="true">
             <use href="#cart-icon"></use>
           </svg>
+          <span
+            class="
+              cart-count
+              tw:absolute tw:-top-1.5 tw:right-1
+              tw:flex tw:items-center tw:justify-center
+              tw:w-4 tw:h-4 tw:p-2.5
+              tw:text-xs tw:font-bold tw:text-white
+              tw:bg-gray-800 tw:rounded-full
+              tw:pointer-events-none
+            "
+            id="MiniCartCount"
+            >0</span
+          >
         </a>
       </div>
     </div>
