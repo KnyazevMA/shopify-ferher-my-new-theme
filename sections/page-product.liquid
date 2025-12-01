@@ -16,7 +16,12 @@
   endfor
 %}
 
-<section class="product" data-product-id="{{ product.id }}">
+<section
+  class="product"
+  data-product-id="{{ product.id }}"
+  data-color-index="{{ color_option_index }}"
+  data-size-index="{{ size_option_index }}"
+>
   <div class="page-width">
     {% if product %}
       <div
