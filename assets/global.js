@@ -799,26 +799,34 @@ class ProductPage {
     }
 
     findMatchingVariant(color, size) {
-        const norm = (v) => (v ?? '').toString().trim().toLowerCase();
+        const norm = v => (v ?? "").toString().trim().toLowerCase();
         const c = norm(color);
         const s = norm(size);
 
-        const list = Object.values(this.variantsData || {});
-        return list.find(v => {
-            const v1 = norm(v.option1);
-            const v2 = norm(v.option2);
-            const matchColor = color != null && color !== '' ? (v1 === c || v2 === c) : true;
-            const matchSize = size != null && size !== '' ? (v1 === s || v2 === s) : true;
-            if (color && size) {
-                return (v1 === c && v2 === s) || (v1 === s && v2 === c);
-            }
-            return matchColor && matchSize;
-        }) || null;
+        const list = Object.values(this.variantsData || []);
+
+        if (color && size) {
+            return list.find(v =>
+                norm(v.option1) === c && norm(v.option2) === s
+            ) || null;
+        }
+        if (color && !size) {
+            return list.find(v =>
+                norm(v.option1) === c || norm(v.option2) === c
+            ) || null;
+        }
+        if (!color && size) {
+            return list.find(v =>
+                norm(v.option1) === s || norm(v.option2) === s
+            ) || null;
+        }
+        return list[0] || null;
     }
 
     updateVariantState() {
         const color = this.section.querySelector('input[name="color"]:checked')?.value;
         const size = this.section.querySelector('input[name="size"]:checked')?.value;
+
         const priceEl = this.section.querySelector('#ProductPrice');
         const compareEl = this.section.querySelector('#ProductCompare');
 
@@ -828,7 +836,6 @@ class ProductPage {
             this.setSoldOut();
             return;
         }
-
         if (found.price_money) priceEl.textContent = found.price_money;
         if (found.compare_money && found.compare_money !== found.price_money) {
             compareEl.textContent = found.compare_money;
@@ -837,24 +844,33 @@ class ProductPage {
             compareEl.hidden = true;
         }
 
-        const qty = Number(found.inventory_quantity ?? 0);
-        const managed = Boolean(found.inventory_management);
-        const policy = (found.inventory_policy || 'deny').toLowerCase();
-        const isAvail = Boolean(found.available);
+        const managed = found.inventory_management === 'shopify';
+        const qty = Number(found.inventory_quantity || 0);
+        const policy = found.inventory_policy || 'deny';
 
-        if (!isAvail) {
-            this.setSoldOut();
-        } else if (!managed || policy === 'continue' || qty <= 0) {
-            this.setAvailable();
+        let isAvailable = false;
+
+        if (!managed) {
+            isAvailable = true;
+        } else if (policy === 'continue') {
+            isAvailable = true;
         } else {
-            this.setAvailable(qty);
+            isAvailable = qty > 0;
         }
 
-        const inputId = this.section.querySelector('input[name="id"]');
-        if (inputId) {
-            inputId.value = found.id;
-            if (this.addToCartBtn) this.addToCartBtn.dataset.productId = found.id;
+        if (isAvailable) {
+            if (managed && policy !== 'continue' && qty > 0) {
+                this.setAvailable(qty);
+            } else {
+                this.setAvailable();
+            }
+        } else {
+            this.setSoldOut();
         }
+        const inputId = this.section.querySelector('input[name="id"]');
+        if (inputId) inputId.value = found.id;
+
+        if (this.addToCartBtn) this.addToCartBtn.dataset.productId = found.id;
     }
 
     setAvailable(qty) {
