@@ -16,60 +16,36 @@
         <div class="swiper-slide tw:relative tw:w-full! tw:h-[calc(100vh-64px)] lg:tw:h-[calc(100vh-72px)] tw:overflow-hidden">
           <!-- MEDIA LAYER -->
           <div class="tw:absolute tw:inset-0 tw:z-0 tw:overflow-hidden">
-            {%- assign is_first = forloop.first -%}
-
+            {%- assign loading_mode = 'lazy' -%}
+            {%- assign video_preload = 'none' -%}
+            {% if forloop.first %}
+              {%- assign loading_mode = 'eager' -%}
+              {%- assign video_preload = 'auto' -%}
+            {% endif %}
             {% if block.settings.slide_video %}
-              {% if is_first %}
-                {{
-                  block.settings.slide_video
-                  | video_tag:
-                    autoplay: true,
-                    muted: true,
-                    playsinline: true,
-                    loop: true,
-                    controls: false,
-                    class: 'tw:w-full tw:h-full tw:object-cover'
-                }}
-              {% else %}
-                {{
-                  block.settings.slide_video
-                  | video_tag:
-                    autoplay: true,
-                    muted: true,
-                    playsinline: true,
-                    loop: true,
-                    controls: false,
-                    class: 'tw:w-full tw:h-full tw:object-cover',
-                    preload: 'none'
-                }}
-              {% endif %}
-
+              {{
+                block.settings.slide_video
+                | video_tag:
+                  autoplay: true,
+                  muted: true,
+                  playsinline: true,
+                  loop: true,
+                  controls: false,
+                  class: 'tw:w-full tw:h-full tw:object-cover',
+                  preload: video_preload
+              }}
             {% elsif block.settings.slide_image %}
-              {% if is_first %}
-                {{
-                  block.settings.slide_image
-                  | image_url: width: 3000
-                  | image_tag:
+              {{
+                block.settings.slide_image
+                | image_url: width: 3000
+                | image_tag:
                   widths: '400, 600, 900, 1200, 1800, 2400, 3000',
                   sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
                   class: 'tw:w-full tw:h-full tw:object-cover',
                   alt: block.settings.slide_title,
                   format: 'webp',
-                  loading: 'eager'
-                }}
-              {% else %}
-                {{
-                  block.settings.slide_image
-                  | image_url: width: 3000
-                  | image_tag:
-                  widths: '400, 600, 900, 1200, 1800, 2400, 3000',
-                  sizes: '(min-width: 1280px) 1280px, (min-width: 768px) 768px, 100vw',
-                  alt: block.settings.slide_title,
-                  class: 'tw:w-full tw:h-full tw:object-cover',
-                  format: 'webp',
-                  loading: 'lazy'
-                }}
-              {% endif %}
+                  loading: loading_mode
+              }}
             {% endif %}
           </div>
 
