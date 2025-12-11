@@ -1,4 +1,4 @@
-<div class="quantity">
+<div class="quantity" data-item-key="{{ item.key }}">
   <button
     class="quantity-btn quantity-btn--minus"
     type="button"
@@ -8,13 +8,19 @@
   >
     –
   </button>
+
+  {% assign qty_value = item.quantity | default: 1 %}
+
+  {% if template.name == 'product' %}
+    {% assign qty_value = 1 %}
+  {% endif %}
   <input
     class="quantity-input"
-    id="Quantity-{{ product.id }}"
+    id="Quantity-{{ item.key | default: product.id }}"
     type="number"
     name="quantity"
     min="1"
-    value="1"
+    value="{{ qty_value }}"
     inputmode="numeric"
     aria-describedby="QuantityHelp-{{ product.id }}{% if form.errors and form.errors['quantity'] %} FieldError-Quantity-{{ product.id }}{% endif %}"
     {% if form.errors and form.errors.quantity %}

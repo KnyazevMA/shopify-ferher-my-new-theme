@@ -19,7 +19,8 @@
 
     {% section 'section-header' %}
 
-    <main id="main" role="main" aria-labelledby="page-title">
+    <main id="main" role="main">
+      <h1 class="tw:sr-only">{{ shop.name | escape }}</h1>
       {{ content_for_layout }}
     </main>
     {% section 'section-footer' %}

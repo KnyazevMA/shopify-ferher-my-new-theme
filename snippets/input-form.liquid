@@ -7,6 +7,7 @@
 {% assign name = 'contact[' | append: field | append: ']' %}
 {% assign label = 'forms.' | append: field | append: '.label' | t %}
 {% assign placeholder = 'forms.' | append: field | append: '.placeholder' | t %}
+{% assign uid = field | append: '-' | append: section.id %}
 <label
   class="
     feedback__field
@@ -15,6 +16,7 @@
     tw:relative
     {{ tw-style }}
   "
+  for="{{ uid}}"
 >
   <span class="feedback__label tw:text-base tw:leading-snug tw:font-normal">{{ label }}</span>
 
@@ -31,6 +33,7 @@
         tw:focus-visible:border-gray-500
         tw:hover:border-gray-500
       "
+      id="{{ uid }}"
       name="{{ name }}"
       placeholder="{{ placeholder }}"
       data-validate="{{ type }}"
@@ -52,6 +55,7 @@
         tw:focus-visible:border-gray-500
         tw:hover:border-gray-500
       "
+      id="{{ uid }}"
       type="{{ type }}"
       name="{{ name }}"
       data-validate="{{ type }}"

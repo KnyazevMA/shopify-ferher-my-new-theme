@@ -17,6 +17,12 @@
       tw:flex tw:flex-col tw:decoration-none tw:color-inherit tw:h-full
     "
   >
+    {%- assign product_image_label = 'a11y.product_image' | t -%}
+    {%- assign alt_text = product.featured_image.alt
+      | default: product.title
+      | append: ' — '
+      | append: product_image_label
+    -%}
     {{
       product.featured_image
       | image_url: width: 2000
@@ -24,7 +30,7 @@
         widths: '200, 400, 600, 800, 1000, 1200, 1600, 2000',
         sizes: '(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw',
         loading: 'lazy',
-        alt: product.title,
+        alt: alt_text,
         class: 'tw:block tw:w-full tw:h-auto tw:object-cover tw:flex-shrink-0 tw:aspect-square'
     }}
     <h3
@@ -67,6 +73,7 @@
           tw:transition tw:duration-200 tw:ease-in-out
         "
         type="button"
+        data-add-to-cart
         data-product-id="{{ product.selected_or_first_available_variant.id }}"
       >
         {{ 'products.product.add_to_cart' | t: default: 'Add to cart' }}
