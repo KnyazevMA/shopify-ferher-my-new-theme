@@ -63,7 +63,7 @@
       "settings": {
         "title": "Featured products",
         "collection": "summer-collection-under-100",
-        "products_count": 4,
+        "products_count": 12,
         "show_price": true,
         "show_rating": true,
         "show_add_to_cart": true,
