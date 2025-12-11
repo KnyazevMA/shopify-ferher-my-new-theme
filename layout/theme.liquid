@@ -6,17 +6,22 @@
     <title>{{ shop.name | escape }}</title>
     {{ content_for_header }}
     <script src="{{ 'global.js' | asset_url }}" defer></script>
+    <script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer></script>
   </head>
   <body>
     {{ 'style.css' | asset_url | stylesheet_tag }}
     {% render 'icon-sprite' %}
 
-    {% section 'header' %}
+    <div class="tw:hidden">
+      {% render 'icon-sprite' %}
+    </div>
 
-    <main id="main" role="main" aria-labelledby="page-title">
+    {% section 'section-header' %}
+
+    <main id="main" role="main">
+      <h1 class="tw:sr-only">{{ shop.name | escape }}</h1>
       {{ content_for_layout }}
     </main>
-
-    {% section 'footer' %}
+    {% section 'section-footer' %}
   </body>
 </html>

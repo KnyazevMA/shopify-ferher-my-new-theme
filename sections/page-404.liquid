@@ -1,0 +1,101 @@
+<section class="tw:relative tw:min-h-screen tw:py-16">
+  <div
+    class="
+      tw:max-w-[420px] tw:flex  tw:flex-col tw:gap-5
+      tw:mx-auto tw:pt-[117px] tw:pb-[197px]
+      tw:md:pt-[129px] tw:md:pb-[209px]
+      tw:sm:pt-20 tw:sm:pb-[278px] tw:sm:gap-2.5
+    "
+  >
+    <div class=" tw:flex tw:flex-col tw:items-center tw:md:items-start tw:gap-5 tw:mx-auto tw:md:mx-0 tw:py-24 tw:md:py-32 tw:pb-48 tw:md:pb-52 tw:sm:py-20 tw:sm:pb-64 tw:text-center tw:md:text-left">
+      <h1 class="tw:text-9xl tw:md:text-8xl tw:sm:text-6xl tw:leading-none tw:md:leading-tight tw:sm:leading-snug tw:font-semibold tw:tracking-[-0.05em] tw:text-deep-lilac tw:mb-4">
+        {{ section.settings.title }}
+      </h1>
+
+      <p class="tw:text-4xl tw:md:text-3xl tw:sm:text-xl tw:leading-tight tw:md:leading-9 tw:sm:leading-6 tw:font-bold tw:mb-3">
+        {{ section.settings.subtitle }}
+      </p>
+
+      <p class="tw:text-base tw:sm:text-sm tw:leading-normal tw:sm:leading-tight tw:text-center tw:md:text-left tw:text-nero tw:mb-5 tw:sm:mb-2">
+        {{ section.settings.description }}
+      </p>
+
+      {% if section.settings.button_label != blank and section.settings.button_link != blank %}
+        <a
+          href="{{ section.settings.button_link }}"
+          class="
+            tw:block tw:py-3 tw:px-4
+            tw:bg-black tw:text-white tw:text-center tw:font-medium
+            tw:border tw:rounded-md tw:border-black/10 tw:cursor-pointer
+            tw:hover:bg-white tw:hover:text-neutral-950
+            tw:active:translate-y-0.5
+            tw:transition tw:duration-200 tw:ease-in-out
+          "
+        >
+          {{ section.settings.button_label }}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if section.settings.image %}
+      {{
+        section.settings.image
+        | image_url: width: 1000
+        | image_tag:
+          loading: 'lazy',
+          widths: '300, 500, 800, 1000',
+          sizes: '(max-width: 768px) 100vw, 50vw',
+          alt: section.settings.title,
+          class: 'tw:absolute tw:bottom-0 tw:-z-10
+                    tw:w-[290px] tw:h-[290px] tw:left-1/2 tw:-translate-x-1/2
+                    tw:sm:w-[330px] tw:sm:h-[330px] tw:sm:left-[30px] tw:sm:translate-x-0
+                    tw:md:w-[430px] tw:md:h-[430px] tw:md:left-[160px]'
+      }}
+    {% else %}
+      {{ '404' | placeholder_svg_tag: 'tw:w-64 tw:h-64 tw:opacity-50' }}
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "404 Page",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "404"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Page not found"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "This page was deleted or never existed, but you can explore great products below."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "404 Image"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button text",
+      "default": "Go back home"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "default": "/"
+    }
+  ]
+}
+{% endschema %}

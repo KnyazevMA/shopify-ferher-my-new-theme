@@ -1,0 +1,49 @@
+<section id="shopify-section-{{ section.id }}" class="collection tw:py-10 tw:px-4">
+  <div class="page-width">
+    <h1 class="tw:text-4xl tw:font-bold tw:text-center tw:mb-6">
+      {{ collection.title }}
+    </h1>
+
+    {% if collection.description != blank %}
+      <div class="tw:max-w-3xl tw:mx-auto tw:prose tw:mb-10 tw:text-center">
+        {{ collection.description | strip_html | strip }}
+      </div>
+    {% endif %}
+
+    {% render 'sort-controls', id: section.id %}
+
+    <div class="collection-grid tw:grid tw:gap-8 tw:grid-cols-1 tw:sm:grid-cols-2 tw:lg:grid-cols-4">
+      {% for product in collection.products %}
+        {% render 'product-card', product: product, settings: section.settings %}
+      {% else %}
+        <p class="tw:text-center tw:col-span-full tw:py-20 tw:text-xl">Товарів немає 😔</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection template",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Показувати ціну",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Показувати рейтинг",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_add_to_cart",
+      "label": "Показувати кнопку Add to cart",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

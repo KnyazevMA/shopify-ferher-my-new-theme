@@ -1,0 +1,36 @@
+<div
+  class="
+    featured-products__controls
+    tw:flex tw:items-center tw:justify-end tw:gap-2 tw:mb-8
+  "
+>
+  <label class="tw:text-sm tw:text-gray-500" for="sort-select">
+    {{- 'sections.featured_products.sort_label' | t: default: 'Sort by' -}}
+  </label>
+  <select
+    id="sort-select"
+    class="
+      featured-products__sort
+      tw:appearance-none tw:bg-white tw:text-black
+      tw:border tw:border-black/15 rounded-lg
+      tw:py-2 tw:pr-8 tw:pl-4
+      tw:text-xs tw:leading-5 tw:cursor-pointer
+      tw:transition tw:duration-300 tw:ease-in-out
+      tw:hover:border-black/40  tw:hover:ring-2 tw:hover:ring-black/10
+      tw:focus-visible:border-black/40  tw:focus-visible:ring-2 tw:focus-visible:ring-black/10
+    "
+  >
+    <option value="best-selling" selected>
+      {{ 'sections.featured_products.sort_best' | t: default: 'Best selling' }}
+    </option>
+    <option value="price-ascending">
+      {{ 'sections.featured_products.sort_low' | t: default: 'Price: Low to High' }}
+    </option>
+    <option value="price-descending">
+      {{ 'sections.featured_products.sort_high' | t: default: 'Price: High to Low' }}
+    </option>
+    <option value="title-ascending">
+      {{ 'sections.featured_products.sort_az' | t: default: 'Title: A–Z' }}
+    </option>
+  </select>
+</div>

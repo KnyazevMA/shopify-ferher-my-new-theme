@@ -10,11 +10,29 @@
 {
   "sections": {
     "main-product": {
-      "type": "product",
+      "type": "page-product",
+      "settings": {
+        "show_thumbnails": true,
+        "color_text_title": "Виберіть колір:",
+        "size_text_title": "Виберіть розмір:",
+        "bottom_margin": 40
+      }
+    },
+    "1763148394e6e1f059": {
+      "type": "apps",
       "settings": {}
+    },
+    "product_recommendations_qGUwKw": {
+      "type": "section-product-recommendations",
+      "name": "Product recommendations",
+      "settings": {
+        "heading": "You may also like"
+      }
     }
   },
   "order": [
-    "main-product"
+    "main-product",
+    "1763148394e6e1f059",
+    "product_recommendations_qGUwKw"
   ]
 }

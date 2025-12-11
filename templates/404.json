@@ -1,0 +1,27 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "not-found-content": {
+      "type": "page-404",
+      "settings": {
+        "title": "404",
+        "subtitle": "Page not found",
+        "description": "This page was deleted or never existed, but you can explore great products below.",
+        "image": "shopify://shop_images/404-img_2x_9884f957-64d3-4425-ad2d-8b8497da2ffa.png",
+        "button_label": "Go back home",
+        "button_link": "/"
+      }
+    }
+  },
+  "order": [
+    "not-found-content"
+  ]
+}
